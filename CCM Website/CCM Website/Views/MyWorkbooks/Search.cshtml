@@ -1,0 +1,56 @@
+﻿@model IEnumerable<CCM_Website.Models.Course>
+
+<h4>Search</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Search" method="post">
+            <div class="form-group">
+                <label for="SearchPhrase" class="control-label">Search</label>
+                <input name="SearchPhrase" class="form-control" value="@ViewData["SearchPhrase"]" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<h3>Search Results</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseLead)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.learningPlatform)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseLead)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.learningPlatform)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
