@@ -1,8 +1,8 @@
 ## Summary
 
-## Related/Prerequisie Issues
+## Related/Prerequisite  Issues
 
-## Required Reaserch
+## Required Research
 
 ---
 
