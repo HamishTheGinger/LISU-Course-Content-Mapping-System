@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CCM_Website</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/CCM_Website.styles.css" asp-append-version="true" />
+</head>
+<body>
+<header>
+    <div class="container-fluid d-flex justify-content-between align-items-center box-shadow p-3" style="background-color: #003865;">
+        <img src="/images/UOFG.PNG" alt="UOFG Logo" class="brand-logo" style="width: 250px; height: auto;" />
+        <img src="/images/LISU.PNG" alt="LISU Logo" class="brand-logo" style="width: 250px; height: auto;" />
+    </div>
+</header>
+
+    <div class="container-fluid">
+        <div class="row h-auto">
+               
+            <nav class="col-md-2 navbar navbar-expand-md flex-column align-items-start p-3" style="background-color: #003865; height:auto;">
+                
+                <ul class="navbar-nav flex-column w-100">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index" >→ Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">→ Privacy</a>
+                    </li>
+                </ul>
+            </nav>
+
+             
+            <main class="col-md-10 bg-white p-3">
+                <h1>@ViewData["Title"]</h1>
+                
+                <div role="main" class = "p-3"style="background-color: #f7f7f7; width: 100%; height: 500px; float: right; border-radius: 15px" >
+                    @RenderBody()
+                </div>
+            </main>
+        </div>
+    </div>
+        
+    
+
+<footer class="border-top footer text-muted p-3">
+   
+        &copy; 2024 - CCM_Website - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+  
+</footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
