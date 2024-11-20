@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CCM_Website.Models.Course>
+﻿@model IEnumerable<CCM_Website.Models.Workbook>
 
 @{
     ViewData["Title"] = "Index";
@@ -18,9 +18,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.CourseLead)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.learningPlatform)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -34,12 +31,9 @@
                 @Html.DisplayFor(modelItem => item.CourseLead)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.learningPlatform)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.WorkbookId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.WorkbookId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.WorkbookId">Delete</a>
             </td>
         </tr>
 }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using CCM_Website.Models;
 using Microsoft.AspNetCore.Builder;
@@ -11,6 +11,22 @@ namespace CCM_Website.Data
             : base(options)
         {
         }
-        public DbSet<CCM_Website.Models.Course> Courses { get; set; } = default!;
+        public DbSet<CCM_Website.Models.Workbook> WorkBooks { get; set; } = default!;
+        public DbSet<CCM_Website.Models.Activities> Activities { get; set; } = default!;
+        public DbSet<CCM_Website.Models.Week> Weeks { get; set; } = default!;
+        public DbSet<CCM_Website.Models.LearningPlatform> LearningPlatforms { get; set; } = default!;
+        public DbSet<CCM_Website.Models.GraduateAttribute> GraduateAttributes { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<LearningPlatformActivities>()
+                .HasKey(l => new { l.LearningPlatformId, l.ActivitiesId });
+            modelBuilder.Entity<WeekActivities>()
+                .HasKey(l => new { l.WeekId, l.ActivitiesId });
+            modelBuilder.Entity<WeekGraduateAttributes>()
+                .HasKey(l => new { l.WeekId, l.GraduateAttributeId });
+        }
     }
 }

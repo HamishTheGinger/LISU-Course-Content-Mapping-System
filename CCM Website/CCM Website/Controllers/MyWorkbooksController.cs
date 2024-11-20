@@ -23,25 +23,7 @@ namespace CCM_Website.Controllers
         // GET: Courses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Courses.ToListAsync());
-        }
-
-        // GET: Courses/SearchForm
-        public async Task<IActionResult> SearchForm()
-        {
-            return View();
-        }
-
-        // POST: Courses/SearchResults
-        public async Task<IActionResult> SearchResults(String SearchPhrase)
-        {
-            var searchResults = await _context.Courses.
-                Where(c => c.CourseName.Contains(SearchPhrase) ||
-                           c.CourseLead.Contains(SearchPhrase) ||
-                           c.learningPlatform.Contains(SearchPhrase))
-                .ToListAsync();
-
-            return View("Index", searchResults);
+            return View(await _context.WorkBooks.ToListAsync());
         }
 
         // POST: Courses/Search
@@ -51,14 +33,13 @@ namespace CCM_Website.Controllers
             if (string.IsNullOrEmpty(SearchPhrase))
             {
                 // If no search phrase, return an empty list or all courses
-                return View("Search", await _context.Courses.ToListAsync());
+                return View("Search", await _context.WorkBooks.ToListAsync());
             }
 
             // Perform search filtering across multiple fields
-            var searchResults = await _context.Courses
+            var searchResults = await _context.WorkBooks
                 .Where(c => c.CourseName.Contains(SearchPhrase) ||
-                            c.CourseLead.Contains(SearchPhrase) ||
-                            c.learningPlatform.Contains(SearchPhrase))
+                            c.CourseLead.Contains(SearchPhrase))
                 .ToListAsync();
 
             // Return the search form view with search results and the search phrase
@@ -74,14 +55,14 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
+            var workbook = await _context.WorkBooks
+                .FirstOrDefaultAsync(m => m.WorkbookId == id);
+            if (workbook == null)
             {
                 return NotFound();
             }
 
-            return View(course);
+            return View(workbook);
         }
 
         // GET: Courses/Create
@@ -95,15 +76,15 @@ namespace CCM_Website.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CourseName,CourseLead,learningPlatform")] Course course)
+        public async Task<IActionResult> Create([Bind("Id,CourseName,CourseLead")] Workbook workbook)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(course);
+                _context.Add(workbook);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View(workbook);
         }
 
         // GET: Courses/Edit/5
@@ -114,7 +95,7 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _context.WorkBooks.FindAsync(id);
             if (course == null)
             {
                 return NotFound();
@@ -127,9 +108,9 @@ namespace CCM_Website.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,CourseLead,learningPlatform")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CourseName,CourseLead")] Workbook workbook)
         {
-            if (id != course.Id)
+            if (id != workbook.WorkbookId)
             {
                 return NotFound();
             }
@@ -138,12 +119,12 @@ namespace CCM_Website.Controllers
             {
                 try
                 {
-                    _context.Update(course);
+                    _context.Update(workbook);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CourseExists(course.Id))
+                    if (!CourseExists(workbook.WorkbookId))
                     {
                         return NotFound();
                     }
@@ -154,7 +135,7 @@ namespace CCM_Website.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(course);
+            return View(workbook);
         }
 
         // GET: Courses/Delete/5
@@ -165,14 +146,14 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Courses
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (course == null)
+            var workbook = await _context.WorkBooks
+                .FirstOrDefaultAsync(m => m.WorkbookId == id);
+            if (workbook == null)
             {
                 return NotFound();
             }
 
-            return View(course);
+            return View(workbook);
         }
 
         // POST: Courses/Delete/5
@@ -180,10 +161,10 @@ namespace CCM_Website.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _context.WorkBooks.FindAsync(id);
             if (course != null)
             {
-                _context.Courses.Remove(course);
+                _context.WorkBooks.Remove(course);
             }
 
             await _context.SaveChangesAsync();
@@ -192,7 +173,7 @@ namespace CCM_Website.Controllers
 
         private bool CourseExists(int id)
         {
-            return _context.Courses.Any(e => e.Id == id);
+            return _context.WorkBooks.Any(e => e.WorkbookId == id);
         }
     }
 }
