@@ -23,7 +23,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         // GET: Admin/Workbook
         public async Task<IActionResult> Index()
         {
-            return View(await _context.WorkBooks.ToListAsync());
+            return View(await _context.Workbooks.ToListAsync());
         }
 
         // GET: Admin/Workbook/Details/5
@@ -34,7 +34,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var workbook = await _context.WorkBooks
+            var workbook = await _context.Workbooks
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
@@ -55,10 +55,10 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WorkbookId,CourseName,CourseLead,CourseLength,PlatformId")] Workbook workbook) {
+        public async Task<IActionResult> Create([Bind("WorkbookId,CourseName,CourseLead,CourseLength,LearningPlatformId")] Workbook workbook) {
             try
             {
-                var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp => lp.PlatformId == workbook.PlatformId);
+                var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp => lp.PlatformId == workbook.LearningPlatformId);
                 workbook.LearningPlatform = learningPlatform;
                 if (workbook.LearningPlatform == null)
                 {
@@ -130,7 +130,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var workbook = await _context.WorkBooks.FindAsync(id);
+            var workbook = await _context.Workbooks.FindAsync(id);
             if (workbook == null)
             {
                 return NotFound();
@@ -181,7 +181,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var workbook = await _context.WorkBooks
+            var workbook = await _context.Workbooks
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
@@ -196,10 +196,10 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var workbook = await _context.WorkBooks.FindAsync(id);
+            var workbook = await _context.Workbooks.FindAsync(id);
             if (workbook != null)
             {
-                _context.WorkBooks.Remove(workbook);
+                _context.Workbooks.Remove(workbook);
             }
 
             await _context.SaveChangesAsync();
@@ -208,7 +208,7 @@ namespace CCM_Website.Areas.Admin.Controllers
 
         private bool WorkbookExists(int id)
         {
-            return _context.WorkBooks.Any(e => e.WorkbookId == id);
+            return _context.Workbooks.Any(e => e.WorkbookId == id);
         }
     }
 }

@@ -21,12 +21,12 @@ namespace CCM_Website.Controllers
 
         public IActionResult Index(string searchQuery)
         {
-            var myWorkbooks = _context.WorkBooks
+            var myWorkbooks = _context.Workbooks
                 .Where(w => (string.IsNullOrEmpty(searchQuery) || w.CourseName.Contains(searchQuery)))
                 .OrderByDescending(w => w.LastEdited)
                 .ToList();
 
-            var uofgWorkbooks = _context.WorkBooks
+            var uofgWorkbooks = _context.Workbooks
                 .Where(w => (string.IsNullOrEmpty(searchQuery) || w.CourseName.Contains(searchQuery)))
                 .ToList();
 
