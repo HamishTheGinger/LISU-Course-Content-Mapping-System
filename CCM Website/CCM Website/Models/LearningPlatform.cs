@@ -11,9 +11,10 @@ namespace CCM_Website.Models
         public required string PlatformName { get; set; }
 
         // Navigation Properties
-        [ForeignKey("Workbook")]
-        public int WorkbookId { get; set; }
-        public required ICollection<Workbook> Workbooks { get; set; }
+        [Required]
+        public ICollection<Workbook> Workbooks { get; set; }
+        
+        [Required]
         public required ICollection<LearningPlatformActivities> LearningPlatformActivities { get; set; }
     }
 }

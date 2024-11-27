@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CCM_Website.Models
 {
@@ -13,7 +14,9 @@ namespace CCM_Website.Models
         public DateTime LastEdited { get; set; }
 
         // Navigation Properties
+        [ForeignKey("LearningPlatform")]
+        public int PlatformId { get; set; }
         public required ICollection<Week> Weeks { get; set; }
-        public required LearningPlatform LearningPlatform { get; set; }
+        public LearningPlatform LearningPlatform { get; set; }
     }
 }
