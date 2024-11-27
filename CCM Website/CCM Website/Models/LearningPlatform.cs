@@ -11,10 +11,7 @@ namespace CCM_Website.Models
         public required string PlatformName { get; set; }
 
         // Navigation Properties
-        [Required]
-        public ICollection<Workbook> Workbooks { get; set; }
-        
-        [Required]
-        public required ICollection<LearningPlatformActivities> LearningPlatformActivities { get; set; }
+        public ICollection<Workbook>? Workbooks { get; set; }
+        public ICollection<LearningPlatformActivities>? LearningPlatformActivities { get; set; }
     }
 }

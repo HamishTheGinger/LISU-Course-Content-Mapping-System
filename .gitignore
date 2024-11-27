@@ -28,6 +28,8 @@
 *.so.*
 *.dylib
 *.db
+*.db-shm
+*.db-wal
 
 # Executables
 *.exe

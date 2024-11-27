@@ -16,6 +16,9 @@ namespace CCM_Website.Data
         public DbSet<CCM_Website.Models.Week> Weeks { get; set; } = default!;
         public DbSet<CCM_Website.Models.LearningPlatform> LearningPlatforms { get; set; } = default!;
         public DbSet<CCM_Website.Models.GraduateAttribute> GraduateAttributes { get; set; } = default!;
+        public DbSet<CCM_Website.Models.LearningPlatformActivities> LearningPlatformActivities { get; set; } = default!;
+        public DbSet<CCM_Website.Models.WeekActivities> WeekActivities { get; set; } = default!;
+        public DbSet<CCM_Website.Models.WeekGraduateAttributes> WeekGraduateAttributes { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
