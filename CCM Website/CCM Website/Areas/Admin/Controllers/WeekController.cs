@@ -49,7 +49,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         // GET: Admin/Week/Create
         public IActionResult Create()
         {
-            ViewData["WorkbookId"] = new SelectList(_context.WorkBooks, "WorkbookId", "WorkbookId");
+            ViewData["WorkbookId"] = new SelectList(_context.Workbooks, "WorkbookId", "WorkbookId");
             return View();
         }
 
@@ -66,7 +66,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["WorkbookId"] = new SelectList(_context.WorkBooks, "WorkbookId", "WorkbookId", week.WorkbookId);
+            ViewData["WorkbookId"] = new SelectList(_context.Workbooks, "WorkbookId", "WorkbookId", week.WorkbookId);
             return View(week);
         }
 
@@ -83,7 +83,7 @@ namespace CCM_Website.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["WorkbookId"] = new SelectList(_context.WorkBooks, "WorkbookId", "WorkbookId", week.WorkbookId);
+            ViewData["WorkbookId"] = new SelectList(_context.Workbooks, "WorkbookId", "WorkbookId", week.WorkbookId);
             return View(week);
         }
 
@@ -119,7 +119,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["WorkbookId"] = new SelectList(_context.WorkBooks, "WorkbookId", "WorkbookId", week.WorkbookId);
+            ViewData["WorkbookId"] = new SelectList(_context.Workbooks, "WorkbookId", "WorkbookId", week.WorkbookId);
             return View(week);
         }
 

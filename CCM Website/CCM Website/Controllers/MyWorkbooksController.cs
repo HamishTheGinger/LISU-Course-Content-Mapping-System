@@ -23,7 +23,7 @@ namespace CCM_Website.Controllers
         // GET: Courses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.WorkBooks.ToListAsync());
+            return View(await _context.Workbooks.ToListAsync());
         }
 
         // POST: Courses/Search
@@ -33,11 +33,11 @@ namespace CCM_Website.Controllers
             if (string.IsNullOrEmpty(SearchPhrase))
             {
                 // If no search phrase, return an empty list or all courses
-                return View("Search", await _context.WorkBooks.ToListAsync());
+                return View("Search", await _context.Workbooks.ToListAsync());
             }
 
             // Perform search filtering across multiple fields
-            var searchResults = await _context.WorkBooks
+            var searchResults = await _context.Workbooks
                 .Where(c => c.CourseName.Contains(SearchPhrase) ||
                             c.CourseLead.Contains(SearchPhrase))
                 .ToListAsync();
@@ -55,7 +55,7 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
-            var workbook = await _context.WorkBooks
+            var workbook = await _context.Workbooks
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
@@ -95,7 +95,7 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
-            var course = await _context.WorkBooks.FindAsync(id);
+            var course = await _context.Workbooks.FindAsync(id);
             if (course == null)
             {
                 return NotFound();
@@ -146,7 +146,7 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
-            var workbook = await _context.WorkBooks
+            var workbook = await _context.Workbooks
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
@@ -161,10 +161,10 @@ namespace CCM_Website.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var course = await _context.WorkBooks.FindAsync(id);
+            var course = await _context.Workbooks.FindAsync(id);
             if (course != null)
             {
-                _context.WorkBooks.Remove(course);
+                _context.Workbooks.Remove(course);
             }
 
             await _context.SaveChangesAsync();
@@ -173,7 +173,7 @@ namespace CCM_Website.Controllers
 
         private bool CourseExists(int id)
         {
-            return _context.WorkBooks.Any(e => e.WorkbookId == id);
+            return _context.Workbooks.Any(e => e.WorkbookId == id);
         }
     }
 }

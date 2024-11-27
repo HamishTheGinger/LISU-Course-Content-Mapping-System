@@ -14,8 +14,6 @@ namespace CCM_Website.Models
         public DateTime LastEdited { get; set; }
 
         // Navigation Properties
-        [ForeignKey("LearningPlatform")]
-        public int PlatformId { get; set; }
         public required ICollection<Week> Weeks { get; set; }
 
         [ForeignKey("LearningPlatform")]
