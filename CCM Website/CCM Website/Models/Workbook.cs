@@ -17,6 +17,9 @@ namespace CCM_Website.Models
         [ForeignKey("LearningPlatform")]
         public int PlatformId { get; set; }
         public required ICollection<Week> Weeks { get; set; }
-        public LearningPlatform LearningPlatform { get; set; }
+
+        [ForeignKey("LearningPlatform")]
+        public int LearningPlatformId { get; set; }
+        public required LearningPlatform LearningPlatform { get; set; }
     }
 }
