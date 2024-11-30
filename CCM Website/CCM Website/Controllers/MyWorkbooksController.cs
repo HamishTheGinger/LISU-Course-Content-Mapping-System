@@ -56,6 +56,7 @@ namespace CCM_Website.Controllers
             }
 
             var workbook = await _context.Workbooks
+                .Include(w => w.Weeks)
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
@@ -170,10 +171,28 @@ namespace CCM_Website.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        
+        // GET: Courses
+        public async Task<IActionResult> Week(int id)
+        {
+            var week = await _context.Weeks
+                .Include(w => w.Workbook) 
+                .Include(w => w.WeekActivities) 
+                .Include(w => w.WeekGraduateAttributes)
+                .FirstOrDefaultAsync(w => w.WeekId == id);
 
+            if (week == null)
+            {
+                return NotFound();
+            }
+
+            return View(week);
+        }
+        
         private bool CourseExists(int id)
         {
             return _context.Workbooks.Any(e => e.WorkbookId == id);
         }
     }
+    
 }

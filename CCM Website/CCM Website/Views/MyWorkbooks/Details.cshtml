@@ -23,18 +23,11 @@
             <h1 class="left-head">@Html.DisplayFor(model => model.CourseName)</h1>
             <h2 class="left-head">Course Leads: @Html.DisplayFor(model => model.CourseLead)</h2>
         </div>
-
-        <div class="col-sm-auto" >
-            <br />
-            <a class="edit-workbook" asp-action="Edit" asp-route-id="@Model?.WorkbookId" >Edit Workbook</a>
-        </div>
-
-     </div>
+    </div>
 
     <div class="container-fluid">
-        <!-- Row for three columns -->
-        <div class="row align-items-stretch">
-            <!-- Left Column -->
+        <div class="row">
+            <!-- Left Column with Toggle Buttons -->
             <div class="col-md-2 left-column d-flex flex-column">
                 <br />
                 <br />
@@ -42,9 +35,18 @@
                 <button id="toggleBreakdownGraphButton" class="toggle-button">Time Breakdown Graph</button>
                 <button id="toggleGradAttributesButton" class="toggle-button">Graduate Attributes</button>
             </div>
+            
+            <div class="col-md-10 d-flex flex-column">
+                <div class="d-flex justify-content-end">
+                    <div class="d-flex flex-column align-items-end">
+                        @foreach (var week in @Model.Weeks)
+                        {
+                        <a class="edit-workbook" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
+                        }
+                    </div>
+                </div>
 
-            <!-- Center Column -->
-            <div class="col-md-8 center-column d-flex align-items-center justify-content-center">
+                <!-- Center Content -->
                 <div class="center-column">
                     <div id="graph-container">
                         <div id="legend">
@@ -65,31 +67,10 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Right Column -->
-            <div class="col-md-2 right-column d-flex flex-column">
-                <button class="week-button">Week 1</button>
-                <button class="week-button">Week 2</button>
-                <button class="week-button">Week 3</button>
-                <button class="week-button">Week 4</button>
-                <button class="week-button">Week 5</button>
-                <button class="week-button">Week 6</button>
-                <button class="week-button">Week 7</button>
-                <button class="week-button">Week 8</button>
-                <button class="week-button">Week 9</button>
-                <button class="week-button">Week 10</button>
-                <button class="week-button">Week 11</button>
-            </div>
-
-            <div class="row mt-auto justify-content-center">
-                <div class="col-auto p-0">
-                    <button id="toggleLegendButton" class="toggle-button-bottom">Legend</button>
-                </div>
-            </div>
-
         </div>
-
     </div>
+
+
 
     <div>
         <a asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit</a> |
