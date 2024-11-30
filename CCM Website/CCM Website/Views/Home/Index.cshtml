@@ -9,10 +9,9 @@
 <div class="container">
     <div class="row mb-4">
         <div class="col-12">
-            <form method="get" action="/HomePage">
+            <form asp-controller="MyWorkbooks" asp-action="Search" method="post">
                 <div class="input-group">
-                    <input type="text" name="searchQuery" class="form-control" placeholder="Search Workbooks"
-                           value="@ViewData["SearchPhrase"]">
+                    <input type="text" name="SearchPhrase" class="form-control" placeholder="Search Workbooks" />
                     <button type="submit" class="btn btn-primary">Search</button>
                 </div>
             </form>
