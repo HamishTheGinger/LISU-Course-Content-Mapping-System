@@ -88,12 +88,17 @@ namespace CCM_Website.Areas.Admin.Controllers
 
                     var weeks = new List<Week>();
 
-                    for (int i = 1; i <= numberOfWeeks; i++) {
-                        weeks.Add(new Week { WeekNumber = i, WorkbookId = workbook.WorkbookId, Workbook = workbook,
-                            WeekActivities = new List<WeekActivities>(), 
-                            WeekGraduateAttributes = new List<WeekGraduateAttributes>()});
+                    for (int i = 1; i <= numberOfWeeks; i++)
+                    {
+                        weeks.Add(new Week
+                        {
+                            WeekNumber = i, WorkbookId = workbook.WorkbookId, Workbook = workbook,
+                            WeekActivities = new List<WeekActivities>(),
+                            WeekGraduateAttributes = new List<WeekGraduateAttributes>()
+                        });
                     }
 
+                    workbook.Weeks = weeks;
                     _context.AddRange(weeks);
                     
                     await _context.SaveChangesAsync();
