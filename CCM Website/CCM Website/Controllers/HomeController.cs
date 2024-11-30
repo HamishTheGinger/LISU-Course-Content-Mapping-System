@@ -19,18 +19,15 @@ namespace CCM_Website.Controllers
             _context = context;
         }
 
-        public IActionResult Index(string searchQuery)
+        public IActionResult Index()
         {
             var myWorkbooks = _context.Workbooks
-                .Where(w => (string.IsNullOrEmpty(searchQuery) || w.CourseName.Contains(searchQuery)))
                 .OrderByDescending(w => w.LastEdited)
                 .ToList();
 
             var uofgWorkbooks = _context.Workbooks
-                .Where(w => (string.IsNullOrEmpty(searchQuery) || w.CourseName.Contains(searchQuery)))
                 .ToList();
 
-            ViewData["SearchPhrase"] = searchQuery;
             ViewData["MyWorkbooks"] = myWorkbooks;
             ViewData["UofGWorkbooks"] = uofgWorkbooks;
             return View();
