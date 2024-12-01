@@ -1,36 +1,57 @@
 ﻿@model CCM_Website.Models.Workbook
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Workbook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<div class="container">
+    <h1>Create Workbook</h1>
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-<h4>Course</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="CourseName" class="control-label"></label>
-                <input asp-for="CourseName" class="form-control" />
-                <span asp-validation-for="CourseName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CourseLead" class="control-label"></label>
-                <input asp-for="CourseLead" class="form-control" />
-                <span asp-validation-for="CourseLead" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        <div class="form-group">
+            <label asp-for="LearningPlatformId" class="control-label"></label>
+            <select asp-for="LearningPlatformId" class="form-control">
+                <option value="1">Moodle</option>
+            </select>
+            <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="CourseName" class="control-label"></label>
+            <input asp-for="CourseName" class="form-control" placeholder="Enter Course Title" />
+            <span asp-validation-for="CourseName" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="CourseCode" class="control-label"></label>
+            <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code" />
+            <span asp-validation-for="CourseCode" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="CourseLead" class="control-label"></label>
+            <input asp-for="CourseLead" class="form-control" placeholder="Enter Course Lead Name" />
+            <span asp-validation-for="CourseLead" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Collaborators" class="control-label"></label>
+            <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
+            <span asp-validation-for="Collaborators" class="text-danger"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+
+    <div class="mt-3">
+        <a asp-action="Index">Back to List</a>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

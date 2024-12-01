@@ -12,6 +12,8 @@ namespace CCM_Website.Models
         public required string CourseLead { get; set; }
         public int CourseLength { get; set; }
         public DateTime LastEdited { get; set; }
+        public string CourseCode { get; set; } 
+        public string Collaborators { get; set; }
 
         // Navigation Properties
         public required ICollection<Week> Weeks { get; set; }
