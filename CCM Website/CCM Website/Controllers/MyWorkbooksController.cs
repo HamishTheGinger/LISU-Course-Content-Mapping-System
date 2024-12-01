@@ -77,7 +77,7 @@ namespace CCM_Website.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CourseName,CourseLead")] Workbook workbook)
+        public async Task<IActionResult> Create([Bind("Id,CourseName,CourseLead,CourseCode,Collaborators")] Workbook workbook)
         {
             if (ModelState.IsValid)
             {
