@@ -55,7 +55,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WorkbookId,CourseName,CourseLead,CourseLength,LearningPlatformId")] Workbook workbook) {
+        public async Task<IActionResult> Create([Bind("WorkbookId,CourseName,CourseCode,CourseLead,CourseLength,LearningPlatformId,Collaborators")] Workbook workbook) {
             try
             {
                 var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp => lp.PlatformId == workbook.LearningPlatformId);
