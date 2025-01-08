@@ -148,12 +148,15 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WorkbookId,CourseName,CourseLead,CourseLength,LastEdited")] Workbook workbook)
+        public async Task<IActionResult> Edit(int id, [Bind("WorkbookId,CourseName,CourseCode,CourseLead,CourseLength,LearningPlatformId,Collaborators")] Workbook workbook)
         {
             if (id != workbook.WorkbookId)
             {
                 return NotFound();
             }
+            
+            ModelState.Remove(nameof(workbook.LearningPlatform));
+            ModelState.Remove(nameof(workbook.Weeks));
 
             if (ModelState.IsValid)
             {
@@ -175,6 +178,16 @@ namespace CCM_Website.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            foreach (var state in ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    // Log each error (you could also store or display them if needed)
+                    Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
+                }
+            }
+            ModelState.AddModelError("",
+                "An error occurred while creating the workbook. Please contact an administrator if this problem persists.");
             return View(workbook);
         }
 
