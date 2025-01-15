@@ -217,7 +217,8 @@ namespace CCM_Website.Controllers
         public async Task<IActionResult> Week(int id)
         {
             var week = await _context.Weeks
-                .Include(w => w.Workbook) 
+                .Include(w => w.Workbook)
+                    .ThenInclude(wb => wb.Weeks)
                 .Include(w => w.WeekActivities) 
                 .Include(w => w.WeekGraduateAttributes)
                 .FirstOrDefaultAsync(w => w.WeekId == id);
