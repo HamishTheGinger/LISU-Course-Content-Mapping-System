@@ -1,6 +1,351 @@
 ﻿@model CCM_Website.Models.Week
-
 @{
-    ViewData["Title"] = $"{@Model.Workbook.CourseName} - Week - {@Model.WeekNumber}";
-    
+    ViewData["Title"] = $"{@Model.Workbook.CourseCode} - Week {@Model.WeekNumber}";
+    ViewData["LearningPlatform"] = $"{@Model.Workbook.LearningPlatformId}";
 }
+
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-10">
+            <h1 id="courseTitle" class="text-wrap"></h1>
+            <h4 id="courseLead" class="text-wrap"></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <div class="table-responsive mb-3">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th colspan="8" style="background-color: #00B050; color: white; text-align: center;">Week @Model.WeekNumber</th>
+                    </tr>
+                    <tr style="background-color: #00B050; color: white; text-align: center;">
+                        <th>Staff Responsible</th>
+                        <th>Title / Name</th>
+                        <th>Learning Activity</th>
+                        <th>Learning Type</th>
+                        <th>Time (in mins)</th>
+                        <th>Task Status</th>
+                        <th>Activity Location</th>
+                        <th>Learning Approach</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>James O'N</td>
+                        <td>1</td>
+                        <td>a</td>
+                        <td>Discussion</td>
+                        <td>00:05</td>
+                        <td>In Progress</td>
+                        <td>On Campus</td>
+                        <td>Synchronous</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mb-10 justify-content-around">
+                <div class="col-md-3">
+                    <button class="btn btn-primary m-3 rounded-pill" id="lt_table_hide" style="background-color: #005398"> <span id="arrow_stats">▼</span> Statistics</button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary m-3 rounded-pill" id="lt_chart_hide" style="background-color: #005398"> <span id="arrow_chart">▼</span> Chart</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <table id="stats_table" class="table table-bordered table-responsive" style="display:none">
+                        <thead>
+                        <tr>
+                            <th colspan="4" style="text-align: center;background-color: #003864; color: white">Statistics</th>
+                        </tr>
+                        <tr style="background-color: #003864; color: white; text-align: center;">
+                            <th>Learning Type</th>
+                            <th>Allocation</th>
+                            <th>Status</th>
+                            <th>Tasks</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td id="acquisition"></td>
+                            <td id="acquisition_data"></td>
+                            <td>Unassigned</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td id="collaboration"></td>
+                            <td id="collaboration_data"></td>
+                            <td>In Progress</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td id="discussion"></td>
+                            <td id="discussion_data"></td>
+                            <td>Completed</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td id="investigation"></td>
+                            <td id="investigation_data"></td>
+                            <td>Total Tasks</td>
+                            <td id="total"></td>
+                        </tr>
+                        <tr>
+                            <td id="practice"></td>
+                            <td id="practice_data"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td id="production"></td>
+                            <td id="production_data"></td>
+                            <th>Activity Location</th>
+                            <th>Total</th>
+                        </tr>
+                        <tr>
+                            <td id="assessment"></td>
+                            <td id="assessment_data"></td>
+                            <td>On Campus</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Total Time</td>
+                            <td></td>
+                            <td>Remote (Home)</td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-6 align-items-center">
+                    <div id="lt_chart" style="display:none"></div>
+                    <div id="lt_chart_key" style="display:none"></div>
+                    <div id="lt_chart_details" style="display:none"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 d-flex flex-column">
+            @foreach (var week in @Model.Workbook.Weeks)
+            {
+                if (Model.WeekNumber != week.WeekNumber)
+                {
+                    <div class="d-flex justify-content-center">
+                        <a class="btn btn-primary mb-2 rounded-pill" style="background-color: #005398" asp-action="Week" asp-route-id="@week.WeekId">
+                            Week @week.WeekNumber
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-10 text-center">
+                <div id="legend" style="display:none">This is the legend</div>
+                <button class="btn btn-primary m-3 rounded-pill" id="legend_btn" style="background-color: #005398"> <span id="arrow_legend">▲</span> Legend</button>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+    
+    //course content to put into headings
+    var courseTitle = document.getElementById("courseTitle");
+    courseTitle.textContent = "@Model.Workbook.CourseName";
+    var courseLead = document.getElementById("courseLead");
+    courseLead.textContent = "Course Lead(s): @Model.Workbook.CourseLead";
+    
+
+    //pie chart data (hard coded)
+    var data = [
+        { label: "Acquisition", value: 2, color : "#A1F5ED", textColor : "#000000"},
+        { label: "Collaboration", value: 1, color : "#FFD21A", textColor : "#000000"},
+        { label: "Discussion", value: 3, color : "#7AAEEA", textColor : "#000000"},
+        { label: "Investigation", value: 2, color : "#F8807F", textColor : "#000000"},
+        { label: "Practice", value: 1, color : "#BB98DC", textColor : "#000000"},
+        { label: "Production", value: 1, color : "#BDEA75", textColor : "#000000"},
+        { label: "Assessment", value: 2, color : "#44546A", textColor : "#FFFFFF"}
+    ];
+
+    var total = calculateTotal(data);
+    function calculateTotal(data) {
+        return data.reduce((sum, d) => sum + d.value, 0);
+    }
+    
+    //pie chart sizes
+    var pieMargin = 20;
+    var pieWidth = Math.max(window.innerWidth * 0.2, 230);
+    var pieHeight = Math.max(window.innerWidth * 0.2, 230);
+    var pieRadius = Math.max(pieWidth, pieHeight) / 2 - pieMargin
+    
+    //pie chart vector
+    var svg = d3.select("#lt_chart")
+        .append("svg")
+        .attr("width", pieWidth)
+        .attr("height", pieHeight)
+        .append("g")
+        .attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")");
+
+    //pie chart colours
+    var color = d3.scaleOrdinal()
+        .domain(data.map(d => d.label))
+        .range(data.map(d => d.color))
+
+    var pie = d3.pie()
+        .value(function(d) {return d.value; })
+
+    var arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(pieRadius);
+
+    svg
+        .selectAll('path')
+        .data(pie(data))
+        .enter()
+        .append('path')
+        .attr('d',arc)
+        .attr('fill', function(d){ return(color(d.data.label))})
+        .attr("stroke", "black")
+        .style("stroke-width", "0px")
+        .style("opacity", 1)
+        .on("mouseover", function (event, d) {
+            displayDetails(d.data);
+        })
+        .on("mouseout", function () {
+            hideDetails();
+        });
+        
+    //Pie chart key
+    const key = d3.select("#lt_chart_key")
+        .append("div")
+        .attr("id", "key")
+        .style("display", "flex")
+        .style("flex-direction", "column")
+        .style("margin-left", "20px")
+        .style("margin-top", "20px")
+
+    key.selectAll("div")
+        .data(data)
+        .enter()
+        .append("div")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("margin-bottom", "5px")
+        .html(function(d) {
+            return `
+            <div style="width: 12px; height: 12px; background-color: ${d.color}; margin-right: 8px; border: 1px solid black;"></div>
+            ${d.label}
+        `;
+        });
+        
+    //button functions
+    document.getElementById("lt_table_hide").addEventListener("click", toggleStatsTable);
+    document.getElementById("lt_chart_hide").addEventListener("click", togglePieChart);
+    document.getElementById("legend_btn").addEventListener("click", toggleLegend);
+
+    function togglePieChart() {
+        const chart = document.getElementById("lt_chart");
+        const key = document.getElementById("lt_chart_key");
+        const currentDisplay = chart.style.display;
+        const arrow = document.getElementById("arrow_chart");
+        const newDisplay = currentDisplay === "none" ? "block" : "none";
+        chart.style.display = newDisplay;
+        key.style.display = newDisplay;
+        if (currentDisplay === "none") {
+            arrow.innerHTML = "▲";
+        } else {
+            arrow.innerHTML = "▼";
+        }
+    }
+
+    function toggleLegend() {
+        const chart = document.getElementById("lt_chart");
+        const table = document.getElementById("stats_table");
+        const key = document.getElementById("lt_chart_key");
+        const legend = document.getElementById("legend");
+        const arrow = document.getElementById("arrow_legend");
+        const buttonChart = document.getElementById("lt_chart_hide");
+        const buttonTable = document.getElementById("lt_table_hide");
+        
+        const currentDisplay = legend.style.display;
+
+        legend.style.display = currentDisplay === "none" || currentDisplay === "" ? "block" : "none";
+        chart.style.display = "none";
+        key.style.display = "none";
+        table.style.display = "none";
+        buttonChart.style.display = "none";
+        buttonTable.style.display = "none";
+        
+        if (legend.style.display === "block") {
+            arrow.innerHTML = "▲";
+        
+        } else {
+            arrow.innerHTML = "▼";
+            buttonChart.style.display = "block";
+            buttonTable.style.display = "block";
+        }
+    }
+
+
+
+    function toggleStatsTable() {
+        const table = document.getElementById("stats_table");
+        const arrow = document.getElementById("arrow_stats");
+        const currentDisplay = table.style.display;
+        const newDisplay = currentDisplay === "none" ? "block" : "none";
+        table.style.display = newDisplay;
+
+        if (currentDisplay === "none") {
+            arrow.innerHTML = "▲";
+        } else {
+            arrow.innerHTML = "▼";
+        }
+    }
+
+    function displayDetails(d) {
+        var percentage = ((d.value / total) * 100).toFixed(2);
+        let detailsDiv = d3.select("#lt_chart_details");
+        detailsDiv.html(`<strong>${d.label}</strong>: (${percentage}%)`);
+        detailsDiv.style("display", "block");
+    }
+
+    function hideDetails() {
+        d3.select("#lt_chart_details").style("display", "none");
+    }
+
+    window.addEventListener("resize", function () {
+        pieWidth = Math.max(window.innerWidth * 0.2, 230);
+        pieHeight = Math.max(window.innerWidth * 0.2, 230);
+        pieRadius = Math.max(pieWidth, pieHeight) / 2 - pieMargin;
+
+        d3.select("svg")
+            .attr("width", pieWidth)
+            .attr("height", pieHeight);
+
+        svg.attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")");
+        arc.outerRadius(pieRadius);
+        svg.selectAll("path").attr("d", arc);
+    });
+
+    
+    //table script
+    data.forEach(item => {
+        const labelId = item.label.toLowerCase();
+        const cell = document.getElementById(labelId);
+        const cellData = document.getElementById(labelId + "_data");
+        if (cell) {
+            cell.textContent = item.label;
+            cell.style.backgroundColor = item.color;
+            cell.style.color = item.textColor;
+        }
+        if (cellData) {
+            cellData.textContent = item.value;
+        }
+    });
+</script>
+
