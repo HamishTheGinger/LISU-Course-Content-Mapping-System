@@ -1,8 +1,65 @@
-﻿@{
+﻿@model IEnumerable<CCM_Website.Models.Workbook>
+
+@{
     ViewData["Title"] = "Home Page";
+    var myWorkbooks = ViewData["MyWorkbooks"] as List<CCM_Website.Models.Workbook>;
+    var uofgWorkbooks = ViewData["UofgWorkbooks"] as List<CCM_Website.Models.Workbook>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <form asp-controller="Workbooks" asp-action="Search" method="post">
+                <div class="input-group">
+                    <input type="text" name="SearchPhrase" class="form-control" placeholder="Search Workbooks" />
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h2>My Workbooks</h2>
+    <div class="row">
+        @if (myWorkbooks!.Count == 0)
+        {
+            <p>No workbooks found.</p>
+        }
+        else
+        {
+            @foreach (var workbook in myWorkbooks)
+            {
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@workbook.CourseName</h5>
+                            <p class="card-text">Last Edited: @workbook.LastEdited.ToShortDateString()</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    <h2>UofG Workbooks</h2>
+    <div class="row">
+        @if (uofgWorkbooks!.Count == 0)
+        {
+            <p>No workbooks found.</p>
+        }
+        else
+        {
+            @foreach (var workbook in uofgWorkbooks)
+            {
+                <div class="col-md-3 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@workbook.CourseName</h5>
+                            <p class="card-text">@workbook.CourseLead</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
 </div>
+

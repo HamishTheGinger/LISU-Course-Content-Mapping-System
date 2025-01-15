@@ -1,0 +1,44 @@
+﻿@model IEnumerable<CCM_Website.Models.Workbook>
+
+@{
+    ViewData["Title"] = "My Workbooks";
+}
+
+<p>
+    <a class="btn btn-success" asp-action="Create">Create New Workbook</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseCode)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseLead)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseCode)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseLead)
+            </td>
+            <td>
+                <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.WorkbookId">View Workbook</a>
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.WorkbookId">Edit Workbook</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -1,0 +1,36 @@
+@model CCM_Website.Models.Week
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>Week</h4>
+<hr />
+@Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <div class="form-group">
+                <label asp-for="WeekNumber" class="control-label"></label>
+                <input asp-for="WeekNumber" class="form-control" />
+                <span asp-validation-for="WeekNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WorkbookId" class="control-label"></label>
+                <select asp-for="WorkbookId" class ="form-control" asp-items="ViewBag.WorkbookId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

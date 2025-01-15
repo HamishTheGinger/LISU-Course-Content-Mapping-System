@@ -1,0 +1,124 @@
+﻿@model CCM_Website.Models.Workbook
+
+@{
+    ViewData["Title"] = "Details";
+    
+}
+<link rel="stylesheet" href="~/css/Details.css" asp-append-version="true" />
+
+<!-- Header part above where workbook appears -->
+<div class="horizontal-container">
+
+    <h1 class="left-head">Course Code XYZ</h1> 
+    <h1 class="right-head">@Html.DisplayFor(model => model.LearningPlatform)</h1>
+
+</div>
+<br />
+
+<!-- Main part of workbook page with buttons-->
+<div class="container">
+
+    <div class="row">
+        <div class="col" >
+            <h1 class="left-head">@Html.DisplayFor(model => model.CourseName)</h1>
+            <h2 class="left-head">Course Leads: @Html.DisplayFor(model => model.CourseLead)</h2>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Column with Toggle Buttons -->
+            <div class="col-md-2 left-column d-flex flex-column">
+                <br />
+                <br />
+                <button id="toggleBreakdownButton" class="toggle-button">Time Breakdown</button>
+                <button id="toggleBreakdownGraphButton" class="toggle-button">Time Breakdown Graph</button>
+                <button id="toggleGradAttributesButton" class="toggle-button">Graduate Attributes</button>
+            </div>
+            
+            <div class="col-md-10 d-flex flex-column">
+                <div class="d-flex justify-content-end">
+                    <div class="d-flex flex-column align-items-end">
+                        @foreach (var week in @Model.Weeks)
+                        {
+                        <a class="edit-workbook" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
+                        }
+                    </div>
+                </div>
+
+                <!-- Center Content -->
+                <div class="center-column">
+                    <div id="graph-container">
+                        <div id="legend">
+                            <p>Legend Here</p>
+                        </div>
+
+                        <div id="time-breakdown">
+                            <p>Time breakdown here</p>
+                        </div>
+
+                        <div id="time-breakdown-graph">
+                            <p>Graph will display here</p>
+                        </div>
+
+                        <div id="grad-attributes">
+                            <p>Display attributes table here</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+<script>
+    // Get the sections and buttons
+    var sections = {
+        legend: document.getElementById('legend'),
+        timeBreakdown: document.getElementById('time-breakdown'),
+        timeBreakdownGraph: document.getElementById('time-breakdown-graph'),
+        gradAttributes: document.getElementById('grad-attributes')
+    };
+
+    var buttons = {
+        toggleLegendButton: document.getElementById('toggleLegendButton'),
+        toggleBreakdownButton: document.getElementById('toggleBreakdownButton'),
+        toggleBreakdownGraphButton: document.getElementById('toggleBreakdownGraphButton'),
+        toggleGradAttributesButton: document.getElementById('toggleGradAttributesButton')
+    };
+
+    // Function to hide all sections
+    function hideAllSections() {
+        for (var key in sections) {
+            sections[key].style.display = 'none';
+        }
+    }
+
+    // Add event listeners for each button to show the relevant section
+    buttons.toggleLegendButton.addEventListener('click', function() {
+        hideAllSections();
+        sections.legend.style.display = 'block';
+    });
+
+    buttons.toggleBreakdownButton.addEventListener('click', function() {
+        hideAllSections();
+        sections.timeBreakdown.style.display = 'block';
+    });
+
+    buttons.toggleBreakdownGraphButton.addEventListener('click', function() {
+        hideAllSections();
+        sections.timeBreakdownGraph.style.display = 'block';
+    });
+
+    buttons.toggleGradAttributesButton.addEventListener('click', function() {
+        hideAllSections();
+        sections.gradAttributes.style.display = 'block';
+    });
+</script>

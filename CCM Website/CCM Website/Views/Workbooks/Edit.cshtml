@@ -1,0 +1,56 @@
+﻿@model CCM_Website.Models.Workbook
+
+@{
+    ViewData["Title"] = "Edit Workbook";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>Enter new workbook details</h4>
+<hr />
+@Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="WorkbookId" />
+            <div class="form-group">
+                <label asp-for="CourseName" class="control-label"></label>
+                <input asp-for="CourseName" class="form-control" />
+                <span asp-validation-for="CourseName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CourseCode" class="control-label"></label>
+                <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code" />
+                <span asp-validation-for="CourseCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CourseLead" class="control-label"></label>
+                <input asp-for="CourseLead" class="form-control" />
+                <span asp-validation-for="CourseLead" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CourseLength" class="control-label"></label>
+                <input  value="11" disabled class="form-control" />
+                <input type="hidden" asp-for="CourseLength" value="11" class="form-control" />
+                <span asp-validation-for="CourseLength" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LearningPlatformId" class="control-label">Learning Platform</label>
+                <input  value="1" disabled class="form-control" />
+                <input type="hidden" asp-for="LearningPlatformId" value="1" class="form-control" />
+                <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Collaborators" class="control-label"></label>
+                <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
+                <span asp-validation-for="Collaborators" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+                <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
