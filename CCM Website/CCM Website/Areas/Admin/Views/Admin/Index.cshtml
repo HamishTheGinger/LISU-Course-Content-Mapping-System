@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Admin Panel";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div>
+    <h2>Manage Workbooks</h2>
+    <hr/>
+    <a class="btn btn-primary" asp-area="Admin" asp-controller="Workbook" asp-action="Index">
+        View Workbooks
+    </a>
+    
+</div>
+<br/>
+<div>
+    <h2>Manage Fields</h2>
+    <hr/>
+    <a class="btn btn-primary" asp-area="Admin" asp-controller="Activities" asp-action="Index">
+        Activities
+    </a>
+    <a class="btn btn-primary" asp-area="Admin" asp-controller="GraduateAttribute" asp-action="Index">
+        Graduate Attributes
+    </a>
+    <a class="btn btn-primary" asp-area="Admin" asp-controller="LearningPlatform" asp-action="Index">
+        Learning Platforms
+    </a>
+    
+</div>

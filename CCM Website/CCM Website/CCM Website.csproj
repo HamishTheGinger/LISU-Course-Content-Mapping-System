@@ -7,4 +7,52 @@
     <RootNamespace>CCM_Website</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="wwwroot\css\Details.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\css\Details.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Context\" />
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Activities\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Activities\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Activities\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Activities\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Activities\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Activity\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Activity\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Activity\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Activity\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Activity\Index.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Admin\Activities\Create.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Admin\Activities\Delete.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Admin\Activities\Details.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Admin\Activities\Edit.cshtml" />
+    <_ContentIncludedByDefault Remove="Views\Admin\Activities\Index.cshtml" />
+  </ItemGroup>
+
 </Project>

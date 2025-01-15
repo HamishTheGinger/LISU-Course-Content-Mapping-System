@@ -1,0 +1,112 @@
+﻿.left-head {
+    text-align: left;
+    margin: 0;
+}
+
+.right-head {
+    text-align: right;
+    margin: 0;
+}
+
+
+.horizontal-container {
+    display: flex; /* Enables flexbox */
+    justify-content: space-between; /* Optional: spaces out the items */
+    align-items: center; /* Optional: aligns items vertically */
+}
+
+
+.main-content {
+    grid-area: main-content;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.right-sidebar {
+    grid-area: right-sidebar;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.week-button {
+    width: 90%;
+    max-width: 150px;
+    padding: 8px;
+    margin: 5px 0;
+    background-color: #005398;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+}
+
+    .week-button:hover {
+        background-color: #003865;
+    }
+
+.edit-workbook {
+    background-color: #005398;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 10px;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.toggle-button {
+    margin: 10px;
+    padding: 5px 10px;
+    
+    background-color: #005398;
+    color: white;
+    border: 15px;
+    border-radius: 6px;
+}
+
+    .toggle-button:hover {
+        background-color: #003865;
+    }
+
+.toggle-button-bottom {
+    padding: 4px 450px;
+    margin: 10px;
+    background-color: #005398;
+    color: white;
+    border: 5px;
+    border-radius: 6px;
+}
+    .toggle-button-bottom:hover {
+        background-color: #003865;
+    }
+
+.center-column {
+    padding: 20px;
+    border-radius: 10px;
+    height: 50%; /* Makes the center column shorter */
+    margin: auto; /* Centers it vertically */
+}
+
+
+#time-breakdown {
+    display: none;
+}
+
+#time-breakdown-graph {
+    display: none;
+}
+
+#grad-attributes {
+    display: none;
+}
+
+#legend {
+    display: none; 
+}
+
+
+
+
+

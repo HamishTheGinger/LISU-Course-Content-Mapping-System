@@ -1,0 +1,47 @@
+﻿@model IEnumerable<CCM_Website.Models.Workbook>
+
+<h4>Search</h4>
+<hr />
+<div class="row mb-4">
+    <div class="col-12">
+        <form asp-action="Search" method="post">
+            <div class="input-group">
+                <input type="text" name="SearchPhrase" class="form-control" placeholder="Search Workbooks" value="@ViewData["SearchPhrase"]"/>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<h3>Search Results</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseLead)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseLead)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.WorkbookId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.WorkbookId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.WorkbookId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
