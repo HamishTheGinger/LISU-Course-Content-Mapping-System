@@ -1,0 +1,67 @@
+﻿@model IEnumerable<CCM_Website.Models.WeekActivities>
+
+@{
+    ViewData["Title"] = $"{@ViewBag.courseName} - Week {@ViewBag.SelectedWeekId} - Activities";
+}
+
+<p>
+    <a class="btn btn-success" asp-action="CreateActivity">Add Activity</a>
+</p>
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Activities.ActivityName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TaskTitle)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TaskStaff)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LearningType.LearningTypeName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TaskTime)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TasksStatus)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LearningType)
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Activities.ActivityName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskTitle)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskStaff)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LearningType.LearningTypeName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TasksStatus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TaskStaff)
+            </td>
+            <td>
+                <a class="btn btn-primary" asp-controller="Workbooks" asp-action="EditActivity" asp-route-id="@item.WeekActivityId">Edit Activity</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
