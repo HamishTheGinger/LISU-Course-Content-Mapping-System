@@ -1,7 +1,12 @@
-﻿@model CCM_Website.Models.Week
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CCM_Website.ViewModels.WeekDetailsViewModel
 @{
-    ViewData["Title"] = $"{@Model.Workbook.CourseCode} - Week {@Model.WeekNumber}";
-    ViewData["LearningPlatform"] = $"{@Model.Workbook.LearningPlatformId}";
+    ViewData["Title"] = $"{@Model.Week.Workbook.CourseCode} - Week {@Model.Week.WeekNumber}";
+    ViewData["LearningPlatform"] = $"{@Model.Week.Workbook.LearningPlatform.PlatformName}";
+    var learningLocationCounts = ViewData["LearningLocationCounts"] as Dictionary<string, int>;
+    Console.WriteLine("learningLocationCounts");
+    Console.WriteLine(learningLocationCounts);
+    Console.WriteLine("--");
 }
 
 <div class="container-fluid">
@@ -10,6 +15,9 @@
             <h1 id="courseTitle" class="text-wrap"></h1>
             <h4 id="courseLead" class="text-wrap"></h4>
         </div>
+        <div class="col-md-2 text-end">
+            <a asp-controller="Workbooks" asp-action="Activities" asp-route-id="@Model.Week.WeekNumber" class="btn-lg btn-primary btn-primary rounded-pill text-decoration-none" style="background-color: #005398">View Activities</a>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-10">
@@ -17,30 +25,34 @@
                 <table class="table table-bordered">
                     <thead>
                     <tr>
-                        <th colspan="8" style="background-color: #00B050; color: white; text-align: center;">Week @Model.WeekNumber</th>
+                        <th colspan="8" style="background-color: #00B050; color: white; text-align: center;">Week @Model.Week.WeekNumber</th>
                     </tr>
                     <tr style="background-color: #00B050; color: white; text-align: center;">
-                        <th>Staff Responsible</th>
-                        <th>Title / Name</th>
-                        <th>Learning Activity</th>
-                        <th>Learning Type</th>
-                        <th>Time (in mins)</th>
-                        <th>Task Status</th>
-                        <th>Activity Location</th>
-                        <th>Learning Approach</th>
+                        <th>@Html.DisplayName("Task Title")</th>
+                        <th>@Html.DisplayName("Task Staff")</th>
+                        <th>@Html.DisplayName("Activity Name")</th>
+                        <th>@Html.DisplayName("Learning Type Name")</th>
+                        <th>@Html.DisplayName("Task Time")</th>
+                        <th>@Html.DisplayName("Task Status")</th>
+                        <th>@Html.DisplayName("Task Location")</th>
+                        <th>@Html.DisplayName("Task Approach")</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>James O'N</td>
-                        <td>1</td>
-                        <td>a</td>
-                        <td>Discussion</td>
-                        <td>00:05</td>
-                        <td>In Progress</td>
-                        <td>On Campus</td>
-                        <td>Synchronous</td>
-                    </tr>
+                    @foreach (var activity in Model.ActivitiesList)
+                    {
+                        <tr>
+                            <td>@activity.TaskTitle</td>
+                            <td>@activity.TaskStaff</td>
+                            <td>@activity.Activities.ActivityName</td>
+                            <td>@activity.LearningType.LearningTypeName</td>
+                            <td>@activity.TaskTime</td>
+                            <td>@activity.TasksStatus</td>
+                            <td>@activity.TaskLocation</td>
+                            <td>@activity.TaskApproach</td>
+
+                        </tr>
+                    }
                     </tbody>
                 </table>
             </div>
@@ -129,9 +141,9 @@
             </div>
         </div>
         <div class="col-md-2 d-flex flex-column">
-            @foreach (var week in @Model.Workbook.Weeks)
+            @foreach (var week in @Model.Week.Workbook.Weeks)
             {
-                if (Model.WeekNumber != week.WeekNumber)
+                if (Model.Week.WeekNumber != week.WeekNumber)
                 {
                     <div class="d-flex justify-content-center">
                         <a class="btn btn-primary mb-2 rounded-pill" style="background-color: #005398" asp-action="Week" asp-route-id="@week.WeekId">
@@ -156,21 +168,43 @@
     
     //course content to put into headings
     var courseTitle = document.getElementById("courseTitle");
-    courseTitle.textContent = "@Model.Workbook.CourseName";
+    courseTitle.textContent = "@Model.Week.Workbook.CourseName";
     var courseLead = document.getElementById("courseLead");
-    courseLead.textContent = "Course Lead(s): @Model.Workbook.CourseLead";
-    
+    courseLead.textContent = "Course Lead(s): @Model.Week.Workbook.CourseLead";
 
+    @{
+        var learningTypeCounts = ViewData["LearningTypeCounts"] as Dictionary<string, int>;
+        
+        var colors = new Dictionary<string, string>
+        {
+            { "Acquisition", "#A1F5ED" },
+            { "Collaboration", "#FFD21A" },
+            { "Discussion", "#7AAEEA" },
+            { "Investigation", "#F8807F" },
+            { "Practice", "#BB98DC" },
+            { "Production", "#BDEA75" },
+            { "Assessment", "#44546A" }
+        };
+    }
     //pie chart data (hard coded)
-    var data = [
-        { label: "Acquisition", value: 2, color : "#A1F5ED", textColor : "#000000"},
-        { label: "Collaboration", value: 1, color : "#FFD21A", textColor : "#000000"},
-        { label: "Discussion", value: 3, color : "#7AAEEA", textColor : "#000000"},
-        { label: "Investigation", value: 2, color : "#F8807F", textColor : "#000000"},
-        { label: "Practice", value: 1, color : "#BB98DC", textColor : "#000000"},
-        { label: "Production", value: 1, color : "#BDEA75", textColor : "#000000"},
-        { label: "Assessment", value: 2, color : "#44546A", textColor : "#FFFFFF"}
-    ];
+    var data = [];
+
+    @foreach (var item in learningTypeCounts)
+    {
+        string label = item.Key; // LearningTypeName
+        int value = item.Value;  // Count of activities for that LearningType
+        string color = colors.ContainsKey(label) ? colors[label] : "#000000"; // Default color if not found
+
+        // Add each entry to the 'data' array in JavaScript
+        <text>
+            data.push({
+                label: "@item.Key",  // Razor outputs the learning type name
+                value: @item.Value,  // Razor outputs the count of activities
+                color: "@color",     // Razor outputs the corresponding color
+                textColor: "#000000" // You can customize the text color
+            });
+        </text>
+    }
 
     var total = calculateTotal(data);
     function calculateTotal(data) {

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using CCM_Website.Models;
 using Microsoft.AspNetCore.Builder;
@@ -27,9 +27,10 @@ namespace CCM_Website.Data
             modelBuilder.Entity<LearningPlatformActivities>()
                 .HasKey(l => new { l.LearningPlatformId, l.ActivitiesId });
             modelBuilder.Entity<WeekActivities>()
-                .HasKey(l => new { l.WeekId, l.ActivitiesId });
+                .HasKey(l => new { l.WeekActivityId });
             modelBuilder.Entity<WeekGraduateAttributes>()
                 .HasKey(l => new { l.WeekId, l.GraduateAttributeId });
         }
+        public DbSet<CCM_Website.Models.LearningType> LearningType { get; set; } = default!;
     }
 }
