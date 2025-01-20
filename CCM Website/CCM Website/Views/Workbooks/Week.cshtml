@@ -24,20 +24,20 @@
             <div class="table-responsive mb-3">
                 <table id="weekTable"class="table table-bordered">
                     <thead>
-                    <tr>
-                        <th id="weekTableHeading" style="background-color: #00B050; color: white; text-align: center;">Week @Model.Week.WeekNumber</th>
-                    </tr>
-                    <tr style="background-color: #00B050; color: white; text-align: center;">
-                        <th>@Html.DisplayName("Task Title")</th>
-                        <th>@Html.DisplayName("Task Staff")</th>
-                        <th>@Html.DisplayName("Activity Name")</th>
-                        <th>@Html.DisplayName("Learning Type Name")</th>
-                        <th>@Html.DisplayName("Task Time")</th>
-                        <th>@Html.DisplayName("Task Status")</th>
-                        <th>@Html.DisplayName("Task Location")</th>
-                        <th>@Html.DisplayName("Task Approach")</th>
-                        <th>Change Order</th>
-                    </tr>
+                        <tr>
+                            <th id="weekTableHeading" style="background-color: #00B050; color: white; text-align: center;">Week @Model.Week.WeekNumber</th>
+                        </tr>
+                        <tr style="background-color: #00B050; color: white; text-align: center;">
+                            <th>@Html.DisplayName("Task Title")</th>
+                            <th>@Html.DisplayName("Task Staff")</th>
+                            <th>@Html.DisplayName("Activity Name")</th>
+                            <th>@Html.DisplayName("Learning Type Name")</th>
+                            <th>@Html.DisplayName("Task Time")</th>
+                            <th>@Html.DisplayName("Task Status")</th>
+                            <th>@Html.DisplayName("Task Location")</th>
+                            <th>@Html.DisplayName("Task Approach")</th>
+                            <th>Change Order</th>
+                        </tr>
                     </thead>
                     <tbody>
                     @foreach (var activity in Model.ActivitiesList)
@@ -58,6 +58,24 @@
             </div>
 
             <div class="row mb-10 justify-content-around">
+                <div id="legend" style="display: none">
+                    <table class="table table-bordered table-responsive">
+                        <thead>
+                            <th>Legend</th>
+                        </thead>
+                        <tbody>
+                            <tr><td id="acquisition">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
+                            <tr><td id="collaboration">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
+                            <tr><td id="discussion">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
+                            <tr><td id="investigation">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
+                            <tr><td id="practice">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
+                            <tr><td id="production">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
+                            <tr><td id="assessment">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                
                 <div class="col-md-3">
                     <button class="btn btn-primary m-3 rounded-pill" id="lt_table_hide" style="background-color: #005398"> <span id="arrow_stats">▼</span> Statistics</button>
                 </div>
@@ -156,7 +174,6 @@
 
         <div class="row mt-3">
             <div class="col-10 text-center">
-                <div id="legend" style="display:none">This is the legend</div>
                 <button class="btn btn-primary m-3 rounded-pill" id="legend_btn" style="background-color: #005398"> <span id="arrow_legend">▲</span> Legend</button>
             </div>
         </div>
