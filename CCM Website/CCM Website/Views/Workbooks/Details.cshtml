@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = $"{@Model.CourseCode}";
-    ViewData["LearningPlatform"] = $"{@Model.LearningPlatformId}";
+    ViewData["LearningPlatform"] = $"{@Model.LearningPlatform.PlatformName}";
 }
 <link rel="stylesheet" href="~/css/Details.css" asp-append-version="true" />
 
