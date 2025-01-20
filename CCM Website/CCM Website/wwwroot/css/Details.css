@@ -70,12 +70,13 @@
         background-color: #003865;
     }
 
-.toggle-button-bottom {
-    padding: 4px 450px;
-    margin: 10px;
+.toggle-button-bottom {    
+    width: 100%;        
+    max-width: 1000px;   
+    padding: 10px 20px;
     background-color: #005398;
     color: white;
-    border: 5px;
+    border: none;
     border-radius: 6px;
 }
     .toggle-button-bottom:hover {
@@ -104,6 +105,28 @@
 
 #legend {
     display: none; 
+}
+
+#acquisition {
+    background-color: #A1F5ED;
+}
+#collaboration {
+    background-color: #FFD21A;
+}
+#discussion {
+    background-color: #7AAEEA;
+}
+#investigation{
+    background-color: #F8807F;
+}
+#practice {
+    background-color: #BB98DC;
+}
+#production {
+    background-color: #BDEA75;
+}
+#assessment {
+    background-color: #44546A;
 }
 
 
