@@ -58,6 +58,7 @@ namespace CCM_Website.Controllers
 
             var workbook = await _context.Workbooks
                 .Include(w => w.Weeks)
+                .Include(w =>w.LearningPlatform)
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
