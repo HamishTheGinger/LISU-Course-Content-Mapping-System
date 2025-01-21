@@ -1,6 +1,503 @@
-﻿@model CCM_Website.Models.Week
-
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CCM_Website.ViewModels.WeekDetailsViewModel
 @{
-    ViewData["Title"] = $"{@Model.Workbook.CourseName} - Week - {@Model.WeekNumber}";
-    
+    ViewData["Title"] = $"{@Model.Week.Workbook.CourseCode} - Week {@Model.Week.WeekNumber}";
+    ViewData["LearningPlatform"] = $"{@Model.Week.Workbook.LearningPlatform.PlatformName}";
+    var learningLocationCounts = ViewData["LearningLocationCounts"] as Dictionary<string, int>;
+    Console.WriteLine("learningLocationCounts");
+    Console.WriteLine(learningLocationCounts);
+    Console.WriteLine("--");
 }
+
+<div class="container-fluid">
+    <div class="row my-3">
+        <div class="col-md-10">
+            <h1 id="courseTitle" class="text-wrap"></h1>
+            <h4 id="courseLead" class="text-wrap"></h4>
+        </div>
+        <div class="col-md-2 d-flex text-center justify-content-center">
+            <a asp-controller="Workbooks" asp-action="Activities" asp-route-id="@Model.Week.WeekNumber" class="btn-lg btn-primary rounded-pill text-decoration-none d-flex justify-content-center align-items-center" style="background-color: #005398">View Activities</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <div class="table-responsive mb-3">
+                <table id="weekTable"class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th id="weekTableHeading" style="background-color: #00B050; color: white; text-align: center;">Week @Model.Week.WeekNumber</th>
+                        </tr>
+                        <tr style="background-color: #00B050; color: white; text-align: center;">
+                            <th>@Html.DisplayName("Task Title")</th>
+                            <th>@Html.DisplayName("Task Staff")</th>
+                            <th>@Html.DisplayName("Activity Name")</th>
+                            <th>@Html.DisplayName("Learning Type Name")</th>
+                            <th>@Html.DisplayName("Task Time")</th>
+                            <th>@Html.DisplayName("Task Status")</th>
+                            <th>@Html.DisplayName("Task Location")</th>
+                            <th>@Html.DisplayName("Task Approach")</th>
+                            <th>Change Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var activity in Model.ActivitiesList)
+                    {
+                        <tr>
+                            <td>@activity.TaskTitle</td>
+                            <td>@activity.TaskStaff</td>
+                            <td>@activity.Activities.ActivityName</td>
+                            <td>@activity.LearningType.LearningTypeName</td>
+                            <td>@activity.TaskTime</td>
+                            <td>@activity.TasksStatus</td>
+                            <td>@activity.TaskLocation</td>
+                            <td>@activity.TaskApproach</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row mb-10 justify-content-around">
+                <div id="legend" style="display: none">
+                    <table class="table table-bordered table-responsive">
+                        <thead>
+                        <th>Legend</th>
+                        </thead>
+                        <tbody>
+                        <tr><td id="Acquisition_legend">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
+                        <tr><td id="Collaboration_legend">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
+                        <tr><td id="Discussion_legend">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
+                        <tr><td id="Investigation_legend">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
+                        <tr><td id="Practice_legend">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
+                        <tr><td id="Production_legend">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
+                        <tr><td id="Assessment_legend">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                
+                <div class="col-md-3">
+                    <button class="btn btn-primary m-3 rounded-pill" id="lt_table_hide" style="background-color: #005398"> <span id="arrow_stats">▼</span> Statistics</button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary m-3 rounded-pill" id="lt_chart_hide" style="background-color: #005398"> <span id="arrow_chart">▼</span> Chart</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <table id="stats_table" class="table table-bordered table-responsive" style="display:none">
+                        <thead>
+                        <tr>
+                            <th colspan="4" style="text-align: center;background-color: #003864; color: white">Statistics</th>
+                        </tr>
+                        <tr style="background-color: #003864; color: white; text-align: center;">
+                            <th>Learning Type</th>
+                            <th>Allocation</th>
+                            <th>Status</th>
+                            <th>Tasks</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td id="Acquisition"></td>
+                            <td id="Acquisition_data"></td>
+                            <td>Unassigned</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td id="Collaboration"></td>
+                            <td id="Collaboration_data"></td>
+                            <td>In Progress</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td id="Discussion"></td>
+                            <td id="Discussion_data"></td>
+                            <td>Completed</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td id="Investigation"></td>
+                            <td id="Investigation_data"></td>
+                            <td>Total Tasks</td>
+                            <td id="total"></td>
+                        </tr>
+                        <tr>
+                            <td id="Practice"></td>
+                            <td id="Practice_data"></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td id="Production"></td>
+                            <td id="Production_data"></td>
+                            <th>Activity Location</th>
+                            <th>Total</th>
+                        </tr>
+                        <tr>
+                            <td id="Assessment"></td>
+                            <td id="Assessment_data"></td>
+                            <td>On Campus</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Total Time</td>
+                            <td></td>
+                            <td>Remote (Home)</td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-6 align-items-center">
+                    <div id="lt_chart" style="display:none"></div>
+                    <div id="lt_chart_key" style="display:none"></div>
+                    <div id="lt_chart_details" style="display:none"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 d-flex flex-column">
+            @foreach (var week in Model.Week.Workbook.Weeks.OrderBy(w => w.WeekNumber))
+            {
+            <div class="d-flex justify-content-center">
+                @if (Model.Week.WeekNumber != week.WeekNumber) {
+                <a class="btn btn-primary mb-2 rounded-pill" style="background-color: #005398" asp-action="Week" asp-route-id="@week.WeekId">
+                    Week @week.WeekNumber
+                </a>
+                }
+                else {
+                <a class="btn btn-primary mb-2 rounded-pill" style="background-color: gray; border-color: gray">
+                    Week @week.WeekNumber
+                </a>
+                }
+
+            </div>
+            }
+        </div>
+
+
+        <div class="row mt-3">
+            <div class="col-10 text-center">
+                <button class="btn btn-primary m-3 rounded-pill" id="legend_btn" style="background-color: #005398"> <span id="arrow_legend">▲</span> Legend</button>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+
+    var weekTableData = [];
+    
+    @foreach (var item in Model.ActivitiesList)
+    {
+    <text>
+    weekTableData.push({
+        staffResponsible: "@item.TaskStaff",
+        title: "@item.TaskTitle",
+        learningActivity: "@item.Activities.ActivityName",
+        learningType: "@item.LearningType.LearningTypeName",
+        time: "@item.TaskTime",
+        status: "@item.TasksStatus",
+        activityLocation: "@item.TaskLocation",
+        approach: "@item.TaskApproach"
+    });
+    </text>
+    }
+    
+    var weekTableBody = document.getElementById('weekTable').querySelector('tbody');
+    var tableHeading = document.getElementById('weekTableHeading')
+    tableHeading.colSpan = Object.keys(weekTableData[0]).length + 1;
+
+    function renderTable() {
+        weekTableBody.innerHTML = '';
+        weekTableData.forEach(function(rowData, index) {
+            var row = document.createElement('tr');
+
+            for (var key in rowData) {
+                var cell = document.createElement('td');
+                cell.textContent = rowData[key];
+                row.appendChild(cell);
+            }
+
+            var actionCell = document.createElement('td');
+
+            var upButton = document.createElement('button');
+            upButton.textContent = "▲";
+
+            upButton.style.display = index !== 0 ? "block" : "none";
+            upButton.style.background = "none";
+            upButton.style.border = "none";
+
+            upButton.addEventListener("mouseover", function() {
+                upButton.style.color = "#0d6efd";
+            });
+            upButton.addEventListener("mouseout", function() {
+                upButton.style.color = "";
+            });
+            upButton.onclick = function() {
+                moveRow(index, -1);
+            };
+            actionCell.appendChild(upButton);
+
+            var downButton = document.createElement('button');
+            downButton.textContent = "▼";
+
+            downButton.style.display = index !== weekTableData.length -1 ? "block" : "none";
+            downButton.style.background = "none";
+            downButton.style.border = "none";
+
+            downButton.addEventListener("mouseover", function() {
+                downButton.style.color = "#0d6efd";
+            });
+            downButton.addEventListener("mouseout", function() {
+                downButton.style.color = "";
+            });
+            downButton.onclick = function() {
+                moveRow(index, 1);
+            };
+            actionCell.appendChild(downButton);
+
+            row.appendChild(actionCell);
+            weekTableBody.appendChild(row);
+        });
+    }
+
+    function moveRow(index, direction) {
+        var newIndex = index + direction;
+
+        var temp = weekTableData[index];
+        weekTableData[index] = weekTableData[newIndex];
+        weekTableData[newIndex] = temp;
+        renderTable();
+    }
+
+    renderTable();
+    
+    //course content to put into headings
+    function updateHeadings() {
+        var courseTitle = document.getElementById("courseTitle");
+        courseTitle.textContent = "@Model.Week.Workbook.CourseName";
+        var courseLead = document.getElementById("courseLead");
+        courseLead.textContent = "Course Lead(s): @Model.Week.Workbook.CourseLead";
+    }
+    updateHeadings()
+    
+    // type colors
+    @{
+        var learningTypeCounts = ViewData["LearningTypeCounts"] as Dictionary<string, int>;
+        
+        var colors = new Dictionary<string, string>
+        {
+            { "Acquisition", "#A1F5ED" },
+            { "Collaboration", "#FFD21A" },
+            { "Discussion", "#7AAEEA" },
+            { "Investigation", "#F8807F" },
+            { "Practice", "#BB98DC" },
+            { "Production", "#BDEA75" },
+            { "Assessment", "#44546A" }
+        };
+    }
+    
+    //pie chart and stats data 
+    var statsData = [];
+
+    @foreach (var item in learningTypeCounts)
+    {
+        string label = item.Key; // LearningTypeName
+        int value = item.Value;  // Count of activities for that LearningType
+        string color = colors.ContainsKey(label) ? colors[label] : "#000000"; // Default color if not found
+
+        // Add each entry to the 'statsData' array in JavaScript
+        <text>
+            statsData.push({
+                label: "@item.Key",  // Razor outputs the learning type name
+                value: @item.Value,  // Razor outputs the count of activities
+                color: "@color",     // Razor outputs the corresponding color
+                textColor: "#000000" // You can customize the text color
+            });
+        </text>
+    }
+
+    var total = calculateTotal(statsData);
+    function calculateTotal(statsData) {
+        return statsData.reduce((sum, d) => sum + d.value, 0);
+    }
+    
+    //pie chart sizes
+    var pieMargin = 20;
+    var pieWidth = Math.max(window.innerWidth * 0.2, 230);
+    var pieHeight = Math.max(window.innerWidth * 0.2, 230);
+    var pieRadius = Math.max(pieWidth, pieHeight) / 2 - pieMargin;
+    
+    //pie chart vector
+    var svg = d3.select("#lt_chart")
+        .append("svg")
+        .attr("width", pieWidth)
+        .attr("height", pieHeight)
+        .append("g")
+        .attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")");
+
+    //pie chart colours
+    var color = d3.scaleOrdinal()
+        .domain(statsData.map(d => d.label))
+        .range(statsData.map(d => d.color));
+
+    var pie = d3.pie()
+        .value(function(d) {return d.value; });
+
+    var arc = d3.arc()
+        .innerRadius(0)
+        .outerRadius(pieRadius);
+
+    svg
+        .selectAll('path')
+        .data(pie(statsData))
+        .enter()
+        .append('path')
+        .attr('d', arc)
+        .attr('fill', function(d){ return color(d.data.label); })
+        .attr("stroke", "black")
+        .style("stroke-width", "0px")
+        .style("opacity", 1)
+        .on("mouseover", function (event, d) {
+            displayDetails(d.data);
+        })
+        .on("mouseout", function () {
+            hideDetails();
+        });
+        
+    //Pie chart key
+    const key = d3.select("#lt_chart_key")
+        .append("div")
+        .attr("id", "key")
+        .style("display", "flex")
+        .style("flex-direction", "column")
+        .style("margin-left", "20px")
+        .style("margin-top", "20px");
+
+    key.selectAll("div")
+        .data(statsData)
+        .enter()
+        .append("div")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("margin-bottom", "5px")
+        .html(function(d) {
+            return `
+            <div style="width: 12px; height: 12px; background-color: ${d.color}; margin-right: 8px; border: 1px solid black;"></div>
+            ${d.label}
+        `;
+        });
+        
+    //button functions
+    document.getElementById("lt_table_hide").addEventListener("click", toggleStatsTable);
+    document.getElementById("lt_chart_hide").addEventListener("click", togglePieChart);
+    document.getElementById("legend_btn").addEventListener("click", toggleLegend);
+
+    function togglePieChart() {
+        const chart = document.getElementById("lt_chart");
+        const key = document.getElementById("lt_chart_key");
+        const currentDisplay = chart.style.display;
+        const arrow = document.getElementById("arrow_chart");
+        const newDisplay = currentDisplay === "none" ? "block" : "none";
+        chart.style.display = newDisplay;
+        key.style.display = newDisplay;
+        if (currentDisplay === "none") {
+            arrow.innerHTML = "▲";
+        } else {
+            arrow.innerHTML = "▼";
+        }
+    }
+
+    function toggleLegend() {
+        const chart = document.getElementById("lt_chart");
+        const table = document.getElementById("stats_table");
+        const key = document.getElementById("lt_chart_key");
+        const legend = document.getElementById("legend");
+        const arrow = document.getElementById("arrow_legend");
+        const buttonChart = document.getElementById("lt_chart_hide");
+        const buttonTable = document.getElementById("lt_table_hide");
+
+        const currentDisplay = legend.style.display;
+        statsData.forEach(item => {
+            const legend_colour = document.getElementById(item.label + "_legend");
+            legend_colour.style.backgroundColor = item.color;
+        });
+
+        legend.style.display = currentDisplay === "none" || currentDisplay === "" ? "block" : "none";
+        chart.style.display = "none";
+        key.style.display = "none";
+        table.style.display = "none";
+        buttonChart.style.display = "none";
+        buttonTable.style.display = "none";
+
+        if (legend.style.display === "block") {
+            arrow.innerHTML = "▼";
+
+        } else {
+            arrow.innerHTML = "▲";
+            buttonChart.style.display = "block";
+            buttonTable.style.display = "block";
+        }
+    }
+
+    function toggleStatsTable() {
+        const table = document.getElementById("stats_table");
+        const arrow = document.getElementById("arrow_stats");
+        const currentDisplay = table.style.display;
+        const newDisplay = currentDisplay === "none" ? "block" : "none";
+        table.style.display = newDisplay;
+
+        if (currentDisplay === "none") {
+            arrow.innerHTML = "▲";
+        } else {
+            arrow.innerHTML = "▼";
+        }
+    }
+
+    function displayDetails(d) {
+        var percentage = ((d.value / total) * 100).toFixed(2);
+        let detailsDiv = d3.select("#lt_chart_details");
+        detailsDiv.html(`<strong>${d.label}</strong>: (${percentage}%)`);
+        detailsDiv.style("display", "block");
+    }
+
+    function hideDetails() {
+        d3.select("#lt_chart_details").style("display", "none");
+    }
+
+    window.addEventListener("resize", function () {
+        pieWidth = Math.max(window.innerWidth * 0.2, 230);
+        pieHeight = Math.max(window.innerWidth * 0.2, 230);
+        pieRadius = Math.max(pieWidth, pieHeight) / 2 - pieMargin;
+
+        d3.select("svg")
+            .attr("width", pieWidth)
+            .attr("height", pieHeight);
+
+        svg.attr("transform", "translate(" + pieWidth / 2 + "," + pieHeight / 2 + ")");
+        arc.outerRadius(pieRadius);
+        svg.selectAll("path").attr("d", arc);
+    });
+
+    
+    //table script
+    statsData.forEach(item => {
+        const labelId = item.label;
+        const cell = document.getElementById(labelId);
+        const cellData = document.getElementById(labelId + "_data");
+        if (cell) {
+            cell.textContent = item.label;
+            cell.style.backgroundColor = item.color;
+            cell.style.color = item.textColor;
+        }
+        if (cellData) {
+            cellData.textContent = item.value;
+        }
+    });
+    
+</script>
+

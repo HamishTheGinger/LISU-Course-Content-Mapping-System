@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CCM_Website.Data;
 using CCM_Website.Models;
+using CCM_Website.ViewModels;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CCM_Website.Controllers
@@ -57,6 +58,7 @@ namespace CCM_Website.Controllers
 
             var workbook = await _context.Workbooks
                 .Include(w => w.Weeks)
+                .Include(w =>w.LearningPlatform)
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
@@ -217,7 +219,10 @@ namespace CCM_Website.Controllers
         public async Task<IActionResult> Week(int id)
         {
             var week = await _context.Weeks
-                .Include(w => w.Workbook) 
+                .Include(w => w.Workbook)
+                    .ThenInclude(wb => wb.Weeks)
+                .Include(w => w.Workbook)
+                    .ThenInclude(wb => wb.LearningPlatform)
                 .Include(w => w.WeekActivities) 
                 .Include(w => w.WeekGraduateAttributes)
                 .FirstOrDefaultAsync(w => w.WeekId == id);
@@ -226,13 +231,225 @@ namespace CCM_Website.Controllers
             {
                 return NotFound();
             }
+            
+            var activities = await _context.WeekActivities
+                .Include(a => a.Week)
+                    .ThenInclude(wk => wk.Workbook)
+                .Include(a => a.Activities)
+                .Include(a => a.LearningType)
+                .Where(a => a.WeekId == id)
+                .OrderBy(w => w.TaskOrder)
+                .ToListAsync();
+            
+            var learningTypeCounts =  activities
+                .GroupBy(a => a.LearningType.LearningTypeName)
+                .ToDictionary(g => g.Key, g => g.Count());
 
-            return View(week);
+            var locationCount = activities
+                .GroupBy(a => a.TaskLocation)
+                .ToDictionary(g => g.Key, g => g.Count());
+            
+            ViewBag.learningTypeCounts = learningTypeCounts;
+            ViewBag.locationCount = locationCount;
+
+            var viewModel = new WeekDetailsViewModel
+            {
+                Week = week,
+                ActivitiesList = activities
+            };
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> Activities(int id) {
+            ViewBag.SelectedWeekId = id;
+            
+            var activity = await _context.WeekActivities.Include(a => a.Week).ThenInclude(wk => wk.Workbook).Include(a => a.Activities).Include(a => a.LearningType).Where(a => a.WeekId == id).ToListAsync();
+            
+            var courseName = activity.FirstOrDefault()?.Week.Workbook.CourseName ?? "Unknown Course";
+            ViewBag.CourseName = courseName;
+
+            return View(activity);
+        }
+        
+        // GET: WeekActivities/Edit/5
+        public async Task<IActionResult> EditActivity(int? id) {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            
+            var weekActivity = await _context.WeekActivities.FindAsync(id);
+            if (weekActivity == null)
+            {
+                return NotFound();
+            }
+
+            ViewData["WeekId"] = new SelectList(_context.Weeks, "WeekId", "WeekNumber", weekActivity.WeekId);
+            ViewData["ActivitiesId"] = new SelectList(_context.Activities, "ActivityId", "ActivityName",
+                weekActivity.ActivitiesId);
+            ViewData["LearningApproach"] = new SelectList(_context.LearningType, "LearningTypeId", "LearningTypeName");
+            return View(weekActivity);
+        }
+
+        // POST: WeekActivities/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditActivity(int id,
+            [Bind("WeekActivityId, TaskOrder,WeekId,ActivitiesId,TaskTitle,TaskStaff,ActivityTime,TasksStatus,LearningTypeId,TaskLocation,TaskApproach")]
+            WeekActivities weekActivities) {
+            
+            if (id != weekActivities.WeekActivityId)
+            {
+                return NotFound();
+            }
+            
+            ModelState.Remove(nameof(weekActivities.Week));
+            ModelState.Remove(nameof(weekActivities.Activities));
+            ModelState.Remove(nameof(weekActivities.LearningType));
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(weekActivities);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Week), new { id = weekActivities.WeekId });
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!WeekActivitiesExists(weekActivities.WeekActivityId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            } 
+            foreach (var state in ModelState)
+            {
+                foreach (var error in state.Value.Errors)
+                {
+                    // Log each error (you could also store or display them if needed)
+                    Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
+                }
+                ModelState.AddModelError("",
+                    "An error occurred while creating the workbook. Please contact an administrator if this problem persists.");
+            }try
+            {
+                var week = await _context.Weeks.FirstOrDefaultAsync(wk => wk.WeekId == weekActivities.WeekId);
+                weekActivities.Week = week;
+                var activity = await _context.Activities.FirstOrDefaultAsync(a => a.ActivityId == weekActivities.ActivitiesId);
+                weekActivities.Activities = activity;
+                var learingType = await _context.LearningType.FirstOrDefaultAsync(lt => lt.LearningTypeId == weekActivities.LearningTypeId);
+                weekActivities.LearningType = learingType;
+                if (weekActivities.Week == null || weekActivities.Activities == null || weekActivities.LearningType == null)
+                {
+                    Console.WriteLine($"ERROR: Link Fail");
+                    ModelState.AddModelError("", "An error occurred while saving the weekly activity. Please try again later.");
+                    return View(weekActivities);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Model Creation Error: {e.Message}");
+                ModelState.AddModelError("", "An error occurred while saving the weekly activity. Please try again later.");
+                return View(weekActivities);
+            }
+
+            ViewData["WeekId"] = new SelectList(_context.Weeks, "WeekId", "WeekNumber", weekActivities.WeekId);
+            ViewData["ActivitiesId"] = new SelectList(_context.Activities, "ActivityId", "ActivityName",
+                weekActivities.ActivitiesId);
+            ViewData["LearningApproach"] = new SelectList(_context.LearningType, "LearningTypeId", "LearningTypeName");
+            
+            return View(weekActivities);
+        }
+        
+         // GET: WeekActivities/Create
+        public IActionResult CreateActivity() {
+            ViewBag.WeekId = new SelectList(_context.Weeks, "WeekId", "WeekNumber");
+            ViewBag.ActivitiesId = new SelectList(_context.Activities, "ActivityId", "ActivityName");
+            ViewBag.LearningApproach = new SelectList(_context.LearningType, "LearningTypeId", "LearningTypeName");
+            return View();
+
+        }
+
+        // POST: WeekActivities/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateActivity([Bind("TaskOrder,WeekId,ActivitiesId,TaskTitle,TaskStaff,ActivityTime,TasksStatus,LearningTypeId,TaskLocation,TaskApproach")]
+            WeekActivities weekActivities) {
+            
+            ModelState.Remove(nameof(weekActivities.Week));
+            ModelState.Remove(nameof(weekActivities.Activities));
+            ModelState.Remove(nameof(weekActivities.LearningType));
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Add(weekActivities);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Week), new { id = weekActivities.WeekId });
+                }
+                catch (Exception exp)
+                {
+                    Console.WriteLine(exp.Message);
+                    ModelState.AddModelError("", $"Error creating WeekActivity: {exp.Message}");
+                }
+            }
+            else
+            {
+                foreach (var state in ModelState)
+                {
+                    foreach (var error in state.Value.Errors)
+                    {
+                        // Log each error (you could also store or display them if needed)
+                        Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
+                    }
+                }
+                ModelState.AddModelError("",
+                    "An error occurred while creating the workbook. Please contact an administrator if this problem persists.");
+
+            }
+            
+            try
+            {
+                var week = await _context.Weeks.FirstOrDefaultAsync(wk => wk.WeekId == weekActivities.WeekId);
+                weekActivities.Week = week;
+                var activity = await _context.Activities.FirstOrDefaultAsync(a => a.ActivityId == weekActivities.ActivitiesId);
+                weekActivities.Activities = activity;
+                var learingType = await _context.LearningType.FirstOrDefaultAsync(lt => lt.LearningTypeId == weekActivities.LearningTypeId);
+                weekActivities.LearningType = learingType;
+                if (weekActivities.Week == null || weekActivities.Activities == null || weekActivities.LearningType == null)
+                {
+                    Console.WriteLine($"ERROR: Link Fail");
+                    ModelState.AddModelError("", "An error occurred while saving the weekly activity. Please try again later.");
+                    return View(weekActivities);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Model Creation Error: {e.Message}");
+                ModelState.AddModelError("", "An error occurred while saving the weekly activity. Please try again later.");
+                return View(weekActivities);
+            }
+
+            ViewData["WeekId"] = new SelectList(_context.Weeks, "WeekId", "WeekNumber", weekActivities.WeekId);
+            ViewData["ActivitiesId"] = new SelectList(_context.Activities, "ActivityId", "ActivityName",
+                weekActivities.ActivitiesId);
+            ViewData["LearningApproach"] = new SelectList(_context.LearningType, "LearningTypeId", "LearningTypeName");
+            return View(weekActivities);
         }
         
         private bool WorkbookExists(int id)
         {
             return _context.Workbooks.Any(e => e.WorkbookId == id);
+        }
+        
+        private bool WeekActivitiesExists(int id) {
+            return _context.WeekActivities.Any(e => e.WeekActivityId == id);
         }
     }
     
