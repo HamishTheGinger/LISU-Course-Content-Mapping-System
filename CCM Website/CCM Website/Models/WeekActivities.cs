@@ -7,7 +7,15 @@ namespace CCM_Website.Models
     {
         [Key]
         public int WeekActivityId { get; set; }
-        
+        public required string TaskTitle { get; set; }
+        public required string TaskStaff { get; set; }
+        public required TimeOnly TaskTime { get; set; }
+        public required string TasksStatus { get; set; }
+        public required string TaskLocation { get; set; }
+        public required string TaskApproach { get; set; }
+        public required int TaskOrder { get; set; }
+
+        // Navigation Propeties
         [ForeignKey("Week")]
         public int WeekId { get; set; }
         public required Week Week { get; set; }
@@ -15,21 +23,9 @@ namespace CCM_Website.Models
         [ForeignKey("Activities")]
         public int ActivitiesId { get; set; }
         public required Activities Activities { get; set; }
-        
-        public string TaskTitle { get; set; }
-        public string TaskStaff { get; set; }
-        public TimeOnly TaskTime { get; set; }
-        public string TasksStatus { get; set; }
-        
+
         [ForeignKey("LearningType")]
         public int LearningTypeId { get; set; }
-        public LearningType LearningType { get; set; }
-        
-        public string TaskLocation { get; set; }
-
-        public string TaskApproach { get; set; }
-        
-        public int TaskOrder { get; set; }
-
+        public required LearningType LearningType { get; set; }
     }
 }

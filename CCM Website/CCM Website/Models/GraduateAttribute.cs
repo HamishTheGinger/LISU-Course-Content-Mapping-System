@@ -8,6 +8,6 @@ namespace CCM_Website.Models {
         public required string AttributeName { get; set; }
 
         // Navigation Propeties
-        public required ICollection<WeekGraduateAttributes> WeekGraduateAttributes { get; set; }
+        public ICollection<WeekGraduateAttributes>? WeekGraduateAttributes { get; set; }
     }
 }

@@ -19,6 +19,7 @@ namespace CCM_Website.Data
         public DbSet<CCM_Website.Models.LearningPlatformActivities> LearningPlatformActivities { get; set; } = default!;
         public DbSet<CCM_Website.Models.WeekActivities> WeekActivities { get; set; } = default!;
         public DbSet<CCM_Website.Models.WeekGraduateAttributes> WeekGraduateAttributes { get; set; } = default!;
+        public DbSet<CCM_Website.Models.LearningType> LearningType { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +32,5 @@ namespace CCM_Website.Data
             modelBuilder.Entity<WeekGraduateAttributes>()
                 .HasKey(l => new { l.WeekId, l.GraduateAttributeId });
         }
-        public DbSet<CCM_Website.Models.LearningType> LearningType { get; set; } = default!;
     }
 }
