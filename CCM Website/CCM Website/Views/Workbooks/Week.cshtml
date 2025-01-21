@@ -61,16 +61,16 @@
                 <div id="legend" style="display: none">
                     <table class="table table-bordered table-responsive">
                         <thead>
-                            <th>Legend</th>
+                        <th>Legend</th>
                         </thead>
                         <tbody>
-                            <tr><td id="acquisition">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
-                            <tr><td id="collaboration">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
-                            <tr><td id="discussion">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
-                            <tr><td id="investigation">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
-                            <tr><td id="practice">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
-                            <tr><td id="production">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
-                            <tr><td id="assessment">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+                        <tr><td id="Acquisition_legend">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
+                        <tr><td id="Collaboration_legend">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
+                        <tr><td id="Discussion_legend">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
+                        <tr><td id="Investigation_legend">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
+                        <tr><td id="Practice_legend">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
+                        <tr><td id="Production_legend">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
+                        <tr><td id="Assessment_legend">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
                         </tbody>
                     </table>
 
@@ -100,44 +100,44 @@
                         </thead>
                         <tbody>
                         <tr>
-                            <td id="acquisition"></td>
-                            <td id="acquisition_data"></td>
+                            <td id="Acquisition"></td>
+                            <td id="Acquisition_data"></td>
                             <td>Unassigned</td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td id="collaboration"></td>
-                            <td id="collaboration_data"></td>
+                            <td id="Collaboration"></td>
+                            <td id="Collaboration_data"></td>
                             <td>In Progress</td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td id="discussion"></td>
-                            <td id="discussion_data"></td>
+                            <td id="Discussion"></td>
+                            <td id="Discussion_data"></td>
                             <td>Completed</td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td id="investigation"></td>
-                            <td id="investigation_data"></td>
+                            <td id="Investigation"></td>
+                            <td id="Investigation_data"></td>
                             <td>Total Tasks</td>
                             <td id="total"></td>
                         </tr>
                         <tr>
-                            <td id="practice"></td>
-                            <td id="practice_data"></td>
+                            <td id="Practice"></td>
+                            <td id="Practice_data"></td>
                             <td></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td id="production"></td>
-                            <td id="production_data"></td>
+                            <td id="Production"></td>
+                            <td id="Production_data"></td>
                             <th>Activity Location</th>
                             <th>Total</th>
                         </tr>
                         <tr>
-                            <td id="assessment"></td>
-                            <td id="assessment_data"></td>
+                            <td id="Assessment"></td>
+                            <td id="Assessment_data"></td>
                             <td>On Campus</td>
                             <td></td>
                         </tr>
@@ -159,18 +159,24 @@
             </div>
         </div>
         <div class="col-md-2 d-flex flex-column">
-            @foreach (var week in @Model.Week.Workbook.Weeks)
+            @foreach (var week in Model.Week.Workbook.Weeks.OrderBy(w => w.WeekNumber))
             {
-                if (Model.Week.WeekNumber != week.WeekNumber)
-                {
-                    <div class="d-flex justify-content-center">
-                        <a class="btn btn-primary mb-2 rounded-pill" style="background-color: #005398" asp-action="Week" asp-route-id="@week.WeekId">
-                            Week @week.WeekNumber
-                        </a>
-                    </div>
+            <div class="d-flex justify-content-center">
+                @if (Model.Week.WeekNumber != week.WeekNumber) {
+                <a class="btn btn-primary mb-2 rounded-pill" style="background-color: #005398" asp-action="Week" asp-route-id="@week.WeekId">
+                    Week @week.WeekNumber
+                </a>
                 }
+                else {
+                <a class="btn btn-primary mb-2 rounded-pill" style="background-color: gray; border-color: gray">
+                    Week @week.WeekNumber
+                </a>
+                }
+
+            </div>
             }
         </div>
+
 
         <div class="row mt-3">
             <div class="col-10 text-center">
@@ -183,24 +189,37 @@
 </div>
 <script>
 
-    var weekTableData = [
-        { staffResponsible: "James O'N", title: "1", learningActivity: "a", learningType: "Practice",  time: "5", status: "In Progress", activityLocation: "On campus", approach: "Synchronous"},
-        { staffResponsible: "James McD", title: "2", learningActivity: "b", learningType: "Production", time: "20", status: "In Progress", activityLocation: "On campus", approach: "Asynchronous"}
-    ];
+    var weekTableData = [];
+    
+    @foreach (var item in Model.ActivitiesList)
+    {
+    <text>
+    weekTableData.push({
+        staffResponsible: "@item.TaskStaff",
+        title: "@item.TaskTitle",
+        learningActivity: "@item.Activities.ActivityName",
+        learningType: "@item.LearningType.LearningTypeName",
+        time: "@item.TaskTime",
+        status: "@item.TasksStatus",
+        activityLocation: "@item.TaskLocation",
+        approach: "@item.TaskApproach"
+    });
+    </text>
+    }
     
     var weekTableBody = document.getElementById('weekTable').querySelector('tbody');
     var tableHeading = document.getElementById('weekTableHeading')
     tableHeading.colSpan = Object.keys(weekTableData[0]).length + 1;
-    
+
     function renderTable() {
         weekTableBody.innerHTML = '';
         weekTableData.forEach(function(rowData, index) {
             var row = document.createElement('tr');
 
             for (var key in rowData) {
-                    var cell = document.createElement('td');
-                    cell.textContent = rowData[key];
-                    row.appendChild(cell);               
+                var cell = document.createElement('td');
+                cell.textContent = rowData[key];
+                row.appendChild(cell);
             }
 
             var actionCell = document.createElement('td');
@@ -211,12 +230,12 @@
             upButton.style.display = index !== 0 ? "block" : "none";
             upButton.style.background = "none";
             upButton.style.border = "none";
-            
+
             upButton.addEventListener("mouseover", function() {
                 upButton.style.color = "#0d6efd";
             });
             upButton.addEventListener("mouseout", function() {
-                upButton.style.color = ""; 
+                upButton.style.color = "";
             });
             upButton.onclick = function() {
                 moveRow(index, -1);
@@ -225,16 +244,16 @@
 
             var downButton = document.createElement('button');
             downButton.textContent = "▼";
-            
+
             downButton.style.display = index !== weekTableData.length -1 ? "block" : "none";
             downButton.style.background = "none";
             downButton.style.border = "none";
 
             downButton.addEventListener("mouseover", function() {
-                downButton.style.color = "#0d6efd"; 
+                downButton.style.color = "#0d6efd";
             });
             downButton.addEventListener("mouseout", function() {
-                downButton.style.color = ""; 
+                downButton.style.color = "";
             });
             downButton.onclick = function() {
                 moveRow(index, 1);
@@ -258,11 +277,15 @@
     renderTable();
     
     //course content to put into headings
-    var courseTitle = document.getElementById("courseTitle");
-    courseTitle.textContent = "@Model.Week.Workbook.CourseName";
-    var courseLead = document.getElementById("courseLead");
-    courseLead.textContent = "Course Lead(s): @Model.Week.Workbook.CourseLead";
-
+    function updateHeadings() {
+        var courseTitle = document.getElementById("courseTitle");
+        courseTitle.textContent = "@Model.Week.Workbook.CourseName";
+        var courseLead = document.getElementById("courseLead");
+        courseLead.textContent = "Course Lead(s): @Model.Week.Workbook.CourseLead";
+    }
+    updateHeadings()
+    
+    // type colors
     @{
         var learningTypeCounts = ViewData["LearningTypeCounts"] as Dictionary<string, int>;
         
@@ -277,7 +300,8 @@
             { "Assessment", "#44546A" }
         };
     }
-    //pie chart data (hard coded)
+    
+    //pie chart and stats data 
     var statsData = [];
 
     @foreach (var item in learningTypeCounts)
@@ -396,8 +420,12 @@
         const arrow = document.getElementById("arrow_legend");
         const buttonChart = document.getElementById("lt_chart_hide");
         const buttonTable = document.getElementById("lt_table_hide");
-        
+
         const currentDisplay = legend.style.display;
+        statsData.forEach(item => {
+            const legend_colour = document.getElementById(item.label + "_legend");
+            legend_colour.style.backgroundColor = item.color;
+        });
 
         legend.style.display = currentDisplay === "none" || currentDisplay === "" ? "block" : "none";
         chart.style.display = "none";
@@ -405,18 +433,16 @@
         table.style.display = "none";
         buttonChart.style.display = "none";
         buttonTable.style.display = "none";
-        
+
         if (legend.style.display === "block") {
             arrow.innerHTML = "▼";
-        
+
         } else {
             arrow.innerHTML = "▲";
             buttonChart.style.display = "block";
             buttonTable.style.display = "block";
         }
     }
-
-
 
     function toggleStatsTable() {
         const table = document.getElementById("stats_table");
@@ -460,7 +486,7 @@
     
     //table script
     statsData.forEach(item => {
-        const labelId = item.label.toLowerCase();
+        const labelId = item.label;
         const cell = document.getElementById(labelId);
         const cellData = document.getElementById(labelId + "_data");
         if (cell) {
