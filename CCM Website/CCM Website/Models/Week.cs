@@ -13,7 +13,7 @@ namespace CCM_Website.Models {
         [ForeignKey("Workbook")]
         public int WorkbookId { get; set; }
         public required Workbook Workbook { get; set; }
-        public required ICollection<WeekActivities> WeekActivities { get; set; }
-        public required ICollection<WeekGraduateAttributes> WeekGraduateAttributes { get; set; }
+        public ICollection<WeekActivities>? WeekActivities { get; set; }
+        public ICollection<WeekGraduateAttributes>? WeekGraduateAttributes { get; set; }
     }
 }

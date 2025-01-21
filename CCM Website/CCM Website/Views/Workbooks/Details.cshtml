@@ -1,26 +1,20 @@
 ﻿@model CCM_Website.Models.Workbook
 
 @{
-    ViewData["Title"] = "Details";
-    
+    ViewData["Title"] = $"{@Model.CourseCode}";
+    ViewData["LearningPlatform"] = $"{@Model.LearningPlatform.PlatformName}";
 }
 <link rel="stylesheet" href="~/css/Details.css" asp-append-version="true" />
 
-<!-- Header part above where workbook appears -->
-<div class="horizontal-container">
-
-    <h1 class="left-head">Course Code XYZ</h1> 
-    <h1 class="right-head">@Html.DisplayFor(model => model.LearningPlatform)</h1>
-
-</div>
-<br />
-
 <!-- Main part of workbook page with buttons-->
-<div class="container">
+<div class="container-fluid">
 
     <div class="row">
-        <div class="col" >
-            <h1 class="left-head">@Html.DisplayFor(model => model.CourseName)</h1>
+        <div class="col">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="left-head">@Html.DisplayFor(model => model.CourseName)</h1>
+                <a class="edit-workbook" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit</a>
+            </div>
             <h2 class="left-head">Course Leads: @Html.DisplayFor(model => model.CourseLead)</h2>
         </div>
     </div>
@@ -28,97 +22,430 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Left Column with Toggle Buttons -->
-            <div class="col-md-2 left-column d-flex flex-column">
+            <div class="col-md-2 left-column d-flex flex-column justify-content-start align-items-start">
                 <br />
                 <br />
                 <button id="toggleBreakdownButton" class="toggle-button">Time Breakdown</button>
                 <button id="toggleBreakdownGraphButton" class="toggle-button">Time Breakdown Graph</button>
                 <button id="toggleGradAttributesButton" class="toggle-button">Graduate Attributes</button>
             </div>
-            
-            <div class="col-md-10 d-flex flex-column">
-                <div class="d-flex justify-content-end">
-                    <div class="d-flex flex-column align-items-end">
-                        @foreach (var week in @Model.Weeks)
-                        {
-                        <a class="edit-workbook" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
-                        }
+
+            <!-- Center Content -->
+            <div class="col-md-8 center-column d-flex align-items-center justify-content-center">
+                <div id="graph-container">
+                    <div id="legend">
+                        <table class="table table-bordered table-responsive">
+                            <thead>
+                                <th>Legend</th>
+                            </thead>
+                            <tbody>
+                                <tr><td id="acquisition">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
+                                <tr><td id="collaboration">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
+                                <tr><td id="discussion">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
+                                <tr><td id="investigation">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
+                                <tr><td id="practice">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
+                                <tr><td id="production">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
+                                <tr><td id="assessment">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+                            </tbody>
+                        </table>
+
                     </div>
-                </div>
 
-                <!-- Center Content -->
-                <div class="center-column">
-                    <div id="graph-container">
-                        <div id="legend">
-                            <p>Legend Here</p>
-                        </div>
+                    <div id="time-breakdown">
+                        <table class="table table-bordered table-responsive w-auto">
+                            <thead>
+                                <tr style="background-color: #005398; color: white; text-align: center;">
+                                    <th>Week</th>
+                                    <th style="background-color: #A1F5ED">Acquisition</th>
+                                    <th style="background-color: #FFD21A">Collaboration</th>
+                                    <th style="background-color: #7AAEEA">Discussion</th>
+                                    <th style="background-color: #F8807F">Investigation</th>
+                                    <th style="background-color: #BB98DC">Practice</th>
+                                    <th style="background-color: #BDEA75">Production</th>
+                                    <th style="background-color: #44546A">Assessment</th>
+                                    <th>Total Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Weeks != null && Model.Weeks.Any())
+                                {
+                                    int weekNumber = 1;
+                                    @foreach (var week in @Model.Weeks)
+                                    {
+                                        <tr>
+                                            <td style="text-align: center;">@weekNumber</td> <!-- Week number -->
+                                            <td style="text-align: center;">00:00</td> <!-- Acquisition -->
+                                            <td style="text-align: center;">00:00</td> <!-- Collaboration -->
+                                            <td style="text-align: center;">00:00</td> <!-- Discussion -->
+                                            <td style="text-align: center;">00:00</td> <!-- Investigation -->
+                                            <td style="text-align: center;">00:00</td> <!-- Practice -->
+                                            <td style="text-align: center;">00:00</td> <!-- Production -->
+                                            <td style="text-align: center;">00:00</td> <!-- Assessment -->
+                                            <td style="text-align: center;">00:00</td> <!-- Total Time -->
+                                        </tr>
+                                        weekNumber++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
 
-                        <div id="time-breakdown">
-                            <p>Time breakdown here</p>
-                        </div>
+                    <div id="time-breakdown-graph">
+                        <!-- Graph that shows up in this div is found in js -->
+                    </div>
 
-                        <div id="time-breakdown-graph">
-                            <p>Graph will display here</p>
-                        </div>
-
-                        <div id="grad-attributes">
-                            <p>Display attributes table here</p>
-                        </div>
+                    <div id="grad-attributes">
+                        <table class="table table-bordered table-responsive">
+                            <thead>
+                                <tr style="background-color: #005398; color: white; text-align: center;">
+                                    <th>Graduate Attributes</th>
+                                    <th>Total Attributes</th>
+                                    @if (Model.Weeks != null && Model.Weeks.Any())
+                                    {
+                                        int weekNumber = 1;
+                                        @foreach (var week in @Model.Weeks)
+                                        {
+                                            <th>W @weekNumber</th>
+                                            weekNumber++;
+                                        }
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Adaptable</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Confident</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Effective Communication</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Ethically and Socially Aware</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Experienced Collaborators</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Independent and Critical Thinkers</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Investigative</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Reflective Learners</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Resourceful and Responsible</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center; background-color: #44546A; color: white;">Subject Specialists</td> <!-- Graduate Attribute -->
+                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
+                                    @foreach (var week in Model.Weeks)
+                                    {
+                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
+                                    }
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+
+
+            <!-- Right Column -->
+            <div class="col-md-2 right-column d-flex flex-column align-items-end">
+                @foreach (var week in @Model.Weeks)
+                {
+                    <a class="edit-workbook" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
+                }
+            </div>
+
+            <div class="row justify-content-center mt-auto">
+                <div class="col-md-8 text-center">
+                    <button id="toggleLegendButton" class="toggle-button-bottom"><span id="arrow_legend">▲</span>  Legend</button>
+                </div>
+            </div>
+
         </div>
     </div>
-
-
-
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit</a> |
-        <a asp-action="Index">Back to List</a>
-    </div>
+    
 </div>
 
 <script>
     // Get the sections and buttons
     var sections = {
-        legend: document.getElementById('legend'),
-        timeBreakdown: document.getElementById('time-breakdown'),
-        timeBreakdownGraph: document.getElementById('time-breakdown-graph'),
-        gradAttributes: document.getElementById('grad-attributes')
+    legend: document.getElementById('legend'),
+    timeBreakdown: document.getElementById('time-breakdown'),
+    timeBreakdownGraph: document.getElementById('time-breakdown-graph'),
+    gradAttributes: document.getElementById('grad-attributes')
     };
 
     var buttons = {
-        toggleLegendButton: document.getElementById('toggleLegendButton'),
-        toggleBreakdownButton: document.getElementById('toggleBreakdownButton'),
-        toggleBreakdownGraphButton: document.getElementById('toggleBreakdownGraphButton'),
-        toggleGradAttributesButton: document.getElementById('toggleGradAttributesButton')
+    toggleLegendButton: document.getElementById('toggleLegendButton'),
+    toggleBreakdownButton: document.getElementById('toggleBreakdownButton'),
+    toggleBreakdownGraphButton: document.getElementById('toggleBreakdownGraphButton'),
+    toggleGradAttributesButton: document.getElementById('toggleGradAttributesButton')
     };
 
     // Function to hide all sections
     function hideAllSections() {
-        for (var key in sections) {
-            sections[key].style.display = 'none';
-        }
+    for (var key in sections) {
+    sections[key].style.display = 'none';
+    }
     }
 
     // Add event listeners for each button to show the relevant section
     buttons.toggleLegendButton.addEventListener('click', function() {
-        hideAllSections();
-        sections.legend.style.display = 'block';
+    hideAllSections();
+    sections.legend.style.display = 'block';
     });
 
     buttons.toggleBreakdownButton.addEventListener('click', function() {
-        hideAllSections();
-        sections.timeBreakdown.style.display = 'block';
+    hideAllSections();
+    sections.timeBreakdown.style.display = 'block';
     });
 
     buttons.toggleBreakdownGraphButton.addEventListener('click', function() {
-        hideAllSections();
-        sections.timeBreakdownGraph.style.display = 'block';
+    hideAllSections();
+    sections.timeBreakdownGraph.style.display = 'block';
     });
 
     buttons.toggleGradAttributesButton.addEventListener('click', function() {
-        hideAllSections();
-        sections.gradAttributes.style.display = 'block';
+    hideAllSections();
+    sections.gradAttributes.style.display = 'block';
     });
+
+    // Time breakdown graph
+     const data = [
+        {
+            week: "W1",
+            acquisition: 2.5,
+            collaboration: 1.0,
+            discussion: 0.5,
+            investigation: 1.0,
+            practice: 1.5,
+            production: 2.0,
+            assessment: 0.5
+        },
+        {
+            week: "W2",
+            acquisition: 3.0,
+            collaboration: 1.5,
+            discussion: 1.0,
+            investigation: 0.5,
+            practice: 2.0,
+            production: 1.5,
+            assessment: 0.5
+        },
+        {
+            week: "W3",
+            acquisition: 1.0,
+            collaboration: 1.5,
+            discussion: 1.0,
+            investigation: 0.5,
+            practice: 2.0,
+            production: 1.5,
+            assessment: 0.5
+        },
+        {
+            week: "W4",
+            acquisition: 2.0,
+            collaboration: 1.5,
+            discussion: 2.0,
+            investigation: 0.5,
+            practice: 2.0,
+            production: 1.5,
+            assessment: 0.5
+        },
+        {
+            week: "W5",
+            acquisition: 3.0,
+            collaboration: 1.5,
+            discussion: 1.0,
+            investigation: 0.5,
+            practice: 2.0,
+            production: 1.5,
+            assessment: 0.5
+        },
+        {
+            week: "W6",
+            acquisition: 1.0,
+            collaboration: 1.5,
+            discussion: 1.0,
+            investigation: 0.5,
+            practice: 3.0,
+            production: 2.5,
+            assessment: 0.5
+        },
+        {
+            week: "W7",
+            acquisition: 3.0,
+            collaboration: 1.5,
+            discussion: 2.0,
+            investigation: 0.5,
+            practice: 2.0,
+            production: 1.5,
+            assessment: 0.5
+        },
+        {
+            week: "W8",
+            acquisition: 3.0,
+            collaboration: 1.5,
+            discussion: 1.0,
+            investigation: 0.5,
+            practice: 2.0,
+            production: 1.5,
+            assessment: 0.5
+        },
+        {
+            week: "W9",
+            acquisition: 3.0,
+            collaboration: 1.5,
+            discussion: 1.0,
+            investigation: 0.5,
+            practice: 2.0,
+            production: 1.5,
+            assessment: 0.5
+        },
+        {
+            week: "W10",
+            acquisition: 1.0,
+            collaboration: 1.0,
+            discussion: 1.0,
+            investigation: 1.0,
+            practice: 1.0,
+            production: 1.0,
+            assessment: 1.0
+        },
+        {
+            week: "W11",
+            acquisition: 3.0,
+            collaboration: 1.5,
+            discussion: 1.0,
+            investigation: 0.5,
+            practice: 2.0,
+            production: 1.5,
+            assessment: 3
+        },
+
+        
+    ];
+        
+
+    const activities = [
+        "acquisition",
+        "collaboration",
+        "discussion",
+        "investigation",
+        "practice",
+        "production",
+        "assessment"
+    ];
+
+    const stackedData = d3.stack().keys(activities)(data);
+
+    const svg = d3
+        .select("#time-breakdown-graph")
+        .append("svg")
+        .attr("width", 800)
+        .attr("height", 400);
+
+    const width = 800;
+    const height = 400;
+    const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+
+    const xScale = d3
+        .scaleBand()
+        .domain(data.map(d => d.week))
+        .range([margin.left, width - margin.right])
+        .padding(0.1);
+
+    const yScale = d3
+        .scaleLinear()
+        .domain([0, d3.max(stackedData, layer => d3.max(layer, d => d[1]))])
+        .nice()
+        .range([height - margin.bottom, margin.top]);
+
+    const colorScale = d3
+        .scaleOrdinal()
+        .domain(activities)
+        .range(["#A1F5ED", "#FFD21A", "#7AAEEA", "#F8807F", "#BB98DC", "#BDEA75", "#44546A"]);
+
+    svg
+        .selectAll("g")
+        .data(stackedData)
+        .join("g")
+        .attr("fill", d => colorScale(d.key))
+        .selectAll("rect")
+        .data(d => d)
+        .join("rect")
+        .attr("x", d => xScale(d.data.week))
+        .attr("y", d => yScale(d[1]))
+        .attr("height", d => yScale(d[0]) - yScale(d[1]))
+        .attr("width", xScale.bandwidth());
+
+    // Add X-axis
+    svg
+        .append("g")
+        .attr("transform", `translate(0, ${height - margin.bottom})`)
+        .call(d3.axisBottom(xScale));
+
+    // Add Y-axis
+    svg
+        .append("g")
+        .attr("transform", `translate(${margin.left}, 0)`)
+        .call(d3.axisLeft(yScale).tickFormat(d => {
+            const hours = Math.floor(d);
+            const minutes = Math.round((d - hours) * 60);
+            return `${hours}:${minutes.toString().padStart(2, "0")}`;
+        }));
+    
+
 </script>

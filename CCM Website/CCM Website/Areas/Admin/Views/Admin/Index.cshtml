@@ -1,5 +1,5 @@
 ﻿@{
-    ViewBag.Title = "Admin Panel";
+    ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div>
@@ -8,7 +8,6 @@
     <a class="btn btn-primary" asp-area="Admin" asp-controller="Workbook" asp-action="Index">
         View Workbooks
     </a>
-    
 </div>
 <br/>
 <div>
@@ -23,5 +22,19 @@
     <a class="btn btn-primary" asp-area="Admin" asp-controller="LearningPlatform" asp-action="Index">
         Learning Platforms
     </a>
-    
+    <a class="btn btn-primary" asp-area="Admin" asp-controller="LearningType" asp-action="Index">
+        Learning Types
+    </a>
+</div>
+<br/>
+<div>
+    <h2>Links and Dependency Tables</h2>
+    <hr/>
+    <p>This section should only be used to edit values if there is an issue occuring that cannot be fixed on the user pages.</p>
+    <a class="btn btn-danger" asp-area="Admin" asp-controller="Week" asp-action="Index">
+        Weeks
+    </a>
+    <a class="btn btn-danger" asp-area="Admin" asp-controller="WeekActivities" asp-action="Index">
+        Weekly Activities Link
+    </a>
 </div>
