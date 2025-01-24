@@ -46,13 +46,13 @@ namespace CCM_Website.Data
                 {
                     var learningTypes = new[]
                     {
-                        new LearningType {  LearningTypeName = "Acquisition" },
-                        new LearningType {  LearningTypeName = "Collaboration" },
-                        new LearningType {  LearningTypeName = "Discussion" },
-                        new LearningType {  LearningTypeName = "Investigation" },
-                        new LearningType {  LearningTypeName = "Practice" },
-                        new LearningType {  LearningTypeName = "Production" },
-                        new LearningType {  LearningTypeName = "Assessment" },
+                        new LearningType {  LearningTypeName = "Acquisition", LearningTypeColour = "#A1F5ED"},
+                        new LearningType {  LearningTypeName = "Collaboration", LearningTypeColour = "#FFD21A"},
+                        new LearningType {  LearningTypeName = "Discussion", LearningTypeColour = "#7AAEEA" },
+                        new LearningType {  LearningTypeName = "Investigation", LearningTypeColour = "#F8807F" },
+                        new LearningType {  LearningTypeName = "Practice", LearningTypeColour = "#BB98DC" },
+                        new LearningType {  LearningTypeName = "Production", LearningTypeColour = "#BDEA75" },
+                        new LearningType {  LearningTypeName = "Assessment", LearningTypeColour = "#44546A" },
                     };
 
                     context.LearningType.AddRange(learningTypes);
