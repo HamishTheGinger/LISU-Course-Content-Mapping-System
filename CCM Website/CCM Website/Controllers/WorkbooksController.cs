@@ -267,6 +267,9 @@ namespace CCM_Website.Controllers
             
             var courseName = activity.FirstOrDefault()?.Week.Workbook.CourseName ?? "Unknown Course";
             ViewBag.CourseName = courseName;
+            
+            var workbookId = activity.FirstOrDefault()?.Week.WorkbookId;
+            ViewBag.WorkbookId = workbookId;
 
             return View(activity);
         }
@@ -367,8 +370,12 @@ namespace CCM_Website.Controllers
         }
         
          // GET: WeekActivities/Create
-        public IActionResult CreateActivity() {
-            ViewBag.WeekId = new SelectList(_context.Weeks, "WeekId", "WeekNumber");
+        public IActionResult CreateActivity(int id) {
+            var filteredWeeks = _context.Weeks.Where(w => w.WorkbookId == id).ToList();
+            
+            Console.WriteLine($"Filtered Weeks: {filteredWeeks.Count}: {id}");
+
+            ViewBag.WeekId = new SelectList(filteredWeeks, "WeekId", "WeekNumber");
             ViewBag.ActivitiesId = new SelectList(_context.Activities, "ActivityId", "ActivityName");
             ViewBag.LearningApproach = new SelectList(_context.LearningType, "LearningTypeId", "LearningTypeName");
             return View();
