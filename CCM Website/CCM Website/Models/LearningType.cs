@@ -8,4 +8,7 @@ public class LearningType {
     public int LearningTypeId { get; set; }
     
     public required string LearningTypeName { get; set; }
+    
+    [RegularExpression("^#(?:[0-9a-fA-F]{3}){1,2}$", ErrorMessage = "Invalid hex color code.")]
+    public string LearningTypeColour { get; set; }
 }
