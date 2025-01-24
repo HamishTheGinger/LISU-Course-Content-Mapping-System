@@ -55,7 +55,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WorkbookId,CourseName,CourseCode,CourseLead,CourseLength,LearningPlatformId,Collaborators")] Workbook workbook) {
+        public async Task<IActionResult> Create([Bind("WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators")] Workbook workbook) {
             try
             {
                 var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp => lp.PlatformId == workbook.LearningPlatformId);
@@ -148,7 +148,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WorkbookId,CourseName,CourseCode,CourseLead,CourseLength,LearningPlatformId,Collaborators")] Workbook workbook)
+        public async Task<IActionResult> Edit(int id, [Bind("WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators")] Workbook workbook)
         {
             if (id != workbook.WorkbookId)
             {
@@ -162,6 +162,7 @@ namespace CCM_Website.Areas.Admin.Controllers
             {
                 try
                 {
+                    workbook.LastEdited = DateTime.Now;
                     _context.Update(workbook);
                     await _context.SaveChangesAsync();
                 }

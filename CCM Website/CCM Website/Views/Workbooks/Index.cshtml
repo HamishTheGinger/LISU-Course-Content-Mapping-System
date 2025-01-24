@@ -19,6 +19,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.CourseLead)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PipReference)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -33,6 +36,9 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CourseLead)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PipReference)
             </td>
             <td>
                 <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.WorkbookId">View Workbook</a>
