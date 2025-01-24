@@ -22,6 +22,9 @@
                 @Html.DisplayNameFor(model => model.CourseName)
             </th>
             <th>
+                @Html.DisplayNameFor(model => model.CourseCode)
+            </th>
+            <th>
                 @Html.DisplayNameFor(model => model.CourseLead)
             </th>
             <th></th>
@@ -34,12 +37,14 @@
                 @Html.DisplayFor(modelItem => item.CourseName)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.CourseCode)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.CourseLead)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.WorkbookId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.WorkbookId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.WorkbookId">Delete</a>
+                <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.WorkbookId">View Workbook</a>
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.WorkbookId">Edit Workbook</a>
             </td>
         </tr>
 }
