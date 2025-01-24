@@ -55,7 +55,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LearningTypeId,LearningTypeName")] LearningType learningType)
+        public async Task<IActionResult> Create([Bind("LearningTypeId,LearningTypeName,LearningTypeColour")] LearningType learningType)
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +87,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LearningTypeId,LearningTypeName")] LearningType learningType)
+        public async Task<IActionResult> Edit(int id, [Bind("LearningTypeId,LearningTypeName,LearningTypeColour")] LearningType learningType)
         {
             if (id != learningType.LearningTypeId)
             {
