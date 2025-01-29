@@ -13,7 +13,7 @@
             <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4>
         </div>
         <div class="col-md-2 d-flex text-center justify-content-center">
-            <a asp-controller="Workbooks" asp-action="Activities" asp-route-id="@Model.Week.WeekId" class="btn-lg btn-primary rounded-pill text-decoration-none d-flex justify-content-center align-items-center" style="background-color: #005398">View Activities</a>
+            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" class="btn btn-primary rounded-pill text-decoration-none d-flex justify-content-center align-items-center" style="background-color: #005398">Add Activity</a>
         </div>
     </div>
     <div class="row">
@@ -34,22 +34,12 @@
                         <th>@Html.DisplayName("Task Location")</th>
                         <th>@Html.DisplayName("Task Approach")</th>
                         <th>Change Order</th>
+                        <th>Edit Activity</th>
+                        
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach (var activity in Model.ActivitiesList)
-                    {
-                        <tr>
-                            <td>@activity.TaskTitle</td>
-                            <td>@activity.TaskStaff</td>
-                            <td>@activity.Activities.ActivityName</td>
-                            <td>@activity.LearningType.LearningTypeName</td>
-                            <td>@Html.DisplayFor(modelItem => activity.TaskTime)</td>
-                            <td>@activity.TasksStatus</td>
-                            <td>@activity.TaskLocation</td>
-                            <td>@activity.TaskApproach</td>
-                        </tr>
-                    }
+      
                     </tbody>
                 </table>
             </div>
@@ -190,10 +180,11 @@
 
     @foreach (var item in Model.ActivitiesList)
     {
-    <text>
+        <text>
     weekTableData.push({
-        staffResponsible: "@item.TaskStaff",
+        id: "@item.WeekActivityId",
         title: "@item.TaskTitle",
+        staffResponsible: "@item.TaskStaff",
         learningActivity: "@item.Activities.ActivityName",
         learningType: "@item.LearningType.LearningTypeName",
         time: "@string.Format("{0:%h} Hours {0:%m} Mins", item.TaskTime)",
@@ -206,7 +197,7 @@
 
     var weekTableBody = document.getElementById('weekTable').querySelector('tbody');
     var tableHeading = document.getElementById('weekTableHeading')
-    tableHeading.colSpan = Object.keys(weekTableData[0]).length + 1;
+    tableHeading.colSpan = Object.keys(weekTableData[0]).length + 2;
 
     function renderTable() {
         weekTableBody.innerHTML = '';
@@ -214,9 +205,11 @@
             var row = document.createElement('tr');
 
             for (var key in rowData) {
-                var cell = document.createElement('td');
-                cell.textContent = rowData[key];
-                row.appendChild(cell);
+                if (key !== "id") {
+                    var cell = document.createElement('td');
+                    cell.textContent = rowData[key];
+                    row.appendChild(cell);
+                }
             }
 
             var actionCell = document.createElement('td');
@@ -258,6 +251,15 @@
             actionCell.appendChild(downButton);
 
             row.appendChild(actionCell);
+
+            var editCell = document.createElement('td');
+            var editLink = document.createElement('a');
+            editLink.textContent = "Edit Activity";
+            editLink.href = `/Workbooks/EditActivity/${rowData.id}`;
+            editLink.className = "btn btn-primary";
+            editCell.appendChild(editLink);
+            row.appendChild(editCell);
+
             weekTableBody.appendChild(row);
         });
     }
@@ -488,6 +490,10 @@
     });
 
 </script>
+
+
+
+
 
 
 

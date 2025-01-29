@@ -260,25 +260,6 @@ namespace CCM_Website.Controllers
             };
             return View(viewModel);
         }
-
-        public async Task<IActionResult> Activities(int id) {
-            ViewBag.SelectedWeekId = id;
-            
-            var week = await _context.Weeks.Include(w => w.Workbook).Where(w => w.WeekId == id).FirstOrDefaultAsync();
-            
-            var activity = await _context.WeekActivities.Include(a => a.Week).ThenInclude(wk => wk.Workbook).Include(a => a.Activities).Include(a => a.LearningType).Where(a => a.WeekId == id).ToListAsync();
-            
-            var courseName = week.Workbook.CourseName ?? "Unknown Course";
-            ViewBag.CourseName = courseName;
-
-            var weekNumber = week.WeekNumber;
-            ViewBag.WeekNumber = weekNumber;
-            
-            var workbookId = week.WorkbookId;
-            ViewBag.WorkbookId = workbookId;
-
-            return View(activity);
-        }
         
         // GET: WeekActivities/Edit/5
         public async Task<IActionResult> EditActivity(int? id) {
