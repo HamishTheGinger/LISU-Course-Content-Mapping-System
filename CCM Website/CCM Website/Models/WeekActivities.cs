@@ -9,7 +9,9 @@ namespace CCM_Website.Models
         public int WeekActivityId { get; set; }
         public required string TaskTitle { get; set; }
         public required string TaskStaff { get; set; }
-        public required TimeOnly TaskTime { get; set; }
+        
+        [UIHint("TimeSpan")]
+        public required TimeSpan TaskTime { get; set; }
         public required string TasksStatus { get; set; }
         public required string TaskLocation { get; set; }
         public required string TaskApproach { get; set; }

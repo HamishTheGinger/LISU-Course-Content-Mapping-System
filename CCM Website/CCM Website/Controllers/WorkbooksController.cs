@@ -264,12 +264,17 @@ namespace CCM_Website.Controllers
         public async Task<IActionResult> Activities(int id) {
             ViewBag.SelectedWeekId = id;
             
+            var week = await _context.Weeks.Include(w => w.Workbook).Where(w => w.WeekId == id).FirstOrDefaultAsync();
+            
             var activity = await _context.WeekActivities.Include(a => a.Week).ThenInclude(wk => wk.Workbook).Include(a => a.Activities).Include(a => a.LearningType).Where(a => a.WeekId == id).ToListAsync();
             
-            var courseName = activity.FirstOrDefault()?.Week.Workbook.CourseName ?? "Unknown Course";
+            var courseName = week.Workbook.CourseName ?? "Unknown Course";
             ViewBag.CourseName = courseName;
+
+            var weekNumber = week.WeekNumber;
+            ViewBag.WeekNumber = weekNumber;
             
-            var workbookId = activity.FirstOrDefault()?.Week.WorkbookId;
+            var workbookId = week.WorkbookId;
             ViewBag.WorkbookId = workbookId;
 
             return View(activity);
@@ -299,7 +304,7 @@ namespace CCM_Website.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditActivity(int id,
-            [Bind("WeekActivityId, TaskOrder,WeekId,ActivitiesId,TaskTitle,TaskStaff,ActivityTime,TasksStatus,LearningTypeId,TaskLocation,TaskApproach")]
+            [Bind("WeekActivityId, TaskOrder,WeekId,ActivitiesId,TaskTitle,TaskStaff,TaskTime,TasksStatus,LearningTypeId,TaskLocation,TaskApproach")]
             WeekActivities weekActivities) {
             
             if (id != weekActivities.WeekActivityId)
@@ -386,7 +391,7 @@ namespace CCM_Website.Controllers
         // POST: WeekActivities/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateActivity([Bind("TaskOrder,WeekId,ActivitiesId,TaskTitle,TaskStaff,ActivityTime,TasksStatus,LearningTypeId,TaskLocation,TaskApproach")]
+        public async Task<IActionResult> CreateActivity([Bind("TaskOrder,WeekId,ActivitiesId,TaskTitle,TaskStaff,TaskTime,TasksStatus,LearningTypeId,TaskLocation,TaskApproach")]
             WeekActivities weekActivities) {
             
             ModelState.Remove(nameof(weekActivities.Week));
