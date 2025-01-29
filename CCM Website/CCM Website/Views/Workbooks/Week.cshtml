@@ -1,19 +1,16 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
 @model CCM_Website.ViewModels.WeekDetailsViewModel
 @{
     ViewData["Title"] = $"{@Model.Week.Workbook.CourseCode} - Week {@Model.Week.WeekNumber}";
     ViewData["LearningPlatform"] = $"{@Model.Week.Workbook.LearningPlatform.PlatformName}";
     var learningLocationCounts = ViewData["LearningLocationCounts"] as Dictionary<string, int>;
-    Console.WriteLine("learningLocationCounts");
-    Console.WriteLine(learningLocationCounts);
-    Console.WriteLine("--");
 }
 
 <div class="container-fluid">
     <div class="row my-3">
         <div class="col-md-10">
-            <h1 id="courseTitle" class="text-wrap"></h1>
-            <h4 id="courseLead" class="text-wrap"></h4>
+            <h1 class="text-wrap">@Model.Week.Workbook.CourseName</h1>
+            <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4>
         </div>
         <div class="col-md-2 d-flex text-center justify-content-center">
             <a asp-controller="Workbooks" asp-action="Activities" asp-route-id="@Model.Week.WeekId" class="btn-lg btn-primary rounded-pill text-decoration-none d-flex justify-content-center align-items-center" style="background-color: #005398">View Activities</a>
@@ -47,7 +44,7 @@
                             <td>@activity.TaskStaff</td>
                             <td>@activity.Activities.ActivityName</td>
                             <td>@activity.LearningType.LearningTypeName</td>
-                            <td>@activity.TaskTime</td>
+                            <td>@Html.DisplayFor(modelItem => activity.TaskTime)</td>
                             <td>@activity.TasksStatus</td>
                             <td>@activity.TaskLocation</td>
                             <td>@activity.TaskApproach</td>
@@ -199,7 +196,7 @@
         title: "@item.TaskTitle",
         learningActivity: "@item.Activities.ActivityName",
         learningType: "@item.LearningType.LearningTypeName",
-        time: "@item.TaskTime",
+        time: "@string.Format("{0:%h} Hours {0:%m} Mins", item.TaskTime)",
         status: "@item.TasksStatus",
         activityLocation: "@item.TaskLocation",
         approach: "@item.TaskApproach"
@@ -275,15 +272,6 @@
     }
 
     renderTable();
-    
-    //course content to put into headings
-    function updateHeadings() {
-        var courseTitle = document.getElementById("courseTitle");
-        courseTitle.textContent = "@Model.Week.Workbook.CourseName";
-        var courseLead = document.getElementById("courseLead");
-        courseLead.textContent = "Course Lead(s): @Model.Week.Workbook.CourseLead";
-    }
-    updateHeadings()
     
     // type colors
     @{
