@@ -1,0 +1,29 @@
+stages:
+  - build
+  - test
+  - deploy
+
+build-job:
+  stage: build
+  script:
+    - echo "Compiling the code..."
+    - echo "Compile complete."
+
+unit-test-job:
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - echo "Tests complete"
+
+lint-test-job:
+  stage: test
+  script:
+    - echo "Linting code..."
+    - echo "Linting Complete"
+
+deploy-job: 
+  stage: deploy
+  environment: production
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed."
