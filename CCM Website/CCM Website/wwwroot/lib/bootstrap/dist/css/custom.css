@@ -1,0 +1,44 @@
+@charset "UTF-8";
+/*!
+ * Bootstrap v5.1.0 (https://getbootstrap.com/)
+ * Copyright 2011-2021 The Bootstrap Authors
+ * Copyright 2011-2021 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+/*TEST*/
+:root {
+    --bs-primary: #003865; /*UOFG Primary*/
+    --bs-secondary: #005398; /*UOFG Secondary*/
+    --bs-main: #f7f7f7; /*Grey for main content*/
+    --bs-week-table: #00B050;
+    --bs-stats-table: #003864;
+}
+
+.bg-primary {
+    background-color: var(--bs-primary) !important;
+}
+
+.bg-secondary {
+    background-color: var(--bs-secondary) !important;
+}
+
+.bg-main {
+    background-color: var(--bs-main) !important;
+}
+
+.bg-week-table {
+    background-color: var(--bs-week-table) !important;
+}
+
+.bg-gray-600 {
+    background-color: var(--bs-gray-600) !important;
+}
+
+.border-gray-600  {
+    border-color: #6c757d !important;
+}
+
+.bg-stats-table {
+    background-color: var(--bs-stats-table) !important;
+}
+
