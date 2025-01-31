@@ -13,7 +13,7 @@
             <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4>
         </div>
         <div class="col-md-2 d-flex text-center justify-content-center">
-            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" class="btn btn-primary rounded-pill text-decoration-none d-flex justify-content-center align-items-center" style="background-color: #005398">Add Activity</a>
+            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" class="btn btn-primary rounded-pill text-decoration-none d-flex justify-content-center align-items-center bg-secondary" >Add Activity</a>
         </div>
     </div>
     <div class="row">
@@ -22,9 +22,9 @@
                 <table id="weekTable"class="table table-bordered">
                     <thead>
                     <tr>
-                        <th id="weekTableHeading" style="background-color: #00B050; color: white; text-align: center;">Week @Model.Week.WeekNumber</th>
+                        <th class ="bg-week-table text-white text-center" id="weekTableHeading">Week @Model.Week.WeekNumber</th>
                     </tr>
-                    <tr style="background-color: #00B050; color: white; text-align: center;">
+                    <tr class ="bg-week-table text-white text-center">
                         <th>@Html.DisplayName("Task Title")</th>
                         <th>@Html.DisplayName("Task Staff")</th>
                         <th>@Html.DisplayName("Activity Name")</th>
@@ -64,15 +64,15 @@
                 </div>
 
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center table-responsive">
-                    <button class="btn btn-primary m-3 rounded-pill" id="lt_table_hide" style="background-color: #005398"> <span id="arrow_stats">▼</span> Statistics</button>
+                    <button class="btn btn-primary m-3 rounded-pill bg-secondary" id="lt_table_hide"> <span id="arrow_stats">▼</span> Statistics</button>
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <table id="stats_table" class="table table-bordered " style="display:block">
+                        <table id="stats_table" class="table table-bordered" style="display:block">
                             <thead>
                             <tr>
-                                <th colspan="4" style="text-align: center;background-color: #003864; color: white">Statistics</th>
+                                <th colspan="4" class ="text-white text-center bg-stats-table">Statistics</th>
                             </tr>
-                            <tr style="background-color: #003864; color: white; text-align: center;">
+                            <tr class ="text-white text-center bg-stats-table">
                                 <th>Learning Type</th>
                                 <th>Allocation</th>
                                 <th>Status</th>
@@ -134,7 +134,7 @@
 
                 </div>
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center">
-                    <button class="btn btn-primary m-3 rounded-pill" id="lt_chart_hide" style="background-color: #005398"> <span id="arrow_chart">▼</span> Chart</button>
+                    <button class="btn btn-primary m-3 rounded-pill bg-secondary" id="lt_chart_hide"> <span id="arrow_chart">▼</span> Chart</button>
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
                         <div id="lt_chart" style="display:block"></div>
@@ -146,7 +146,7 @@
             </div>
 
             <div class="text-center d-flex justify-content-center">
-                <button class="btn btn-primary m-3 rounded-pill" id="legend_btn" style="background-color: #005398"> <span id="arrow_legend">▲</span> Legend</button>
+                <button class="btn btn-primary m-3 rounded-pill bg-secondary" id="legend_btn"> <span id="arrow_legend">▲</span> Legend</button>
             </div>
 
         </div>
@@ -157,12 +157,12 @@
             {
                 <div class="d-flex justify-content-center">
                     @if (Model.Week.WeekNumber != week.WeekNumber) {
-                        <a class="btn btn-primary mb-2 rounded-pill" style="background-color: #005398" asp-action="Week" asp-route-id="@week.WeekId">
+                        <a class="btn btn-primary mb-2 rounded-pill bg-secondary" asp-action="Week" asp-route-id="@week.WeekId">
                             Week @week.WeekNumber
                         </a>
                     }
                     else {
-                        <a class="btn btn-primary mb-2 rounded-pill" style="background-color: gray; border-color: gray">
+                        <a class="btn btn-primary mb-2 rounded-pill bg-gray-600 border border-gray-600" >
                             Week @week.WeekNumber
                         </a>
                     }
