@@ -57,13 +57,52 @@ namespace CCM_Website.Controllers
             }
 
             var workbook = await _context.Workbooks
-                .Include(w => w.Weeks)
-                .Include(w =>w.LearningPlatform)
+                .Include(w => w.Weeks!)
+                    .ThenInclude(week => week.WeekGraduateAttributes!)
+                        .ThenInclude(wga => wga.GraduateAttribute!) 
+                .Include(w => w.Weeks!)
+                    .ThenInclude(week => week.WeekActivities!)
+                        .ThenInclude(wa => wa.LearningType!)  // Include LearningType
+                .Include(w => w.Weeks!)
+                    .ThenInclude(week => week.WeekActivities!)
+                        .ThenInclude(wa => wa.Activities!)    // Include Activities
+                .Include(w => w.LearningPlatform)
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
+
             if (workbook == null)
             {
                 return NotFound();
             }
+            
+            // Create a dictionary to store total time spent per learning type per week
+            var timeBreakdown = new Dictionary<int, Dictionary<string, TimeSpan>>();
+
+            foreach (var week in workbook.Weeks)
+            {
+                var weekData = new Dictionary<string, TimeSpan>
+                {
+                    { "Acquisition", TimeSpan.Zero },
+                    { "Collaboration", TimeSpan.Zero },
+                    { "Discussion", TimeSpan.Zero },
+                    { "Investigation", TimeSpan.Zero },
+                    { "Practice", TimeSpan.Zero },
+                    { "Production", TimeSpan.Zero },
+                    { "Assessment", TimeSpan.Zero }
+                };
+
+                foreach (var activity in week.WeekActivities)
+                {
+                    if (weekData.ContainsKey(activity.LearningType.LearningTypeName))
+                    {
+                        weekData[activity.LearningType.LearningTypeName] += activity.TaskTime;
+                    }
+                }
+
+                timeBreakdown[week.WeekNumber] = weekData;
+            }
+            
+            
+            ViewBag.TimeBreakdown = timeBreakdown;
 
             return View(workbook);
         }
