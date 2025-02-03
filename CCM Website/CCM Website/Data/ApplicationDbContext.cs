@@ -32,5 +32,10 @@ namespace CCM_Website.Data
             modelBuilder.Entity<WeekGraduateAttributes>()
                 .HasKey(l => new { l.WeekId, l.GraduateAttributeId });
         }
+        public DbSet<CCM_Website.Models.TaskLocation> TaskLocation { get; set; } = default!;
+        public DbSet<CCM_Website.Models.TaskProgressStatus> TaskProgressStatus { get; set; } = default!;
+        
+        public DbSet<CCM_Website.Models.TaskApproach> TaskApproach { get; set; } = default!;
+
     }
 }

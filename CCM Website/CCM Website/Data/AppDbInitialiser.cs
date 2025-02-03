@@ -59,6 +59,43 @@ namespace CCM_Website.Data
                     context.SaveChanges();
                 }
 
+                if (!context.TaskLocation.Any())
+                {
+                    var taskLocations = new[]
+                    {
+                        new TaskLocation{LocationName = "On Campus"},
+                        new TaskLocation{LocationName = "Remote (Home)"},
+                    };
+                    
+                    context.TaskLocation.AddRange(taskLocations);
+                    context.SaveChanges();
+                }
+
+                if (!context.TaskProgressStatus.Any())
+                {
+                    var taskProgressStatuss = new[]
+                    {
+                        new TaskProgressStatus { StatusName = "Completed" },
+                        new TaskProgressStatus { StatusName = "In-Progress" },
+                        new TaskProgressStatus { StatusName = "Unassigned" }
+                    };
+                    
+                    context.TaskProgressStatus.AddRange(taskProgressStatuss);
+                    context.SaveChanges();
+                }
+
+                if (!context.TaskApproach.Any())
+                {
+                    var taskApproachs = new[]
+                    {
+                        new TaskApproach { ApproachName = "Synchronous" },
+                        new TaskApproach { ApproachName = "Asynchronous" },
+                    };
+                    
+                    context.TaskApproach.AddRange(taskApproachs);
+                    context.SaveChanges();
+                }
+
                 if (!context.LearningPlatforms.Any())
                 {
                     var platforms = new[]
