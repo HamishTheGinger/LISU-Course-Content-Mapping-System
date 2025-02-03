@@ -25,8 +25,5 @@ This will give reviewers and future readers helpful context to give an efficient
 ## MR acceptance checklist
 - [ ] Project Builds
 - [ ] Project runs locally without any errors  
-<!--
-Once a pipline has been established a more detailed MR acceptance checlist will be created. 
-Please add any requirements that are specific to your MR.
--->
+- [ ] Pipeline passes
 

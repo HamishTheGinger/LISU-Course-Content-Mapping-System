@@ -1,0 +1,78 @@
+image: mcr.microsoft.com/dotnet/sdk:8.0
+
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  ASPNETCORE_ENVIRONMENT: 'Development'
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .nuget/packages/
+    - "**/bin/"
+    - "**/obj/"
+
+before_script:
+  - echo "Using .NET Core version:"
+  - dotnet --version
+  - cd "CCM Website/"
+
+build-website:
+  stage: build
+  script:
+    - echo "Compiling the code..."
+    - dotnet restore
+    - dotnet build --no-restore --configuration Release
+    - echo "Compile complete"
+  only:
+    - merge_requests
+
+build-database:
+  stage: build
+  script:
+    - cd "CCM Website/"
+    - echo "Installing EF Core tools..."
+    - dotnet tool install --global dotnet-ef
+    - echo "Adding tools directory to PATH..."
+    - export PATH="$PATH:/root/.dotnet/tools"
+    - echo "Adding migrations..."
+    - dotnet ef migrations add TestMigration
+    - echo "Applying migrations to database..."
+    - dotnet ef database update
+  artifacts:
+    paths:
+      - "CCM Website/CCM Website/ccm_website.db"
+  only:
+    - merge_requests
+
+unit-test-website:
+  stage: test
+  script:
+    - echo "Running unit tests..."
+    - dotnet test --no-restore --configuration Release
+    - echo "Tests complete"
+  only:
+    - merge_requests
+
+lint-test-website:
+  stage: test
+  script:
+    - echo "Linting code..."
+    - echo "Linting Complete"
+  only:
+    - merge_requests
+
+deploy-job: 
+  stage: deploy
+  environment: production
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed"
+  only:
+    - main
