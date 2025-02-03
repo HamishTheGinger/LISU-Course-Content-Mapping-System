@@ -3,14 +3,15 @@
 @{
     ViewData["Title"] = $"{@Model.Week.Workbook.CourseCode} - Week {@Model.Week.WeekNumber}";
     ViewData["LearningPlatform"] = $"{@Model.Week.Workbook.LearningPlatform.PlatformName}";
-    var learningLocationCounts = ViewData["LearningLocationCounts"] as Dictionary<string, int>;
+    var learningLocationCounts = ViewBag.locationCount as Dictionary<string, int>;
+    var taskProgressCounts = ViewBag.progressCount as Dictionary<string, int>;
 }
 
 <div class="container-fluid">
     <div class="row my-3">
         <div class="col-md-10">
             <h1 class="text-wrap">@Model.Week.Workbook.CourseName</h1>
-            <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4>
+            <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4> 
         </div>
         <div class="col-md-2 d-flex text-center justify-content-center">
             <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" class="btn btn-primary rounded-pill text-decoration-none d-flex justify-content-center align-items-center bg-secondary" >Add Activity</a>
@@ -83,26 +84,38 @@
                             <tr>
                                 <td id="Acquisition"></td>
                                 <td id="Acquisition_data"></td>
+                                @{
+                                    var unassignedCount = 0;
+                                    taskProgressCounts?.TryGetValue("Unassigned", out unassignedCount);
+                                }
                                 <td>Unassigned</td>
-                                <td></td>
+                                <td>@unassignedCount</td>
                             </tr>
                             <tr>
                                 <td id="Collaboration"></td>
                                 <td id="Collaboration_data"></td>
+                                @{
+                                    var inProgressCount = 0;
+                                    taskProgressCounts?.TryGetValue("In Progress", out inProgressCount);
+                                }
                                 <td>In Progress</td>
-                                <td></td>
+                                <td>@inProgressCount</td>
                             </tr>
                             <tr>
                                 <td id="Discussion"></td>
                                 <td id="Discussion_data"></td>
+                                @{
+                                    var completedCount = 0;
+                                    taskProgressCounts?.TryGetValue("Completed", out completedCount);
+                                }
                                 <td>Completed</td>
-                                <td></td>
+                                <td>@completedCount</td>
                             </tr>
                             <tr>
                                 <td id="Investigation"></td>
                                 <td id="Investigation_data"></td>
                                 <td>Total Tasks</td>
-                                <td id="total"></td>
+                                <td id="total">@(unassignedCount + inProgressCount + completedCount)</td>
                             </tr>
                             <tr>
                                 <td id="Practice"></td>
@@ -119,14 +132,22 @@
                             <tr>
                                 <td id="Assessment"></td>
                                 <td id="Assessment_data"></td>
+                                @{
+                                    var campusCount = 0;
+                                    learningLocationCounts?.TryGetValue("On Campus", out campusCount);
+                                }
                                 <td>On Campus</td>
-                                <td></td>
+                                <td>@campusCount</td>
                             </tr>
                             <tr>
                                 <td>Total Time</td>
                                 <td></td>
+                                @{
+                                    var remoteCount = 0;
+                                    learningLocationCounts?.TryGetValue("Remote (Home)", out remoteCount);
+                                }
                                 <td>Remote (Home)</td>
-                                <td></td>
+                                <td>@remoteCount</td>
                             </tr>
                             </tbody>
                         </table>
@@ -188,9 +209,9 @@
         learningActivity: "@item.Activities.ActivityName",
         learningType: "@item.LearningType.LearningTypeName",
         time: "@string.Format("{0:%h} Hours {0:%m} Mins", item.TaskTime)",
-        status: "@item.TasksStatus",
-        activityLocation: "@item.TaskLocation",
-        approach: "@item.TaskApproach"
+        status: "@item.TasksStatus.StatusName",
+        activityLocation: "@item.TaskLocation.LocationName",
+        approach: "@item.TaskApproach.ApproachName"
     });
     </text>
     }

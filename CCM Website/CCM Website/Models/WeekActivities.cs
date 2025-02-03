@@ -12,11 +12,21 @@ namespace CCM_Website.Models
         
         [UIHint("TimeSpan")]
         public required TimeSpan TaskTime { get; set; }
-        public required string TasksStatus { get; set; }
-        public required string TaskLocation { get; set; }
-        public required string TaskApproach { get; set; }
+
         public required int TaskOrder { get; set; }
 
+        [ForeignKey("TasksStatus")]
+        public int TasksStatusId { get; set; }
+        public required TaskProgressStatus TasksStatus { get; set; }
+        
+        [ForeignKey("TaskLocation")]
+        public int TaskLocationId { get; set; }
+        public required TaskLocation TaskLocation { get; set; }
+        
+        [ForeignKey("TaskApproach")]
+        public int TaskApproachId { get; set; }
+        public required TaskApproach TaskApproach { get; set; }
+        
         // Navigation Propeties
         [ForeignKey("Week")]
         public int WeekId { get; set; }

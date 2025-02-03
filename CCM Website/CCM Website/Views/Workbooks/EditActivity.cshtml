@@ -47,9 +47,9 @@
                 <span asp-validation-for="TaskTime" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TasksStatus" class="control-label">Task Status</label>
-                <input asp-for="TasksStatus" class="form-control"/>
-                <span asp-validation-for="TasksStatus" class="text-danger"></span>
+                <label asp-for="TasksStatusId" class="control-label">Task Status</label>
+                <select  asp-for="TasksStatusId" class="form-control" asp-items="ViewBag.TaskStatus"></select>
+                <span asp-validation-for="TasksStatusId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LearningTypeId" class="control-label"></label>
@@ -57,14 +57,14 @@
                 <span asp-validation-for="LearningTypeId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TaskLocation" class="control-label">Task Location</label>
-                <input asp-for="TaskLocation" class="form-control"/>
-                <span asp-validation-for="TaskLocation" class="text-danger"></span>
+                <label asp-for="TaskLocationId" class="control-label">Task Location</label>
+                <select  asp-for="TaskLocationId" class="form-control" asp-items="ViewBag.TaskLocation"></select>
+                <span asp-validation-for="TaskLocationId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TaskApproach" class="control-label">Task Approach</label>
-                <input asp-for="TaskApproach" class="form-control"/>
-                <span asp-validation-for="TaskApproach" class="text-danger"></span>
+                <label asp-for="TaskApproachId" class="control-label">Task Approach</label>
+                <select  asp-for="TaskApproachId" class="form-control" asp-items="ViewBag.TaskApproach"></select>
+                <span asp-validation-for="TaskApproachId" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">
