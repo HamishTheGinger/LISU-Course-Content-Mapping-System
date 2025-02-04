@@ -7,6 +7,8 @@
     var taskProgressCounts = ViewBag.progressCount as Dictionary<string, int>;
 }
 
+
+
 <div class="container-fluid">
     <div class="row my-3">
         <div class="col-md-10">
@@ -204,6 +206,7 @@
         <text>
     weekTableData.push({
         id: "@item.WeekActivityId",
+        taskOrder : "@item.TaskOrder",
         title: "@item.TaskTitle",
         staffResponsible: "@item.TaskStaff",
         learningActivity: "@item.Activities.ActivityName",
@@ -226,7 +229,7 @@
             var row = document.createElement('tr');
 
             for (var key in rowData) {
-                if (key !== "id") {
+                if (key !== "id" && key !== "taskOrder") {
                     var cell = document.createElement('td');
                     cell.textContent = rowData[key];
                     row.appendChild(cell);
@@ -285,12 +288,31 @@
         });
     }
 
+
     function moveRow(index, direction) {
+     
+        if (index < 0 || index >= weekTableData.length) {
+            return;
+        }
+
         var newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= weekTableData.length) {
+            return;
+        }
 
         var temp = weekTableData[index];
         weekTableData[index] = weekTableData[newIndex];
         weekTableData[newIndex] = temp;
+
+        if (direction > 0 && weekTableData[index]) {
+            upF(weekTableData[index].id);
+            downF(weekTableData[newIndex].id); 
+
+        }else{
+            upF(weekTableData[newIndex].id);
+            downF(weekTableData[index].id);  
+        }
+        
         renderTable();
     }
 
@@ -509,6 +531,29 @@
             cellData.textContent = item.value;
         }
     });
+    
+    //function to call controller to save new taskOrder to the DB
+    function upF(activityId) {
+        fetch('/Workbooks/activityUp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(activityId),
+        })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function downF(activityId) {
+        fetch('/Workbooks/activityDown', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(activityId),
+        })
+            .catch(error => console.error('Error:', error));
+    }
 
 </script>
 
