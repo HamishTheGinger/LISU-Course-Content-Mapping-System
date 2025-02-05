@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CCM_Website.Data;
-using CCM_Website.Models;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -34,8 +34,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var learningPlatform = await _context.LearningPlatforms
-                .FirstOrDefaultAsync(m => m.PlatformId == id);
+            var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(m =>
+                m.PlatformId == id
+            );
             if (learningPlatform == null)
             {
                 return NotFound();
@@ -55,29 +56,35 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PlatformId,PlatformName")] LearningPlatform learningPlatform)
+        public async Task<IActionResult> Create(
+            [Bind("PlatformId,PlatformName")] LearningPlatform learningPlatform
+        )
         {
             try
             {
                 learningPlatform.Workbooks = new List<Workbook>();
-                learningPlatform.LearningPlatformActivities = new List<LearningPlatformActivities>();
+                learningPlatform.LearningPlatformActivities =
+                    new List<LearningPlatformActivities>();
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Model Creation Error: {e.Message}");
-                ModelState.AddModelError("", "An error occurred while saving the workbook. Please try again later.");
+                ModelState.AddModelError(
+                    "",
+                    "An error occurred while saving the workbook. Please try again later."
+                );
                 return View(learningPlatform);
             }
-            
+
             ModelState.Remove(nameof(learningPlatform.Workbooks));
             ModelState.Remove(nameof(learningPlatform.LearningPlatformActivities));
-            
+
             if (!ModelState.IsValid)
             {
                 Console.WriteLine("Error creating model");
                 return View(learningPlatform);
             }
-            
+
             try
             {
                 _context.Add(learningPlatform);
@@ -87,9 +94,11 @@ namespace CCM_Website.Areas.Admin.Controllers
             catch (Exception exp)
             {
                 Console.WriteLine($"Model Creation Error: {exp.Message}");
-                ModelState.AddModelError("", "An error occurred while saving the workbook. Please try again later.");
+                ModelState.AddModelError(
+                    "",
+                    "An error occurred while saving the workbook. Please try again later."
+                );
                 return View(learningPlatform);
-
             }
         }
 
@@ -114,7 +123,10 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PlatformId,PlatformName")] LearningPlatform learningPlatform)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("PlatformId,PlatformName")] LearningPlatform learningPlatform
+        )
         {
             if (id != learningPlatform.PlatformId)
             {
@@ -152,8 +164,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var learningPlatform = await _context.LearningPlatforms
-                .FirstOrDefaultAsync(m => m.PlatformId == id);
+            var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(m =>
+                m.PlatformId == id
+            );
             if (learningPlatform == null)
             {
                 return NotFound();

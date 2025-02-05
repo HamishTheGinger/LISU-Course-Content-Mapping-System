@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CCM_Website.Data;
-using CCM_Website.Models;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -34,8 +34,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var workbook = await _context.Workbooks
-                .FirstOrDefaultAsync(m => m.WorkbookId == id);
+            var workbook = await _context.Workbooks.FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
                 return NotFound();
@@ -55,29 +54,44 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators")] Workbook workbook) {
+        public async Task<IActionResult> Create(
+            [Bind(
+                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators"
+            )]
+                Workbook workbook
+        )
+        {
             try
             {
-                var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp => lp.PlatformId == workbook.LearningPlatformId);
+                var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp =>
+                    lp.PlatformId == workbook.LearningPlatformId
+                );
                 workbook.LearningPlatform = learningPlatform;
                 if (workbook.LearningPlatform == null)
                 {
                     Console.WriteLine($"ERROR: Failed to link Workbook to Learning Platform");
-                    ModelState.AddModelError("", "An error occurred while saving the workbook. Please try again later.");
+                    ModelState.AddModelError(
+                        "",
+                        "An error occurred while saving the workbook. Please try again later."
+                    );
                     return View(workbook);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Model Creation Error: {e.Message}");
-                ModelState.AddModelError("", "An error occurred while saving the workbook. Please try again later.");
+                ModelState.AddModelError(
+                    "",
+                    "An error occurred while saving the workbook. Please try again later."
+                );
                 return View(workbook);
             }
-            
+
             ModelState.Remove(nameof(workbook.LearningPlatform));
             ModelState.Remove(nameof(workbook.Weeks));
 
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 try
                 {
                     workbook.LastEdited = DateTime.Now;
@@ -90,27 +104,34 @@ namespace CCM_Website.Areas.Admin.Controllers
 
                     for (int i = 1; i <= numberOfWeeks; i++)
                     {
-                        weeks.Add(new Week
-                        {
-                            WeekNumber = i, WorkbookId = workbook.WorkbookId, Workbook = workbook,
-                            WeekActivities = new List<WeekActivities>(),
-                            WeekGraduateAttributes = new List<WeekGraduateAttributes>()
-                        });
+                        weeks.Add(
+                            new Week
+                            {
+                                WeekNumber = i,
+                                WorkbookId = workbook.WorkbookId,
+                                Workbook = workbook,
+                                WeekActivities = new List<WeekActivities>(),
+                                WeekGraduateAttributes = new List<WeekGraduateAttributes>(),
+                            }
+                        );
                     }
 
                     workbook.Weeks = weeks;
                     _context.AddRange(weeks);
-                    
+
                     await _context.SaveChangesAsync();
 
                     return RedirectToAction(nameof(Index));
                 }
-                catch (Exception ex) {
+                catch (Exception ex)
+                {
                     Console.WriteLine($"DB Error occurred: {ex.Message}");
-                    ModelState.AddModelError("", "An error occurred while saving the workbook. Please try again later.");
+                    ModelState.AddModelError(
+                        "",
+                        "An error occurred while saving the workbook. Please try again later."
+                    );
                     return View(workbook);
                 }
-                
             }
 
             foreach (var state in ModelState)
@@ -121,10 +142,11 @@ namespace CCM_Website.Areas.Admin.Controllers
                     Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
                 }
             }
-            ModelState.AddModelError("",
-                "An error occurred while creating the workbook. Please contact an administrator if this problem persists.");
-            return View(workbook); 
-            
+            ModelState.AddModelError(
+                "",
+                "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
+            );
+            return View(workbook);
         }
 
         // GET: Admin/Workbook/Edit/5
@@ -148,13 +170,19 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators")] Workbook workbook)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind(
+                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators"
+            )]
+                Workbook workbook
+        )
         {
             if (id != workbook.WorkbookId)
             {
                 return NotFound();
             }
-            
+
             ModelState.Remove(nameof(workbook.LearningPlatform));
             ModelState.Remove(nameof(workbook.Weeks));
 
@@ -187,8 +215,10 @@ namespace CCM_Website.Areas.Admin.Controllers
                     Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
                 }
             }
-            ModelState.AddModelError("",
-                "An error occurred while creating the workbook. Please contact an administrator if this problem persists.");
+            ModelState.AddModelError(
+                "",
+                "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
+            );
             return View(workbook);
         }
 
@@ -200,8 +230,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var workbook = await _context.Workbooks
-                .FirstOrDefaultAsync(m => m.WorkbookId == id);
+            var workbook = await _context.Workbooks.FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
                 return NotFound();

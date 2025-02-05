@@ -12,9 +12,9 @@ namespace CCM_Website.Models
         public required string CourseLead { get; set; }
         public int CourseLength { get; set; }
         public DateTime LastEdited { get; set; }
-        public required string CourseCode { get; set; } 
+        public required string CourseCode { get; set; }
         public string? Collaborators { get; set; }
-        
+
         public string? PipReference { get; set; }
 
         // Navigation Properties

@@ -1,8 +1,8 @@
-using CCM_Website.Models;
-using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Linq;
 using CCM_Website.Data;
+using CCM_Website.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,18 +21,14 @@ namespace CCM_Website.Controllers
 
         public IActionResult Index()
         {
-            var myWorkbooks = _context.Workbooks
-                .OrderByDescending(w => w.LastEdited)
-                .ToList();
+            var myWorkbooks = _context.Workbooks.OrderByDescending(w => w.LastEdited).ToList();
 
-            var uofgWorkbooks = _context.Workbooks
-                .ToList();
+            var uofgWorkbooks = _context.Workbooks.ToList();
 
             ViewData["MyWorkbooks"] = myWorkbooks;
             ViewData["UofGWorkbooks"] = uofgWorkbooks;
             return View();
         }
-        
 
         public IActionResult Settings()
         {
@@ -42,7 +38,12 @@ namespace CCM_Website.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(
+                new ErrorViewModel
+                {
+                    RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                }
+            );
         }
     }
 }

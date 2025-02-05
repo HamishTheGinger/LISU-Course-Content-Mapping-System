@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CCM_Website.Models {
-    public class TaskProgressStatus {
+namespace CCM_Website.Models
+{
+    public class TaskProgressStatus
+    {
         [Key]
         public int StatusId { get; set; }
 

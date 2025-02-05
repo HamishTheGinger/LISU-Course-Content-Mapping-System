@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CCM_Website.Data;
-using CCM_Website.Models;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -34,8 +34,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var taskLocation = await _context.TaskLocation
-                .FirstOrDefaultAsync(m => m.LocationId == id);
+            var taskLocation = await _context.TaskLocation.FirstOrDefaultAsync(m =>
+                m.LocationId == id
+            );
             if (taskLocation == null)
             {
                 return NotFound();
@@ -87,7 +88,10 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("LocationId,LocationName")] TaskLocation taskLocation)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("LocationId,LocationName")] TaskLocation taskLocation
+        )
         {
             if (id != taskLocation.LocationId)
             {
@@ -125,8 +129,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var taskLocation = await _context.TaskLocation
-                .FirstOrDefaultAsync(m => m.LocationId == id);
+            var taskLocation = await _context.TaskLocation.FirstOrDefaultAsync(m =>
+                m.LocationId == id
+            );
             if (taskLocation == null)
             {
                 return NotFound();

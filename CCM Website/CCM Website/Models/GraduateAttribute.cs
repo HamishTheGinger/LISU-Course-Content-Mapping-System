@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CCM_Website.Models {
-    public class GraduateAttribute {
+namespace CCM_Website.Models
+{
+    public class GraduateAttribute
+    {
         [Key]
         public int AttributeId { get; set; }
 
