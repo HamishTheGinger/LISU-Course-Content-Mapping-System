@@ -14,11 +14,7 @@
         <form asp-action="EditActivity">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="WeekActivityId" />
-            <div class="form-group">
-                <label asp-for="TaskOrder" class="control-label">Task Order</label>
-                <input asp-for="TaskOrder" class="form-control" />
-                <span asp-validation-for="TaskOrder" class="text-danger"></span>
-            </div>
+            <input type="hidden" asp-for="TaskOrder" />
             <input type="hidden" asp-for="WeekId" />
             <div class="form-group">
                 <label asp-for="WeekId" class="control-label">Week</label>

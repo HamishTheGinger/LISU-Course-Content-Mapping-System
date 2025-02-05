@@ -539,6 +539,66 @@ namespace CCM_Website.Controllers
         private bool WeekActivitiesExists(int id) {
             return _context.WeekActivities.Any(e => e.WeekActivityId == id);
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> ActivityUp([FromBody] int id)
+        {
+           
+            var activity = await _context.WeekActivities
+                .FirstOrDefaultAsync(a => a.WeekActivityId == id);
+
+            if (activity == null)
+            {
+                return NotFound();
+            }
+
+            var taskToSwap = await _context.WeekActivities
+                .FirstOrDefaultAsync(a => a.TaskOrder == activity.TaskOrder - 1);
+
+            if (taskToSwap == null)
+            {
+                return NoContent();  
+            }
+            
+            int tempOrder = activity.TaskOrder;
+            activity.TaskOrder = taskToSwap.TaskOrder;
+            taskToSwap.TaskOrder = tempOrder;
+            
+            _context.Update(activity);
+            _context.Update(taskToSwap);
+            await _context.SaveChangesAsync();
+            
+            return NoContent(); 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActivityDown([FromBody] int id)
+        {
+            var activity = await _context.WeekActivities
+                .FirstOrDefaultAsync(a => a.WeekActivityId == id);
+
+            if (activity == null)
+            {
+                return NotFound();
+            }
+
+            var taskToSwap = await _context.WeekActivities
+                .FirstOrDefaultAsync(a => a.TaskOrder == activity.TaskOrder + 1);
+
+            if (taskToSwap == null)
+            {
+                return NoContent();  
+            }
+            
+            int tempOrder = activity.TaskOrder;
+            activity.TaskOrder = taskToSwap.TaskOrder;
+            taskToSwap.TaskOrder = tempOrder;
+            
+            _context.Update(activity);
+            _context.Update(taskToSwap);
+            await _context.SaveChangesAsync();
+            
+            return NoContent(); 
+        }
     }
-    
 }
