@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CCM_Website.Models {
-    public class LearningApproach {
+namespace CCM_Website.Models
+{
+    public class LearningApproach
+    {
         [Key]
         public int ApproachId { get; set; }
 

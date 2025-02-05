@@ -64,6 +64,9 @@ lint-test-website:
   stage: test
   script:
     - echo "Linting code..."
+    - dotnet tool install --global csharpier
+    - export PATH="$PATH:/root/.dotnet/tools"
+    - dotnet csharpier --check .
     - echo "Linting Complete"
   only:
     - merge_requests

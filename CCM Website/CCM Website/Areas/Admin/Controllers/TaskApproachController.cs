@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CCM_Website.Data;
-using CCM_Website.Models;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -34,8 +34,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var taskApproach = await _context.TaskApproach
-                .FirstOrDefaultAsync(m => m.ApproachId == id);
+            var taskApproach = await _context.TaskApproach.FirstOrDefaultAsync(m =>
+                m.ApproachId == id
+            );
             if (taskApproach == null)
             {
                 return NotFound();
@@ -55,7 +56,9 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ApproachId,ApproachName")] TaskApproach taskApproach)
+        public async Task<IActionResult> Create(
+            [Bind("ApproachId,ApproachName")] TaskApproach taskApproach
+        )
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +90,10 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ApproachId,ApproachName")] TaskApproach taskApproach)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("ApproachId,ApproachName")] TaskApproach taskApproach
+        )
         {
             if (id != taskApproach.ApproachId)
             {
@@ -125,8 +131,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var taskApproach = await _context.TaskApproach
-                .FirstOrDefaultAsync(m => m.ApproachId == id);
+            var taskApproach = await _context.TaskApproach.FirstOrDefaultAsync(m =>
+                m.ApproachId == id
+            );
             if (taskApproach == null)
             {
                 return NotFound();

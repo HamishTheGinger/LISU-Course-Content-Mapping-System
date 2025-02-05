@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CCM_Website.Data;
-using CCM_Website.Models;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -34,8 +34,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var taskProgressStatus = await _context.TaskProgressStatus
-                .FirstOrDefaultAsync(m => m.StatusId == id);
+            var taskProgressStatus = await _context.TaskProgressStatus.FirstOrDefaultAsync(m =>
+                m.StatusId == id
+            );
             if (taskProgressStatus == null)
             {
                 return NotFound();
@@ -55,7 +56,9 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StatusName")] TaskProgressStatus taskProgressStatus)
+        public async Task<IActionResult> Create(
+            [Bind("StatusName")] TaskProgressStatus taskProgressStatus
+        )
         {
             if (ModelState.IsValid)
             {
@@ -87,7 +90,10 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StatusId,StatusName")] TaskProgressStatus taskProgressStatus)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("StatusId,StatusName")] TaskProgressStatus taskProgressStatus
+        )
         {
             if (id != taskProgressStatus.StatusId)
             {
@@ -125,8 +131,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var taskProgressStatus = await _context.TaskProgressStatus
-                .FirstOrDefaultAsync(m => m.StatusId == id);
+            var taskProgressStatus = await _context.TaskProgressStatus.FirstOrDefaultAsync(m =>
+                m.StatusId == id
+            );
             if (taskProgressStatus == null)
             {
                 return NotFound();

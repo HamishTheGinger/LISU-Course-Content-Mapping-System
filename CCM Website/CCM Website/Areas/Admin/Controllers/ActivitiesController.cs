@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CCM_Website.Data;
-using CCM_Website.Models;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -35,8 +35,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var activities = await _context.Activities
-                .FirstOrDefaultAsync(m => m.ActivityId == id);
+            var activities = await _context.Activities.FirstOrDefaultAsync(m => m.ActivityId == id);
             if (activities == null)
             {
                 return NotFound();
@@ -46,11 +45,12 @@ namespace CCM_Website.Areas.Admin.Controllers
         }
 
         // GET: Admin/Activities/Create
-        public IActionResult Create() {
-            var platforms = _context.LearningPlatforms.ToList();  // _context is your DB context
-            
+        public IActionResult Create()
+        {
+            var platforms = _context.LearningPlatforms.ToList(); // _context is your DB context
+
             ViewBag.LearningPlatforms = new SelectList(platforms, "PlatformId", "PlatformName");
-            
+
             return View();
         }
 
@@ -59,9 +59,11 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ActivityId,ActivityName")] Activities activities)
+        public async Task<IActionResult> Create(
+            [Bind("ActivityId,ActivityName")] Activities activities
+        )
         {
-            var platforms = _context.LearningPlatforms.ToList();  // _context is your DB context
+            var platforms = _context.LearningPlatforms.ToList(); // _context is your DB context
             ViewBag.LearningPlatforms = new SelectList(platforms, "PlatformId", "PlatformName");
 
             try
@@ -72,28 +74,35 @@ namespace CCM_Website.Areas.Admin.Controllers
             catch (Exception e)
             {
                 Console.WriteLine($"Model Creation Error: {e.Message}");
-                ModelState.AddModelError("", "An error occurred while saving the activity. Please try again later.");
+                ModelState.AddModelError(
+                    "",
+                    "An error occurred while saving the activity. Please try again later."
+                );
                 return View(activities);
             }
-            
+
             ModelState.Remove(nameof(activities.WeekActivities));
             ModelState.Remove(nameof(activities.LearningPlatformActivities));
-            
+
             if (ModelState.IsValid)
             {
-                try {
+                try
+                {
                     _context.Add(activities);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (Exception exp) {
+                catch (Exception exp)
+                {
                     Console.WriteLine($"Model Creation Error: {exp.Message}");
-                    ModelState.AddModelError("", "An error occurred while saving the workbook. Please try again later.");
+                    ModelState.AddModelError(
+                        "",
+                        "An error occurred while saving the workbook. Please try again later."
+                    );
                     return View(activities);
                 }
-                
             }
-            
+
             Console.WriteLine("Error creating model");
             return View(activities);
         }
@@ -119,7 +128,10 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ActivityId,ActivityName")] Activities activities)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("ActivityId,ActivityName")] Activities activities
+        )
         {
             if (id != activities.ActivityId)
             {
@@ -157,8 +169,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var activities = await _context.Activities
-                .FirstOrDefaultAsync(m => m.ActivityId == id);
+            var activities = await _context.Activities.FirstOrDefaultAsync(m => m.ActivityId == id);
             if (activities == null)
             {
                 return NotFound();
