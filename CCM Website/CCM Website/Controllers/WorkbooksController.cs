@@ -49,6 +49,37 @@ namespace CCM_Website.Controllers
             return View("Search", searchResults);
         }
 
+        //GET: Courses/Filter
+        [HttpGet]
+        public async Task<IActionResult> Filter(string searchPhrase, string filterPhrase)
+        {
+            var workbooks = _context.Workbooks.AsQueryable();
+
+            // First, apply the search term (if provided)
+            if (!string.IsNullOrEmpty(searchPhrase))
+            {
+                workbooks = workbooks.Where(w =>
+                    EF.Functions.Like(w.CourseName, $"%{searchPhrase}%")
+                    || EF.Functions.Like(w.CourseLead, $"%{searchPhrase}%")
+                );
+            }
+
+            // Then, apply the filter to the search results (if provided)
+            if (!string.IsNullOrEmpty(filterPhrase))
+            {
+                workbooks = workbooks.Where(w =>
+                    EF.Functions.Like(w.CourseName, $"%{filterPhrase}%")
+                    || EF.Functions.Like(w.CourseLead, $"%{filterPhrase}%")
+                );
+            }
+
+            // Preserve search and filter values in ViewData
+            ViewData["SearchPhrase"] = searchPhrase;
+            ViewData["FilterPhrase"] = filterPhrase;
+
+            return View("Search", await workbooks.ToListAsync()); // Return filtered results to Search.cshtml
+        }
+
         // GET: Courses/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -722,66 +753,69 @@ namespace CCM_Website.Controllers
         {
             return _context.WeekActivities.Any(e => e.WeekActivityId == id);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> ActivityUp([FromBody] int id)
         {
-           
-            var activity = await _context.WeekActivities
-                .FirstOrDefaultAsync(a => a.WeekActivityId == id);
+            var activity = await _context.WeekActivities.FirstOrDefaultAsync(a =>
+                a.WeekActivityId == id
+            );
 
             if (activity == null)
             {
                 return NotFound();
             }
 
-            var taskToSwap = await _context.WeekActivities
-                .FirstOrDefaultAsync(a => a.TaskOrder == activity.TaskOrder - 1);
+            var taskToSwap = await _context.WeekActivities.FirstOrDefaultAsync(a =>
+                a.TaskOrder == activity.TaskOrder - 1
+            );
 
             if (taskToSwap == null)
             {
-                return NoContent();  
+                return NoContent();
             }
-            
+
             int tempOrder = activity.TaskOrder;
             activity.TaskOrder = taskToSwap.TaskOrder;
             taskToSwap.TaskOrder = tempOrder;
-            
+
             _context.Update(activity);
             _context.Update(taskToSwap);
             await _context.SaveChangesAsync();
-            
-            return NoContent(); 
+
+            return NoContent();
         }
 
         [HttpPost]
         public async Task<IActionResult> ActivityDown([FromBody] int id)
         {
-            var activity = await _context.WeekActivities
-                .FirstOrDefaultAsync(a => a.WeekActivityId == id);
+            var activity = await _context.WeekActivities.FirstOrDefaultAsync(a =>
+                a.WeekActivityId == id
+            );
 
             if (activity == null)
             {
                 return NotFound();
             }
 
-            var taskToSwap = await _context.WeekActivities
-                .FirstOrDefaultAsync(a => a.TaskOrder == activity.TaskOrder + 1);
+            var taskToSwap = await _context.WeekActivities.FirstOrDefaultAsync(a =>
+                a.TaskOrder == activity.TaskOrder + 1
+            );
 
             if (taskToSwap == null)
             {
-                return NoContent();  
+                return NoContent();
             }
-            
+
             int tempOrder = activity.TaskOrder;
             activity.TaskOrder = taskToSwap.TaskOrder;
             taskToSwap.TaskOrder = tempOrder;
-            
+
             _context.Update(activity);
             _context.Update(taskToSwap);
             await _context.SaveChangesAsync();
-            
-            return NoContent(); 
+
+            return NoContent();
         }
     }
 }
