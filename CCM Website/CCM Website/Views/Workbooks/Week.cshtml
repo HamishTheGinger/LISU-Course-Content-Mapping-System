@@ -16,7 +16,7 @@
             <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4> 
         </div>
         <div class="col-md-2 d-flex text-center justify-content-center">
-            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" class="btn btn-primary rounded-pill text-decoration-none d-flex justify-content-center align-items-center bg-secondary" >Add Activity</a>
+            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" class="btn btn-primary rounded-pill text-decoration-none d-flex justify-content-center align-items-center" >Create Activity</a>
         </div>
     </div>
     <div class="row">
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center table-responsive">
-                    <button class="btn btn-primary m-3 rounded-pill bg-secondary" id="lt_table_hide"> <span id="arrow_stats">▼</span> Statistics</button>
+                    <button class="btn btn-primary m-3 rounded-pill " id="lt_table_hide"> <span id="arrow_stats">▼</span> Statistics</button>
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
                         <table id="stats_table" class="table table-bordered" style="display:block">
@@ -157,7 +157,7 @@
 
                 </div>
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center">
-                    <button class="btn btn-primary m-3 rounded-pill bg-secondary" id="lt_chart_hide"> <span id="arrow_chart">▼</span> Chart</button>
+                    <button class="btn btn-primary m-3 rounded-pill" id="lt_chart_hide"> <span id="arrow_chart">▼</span> Chart</button>
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
                         <div id="lt_chart" style="display:block"></div>
@@ -169,7 +169,7 @@
             </div>
 
             <div class="text-center d-flex justify-content-center">
-                <button class="btn btn-primary m-3 rounded-pill bg-secondary" id="legend_btn"> <span id="arrow_legend">▲</span> Legend</button>
+                <button class="btn btn-primary m-3 rounded-pill" id="legend_btn"> <span id="arrow_legend">▲</span> Legend</button>
             </div>
 
         </div>
