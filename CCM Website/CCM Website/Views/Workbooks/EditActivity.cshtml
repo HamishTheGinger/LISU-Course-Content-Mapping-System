@@ -1,13 +1,11 @@
 ﻿@model CCM_Website.Models.WeekActivities
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Activity";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
-
-<h4>WeekActivities</h4>
+<h4>Enter updated activity details</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -64,7 +62,7 @@
             </div>
             <br/>
             <div class="form-group">
-                <input type="submit" value="Edit" class="btn btn-primary"/>
+                <input type="submit" value="Save Changes" class="btn btn-primary"/>
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>
         </form>

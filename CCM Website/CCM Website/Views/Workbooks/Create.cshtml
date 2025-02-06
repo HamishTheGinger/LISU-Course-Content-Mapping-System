@@ -5,8 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<h4>Enter new workbook details</h4>
+<hr/>
 <div class="container">
-    <h4>Please enter the details for your new workbook</h4>
+
     <form asp-action="Create" method="post">
         @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
