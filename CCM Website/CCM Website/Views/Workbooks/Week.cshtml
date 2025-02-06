@@ -241,38 +241,56 @@
             var upButton = document.createElement('button');
             upButton.textContent = "▲";
 
-            upButton.style.display = index !== 0 ? "block" : "none";
+            upButton.disabled = index === 0;
             upButton.style.background = "none";
             upButton.style.border = "none";
+            upButton.id = `upButton-${index}`;
 
             upButton.addEventListener("mouseover", function() {
-                upButton.style.color = "#0d6efd";
+                if (!upButton.disabled) {
+                    upButton.style.color = "#0d6efd";
+                }
             });
             upButton.addEventListener("mouseout", function() {
                 upButton.style.color = "";
             });
-            upButton.onclick = function() {
-                moveRow(index, -1);
-            };
-            actionCell.appendChild(upButton);
 
             var downButton = document.createElement('button');
             downButton.textContent = "▼";
 
-            downButton.style.display = index !== weekTableData.length -1 ? "block" : "none";
             downButton.style.background = "none";
             downButton.style.border = "none";
+            downButton.disabled = index === weekTableData.length - 1;
+            downButton.id = `downButton-${index}`;
 
             downButton.addEventListener("mouseover", function() {
-                downButton.style.color = "#0d6efd";
+                if (!downButton.disabled) {
+                    downButton.style.color = "#0d6efd";
+                }
             });
             downButton.addEventListener("mouseout", function() {
                 downButton.style.color = "";
             });
+
+            upButton.onclick = function() {
+                moveRow(index, -1);
+                setTimeout(() => {
+                    refocusArrows(index - 1, "up");
+                }, 0);
+            };
+
             downButton.onclick = function() {
                 moveRow(index, 1);
+                setTimeout(() => {
+                    refocusArrows(index + 1, "down");
+                }, 0);
             };
+
+            actionCell.appendChild(upButton);
             actionCell.appendChild(downButton);
+
+            actionCell.classList.add("d-flex", "flex-column","gap-4");
+            actionCell.style.border = "none";
 
             row.appendChild(actionCell);
 
@@ -440,6 +458,7 @@
         key.style.display = newDisplay;
         if (currentDisplay === "none") {
             arrow.innerHTML = "▲";
+            refocusButton("lt_chart");
         } else {
             arrow.innerHTML = "▼";
         }
@@ -469,6 +488,7 @@
 
         if (legend.style.display === "block") {
             arrow.innerHTML = "▼";
+            refocusButton("legend");
 
         } else {
             arrow.innerHTML = "▲";
@@ -486,6 +506,7 @@
 
         if (currentDisplay === "none") {
             arrow.innerHTML = "▲";
+            refocusButton("stats_table");
         } else {
             arrow.innerHTML = "▼";
         }
@@ -555,7 +576,31 @@
             .catch(error => console.error('Error:', error));
     }
 
+    function refocusArrows(newIndex, direction) {
+
+        if (direction === "up") {
+            let upButton = document.getElementById(`upButton-${newIndex}`);
+            upButton.focus();
+            upButton.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else if (direction === "down") {
+            let downButton = document.getElementById(`downButton-${newIndex}`);
+            downButton.focus();
+            downButton.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }
+
+    function refocusButton(id) {
+
+        let content = document.getElementById(`${id}`);
+        content.focus();
+        content.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    
 </script>
+
+
+
+
 
 
 
