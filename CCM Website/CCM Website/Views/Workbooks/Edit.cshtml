@@ -41,8 +41,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="LearningPlatformId" class="control-label">Learning Platform</label>
-                <input  value="1" disabled class="form-control" />
-                <input type="hidden" asp-for="LearningPlatformId" value="1" class="form-control" />
+                <select asp-for="LearningPlatformId" asp-items="ViewBag.LearningPlatforms" class="form-control">
+                    <option value="">-- Select Learning Platform --</option>
+                </select>
                 <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
             </div>
             <div class="form-group">

@@ -18,7 +18,7 @@
             <span asp-validation-for="CourseName" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="CourseCode" class="control-label">Course Name</label>
+            <label asp-for="CourseCode" class="control-label"></label>
             <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code" />
             <span asp-validation-for="CourseCode" class="text-danger"></span>
         </div>
@@ -39,8 +39,9 @@
         </div>
         <div class="form-group">
             <label asp-for="LearningPlatformId" class="control-label">Learning Platform</label>
-            <input  value="1" disabled class="form-control" />
-            <input type="hidden" asp-for="LearningPlatformId" value="1" class="form-control" />
+            <select asp-for="LearningPlatformId" asp-items="ViewBag.LearningPlatforms" class="form-control" required>
+                <option value="">-- Select a Learning Platform --</option>
+            </select>
             <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
         </div>
         <div class="form-group">
