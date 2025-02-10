@@ -46,6 +46,11 @@ namespace CCM_Website.Areas.Admin.Controllers
         // GET: Admin/Workbook/Create
         public IActionResult Create()
         {
+            ViewBag.LearningPlatforms = new SelectList(
+                _context.LearningPlatforms,
+                "PlatformId",
+                "PlatformName"
+            );
             return View();
         }
 
@@ -66,14 +71,23 @@ namespace CCM_Website.Areas.Admin.Controllers
                 var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp =>
                     lp.PlatformId == workbook.LearningPlatformId
                 );
+
                 workbook.LearningPlatform = learningPlatform;
+
                 if (workbook.LearningPlatform == null)
                 {
-                    Console.WriteLine($"ERROR: Failed to link Workbook to Learning Platform");
+                    Console.WriteLine("ERROR: Failed to link Workbook to Learning Platform");
                     ModelState.AddModelError(
                         "",
                         "An error occurred while saving the workbook. Please try again later."
                     );
+
+                    ViewBag.LearningPlatforms = new SelectList(
+                        _context.LearningPlatforms,
+                        "PlatformId",
+                        "PlatformName"
+                    );
+
                     return View(workbook);
                 }
             }
@@ -84,6 +98,13 @@ namespace CCM_Website.Areas.Admin.Controllers
                     "",
                     "An error occurred while saving the workbook. Please try again later."
                 );
+
+                ViewBag.LearningPlatforms = new SelectList(
+                    _context.LearningPlatforms,
+                    "PlatformId",
+                    "PlatformName"
+                );
+
                 return View(workbook);
             }
 
@@ -99,7 +120,6 @@ namespace CCM_Website.Areas.Admin.Controllers
                     await _context.SaveChangesAsync();
 
                     int numberOfWeeks = workbook.CourseLength;
-
                     var weeks = new List<Week>();
 
                     for (int i = 1; i <= numberOfWeeks; i++)
@@ -118,7 +138,6 @@ namespace CCM_Website.Areas.Admin.Controllers
 
                     workbook.Weeks = weeks;
                     _context.AddRange(weeks);
-
                     await _context.SaveChangesAsync();
 
                     return RedirectToAction(nameof(Index));
@@ -130,6 +149,13 @@ namespace CCM_Website.Areas.Admin.Controllers
                         "",
                         "An error occurred while saving the workbook. Please try again later."
                     );
+
+                    ViewBag.LearningPlatforms = new SelectList(
+                        _context.LearningPlatforms,
+                        "PlatformId",
+                        "PlatformName"
+                    );
+
                     return View(workbook);
                 }
             }
@@ -138,14 +164,21 @@ namespace CCM_Website.Areas.Admin.Controllers
             {
                 foreach (var error in state.Value.Errors)
                 {
-                    // Log each error (you could also store or display them if needed)
                     Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
                 }
             }
+
             ModelState.AddModelError(
                 "",
                 "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
             );
+
+            ViewBag.LearningPlatforms = new SelectList(
+                _context.LearningPlatforms,
+                "PlatformId",
+                "PlatformName"
+            );
+
             return View(workbook);
         }
 
@@ -157,11 +190,20 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var workbook = await _context.Workbooks.FindAsync(id);
+            var workbook = await _context
+                .Workbooks.Include(w => w.LearningPlatform)
+                .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
                 return NotFound();
             }
+
+            ViewBag.LearningPlatforms = new SelectList(
+                _context.LearningPlatforms,
+                "PlatformId",
+                "PlatformName",
+                workbook.LearningPlatformId
+            );
             return View(workbook);
         }
 
@@ -190,6 +232,25 @@ namespace CCM_Website.Areas.Admin.Controllers
             {
                 try
                 {
+                    var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(
+                        lp => lp.PlatformId == workbook.LearningPlatformId
+                    );
+                    if (learningPlatform == null)
+                    {
+                        ModelState.AddModelError(
+                            "LearningPlatformId",
+                            "Invalid Learning Platform selected."
+                        );
+                        ViewBag.LearningPlatforms = new SelectList(
+                            _context.LearningPlatforms,
+                            "PlatformId",
+                            "PlatformName",
+                            workbook.LearningPlatformId
+                        );
+                        return View(workbook);
+                    }
+
+                    workbook.LearningPlatform = learningPlatform;
                     workbook.LastEdited = DateTime.Now;
                     _context.Update(workbook);
                     await _context.SaveChangesAsync();
@@ -207,6 +268,14 @@ namespace CCM_Website.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.LearningPlatforms = new SelectList(
+                _context.LearningPlatforms,
+                "PlatformId",
+                "PlatformName",
+                workbook.LearningPlatformId
+            );
+
             foreach (var state in ModelState)
             {
                 foreach (var error in state.Value.Errors)
