@@ -17,8 +17,13 @@
     --bs-stats-total: #FFFFCC;
     --bs-remote: #FDEBAC;
     --bs-on-campus: #FBCED0;
+    --bs-font-pt-sans: "PT Sans", Tahoma, Verdana, sans-serif;
+    --bs-body-font-family: var(--bs-font-pt-sans);
+    --bs-body-font-size: 14px;
+    --bs-body-font-weight: 400;
+    --bs-body-font-style: normal;
+    
 }
-
 .bg-primary {
     background-color: var(--bs-primary) !important;
 }
