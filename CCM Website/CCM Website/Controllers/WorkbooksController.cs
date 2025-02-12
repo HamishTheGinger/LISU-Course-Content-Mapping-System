@@ -435,6 +435,7 @@ namespace CCM_Website.Controllers
             ViewBag.learningTypeCounts = learningTypeCounts;
             ViewBag.locationCount = locationCount;
             ViewBag.progressCount = progressCount;
+            ViewData["LearningTypes"] = await _context.LearningType.ToListAsync();
 
             var viewModel = new WeekDetailsViewModel { Week = week, ActivitiesList = activities };
             return View(viewModel);

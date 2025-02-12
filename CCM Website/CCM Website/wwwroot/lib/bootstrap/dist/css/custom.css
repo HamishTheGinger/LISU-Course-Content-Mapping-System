@@ -10,7 +10,13 @@
     --bs-secondary: #005398; /*UOFG Secondary*/
     --bs-main: #f7f7f7; /*Grey for main content*/
     --bs-week-table: #00B050;
-    --bs-stats-table: #003864;
+    --bs-stats-table: #0070C0;
+    --bs-red: #FF0000;
+    --bs-amber: #FFC000;
+    --bs-green: #00B050;
+    --bs-stats-total: #FFFFCC;
+    --bs-remote: #FDEBAC;
+    --bs-on-campus: #FBCED0;
 }
 
 .bg-primary {
@@ -60,4 +66,27 @@
     box-shadow: 0 0 0 0.25rem rgba(49, 132, 253, 0.5);
 }
 
+.bg-red {
+    background-color: var(--bs-red) !important;
+}
+
+.bg-amber {
+    background-color: var(--bs-amber) !important;
+}
+
+.bg-green {
+    background-color: var(--bs-green) !important;
+}
+
+.bg-stats-total {
+    background-color: var(--bs-stats-total) !important;
+}
+
+.bg-on-campus {
+    background-color: var(--bs-on-campus) !important;
+}
+
+.bg-remote {
+    background-color: var(--bs-remote) !important;
+}
 
