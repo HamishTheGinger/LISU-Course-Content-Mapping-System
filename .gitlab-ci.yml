@@ -55,6 +55,7 @@ unit-test-website:
   stage: test
   script:
     - echo "Running unit tests..."
+    - dotnet restore
     - dotnet test --no-restore --configuration Release
     - echo "Tests complete"
   only:
