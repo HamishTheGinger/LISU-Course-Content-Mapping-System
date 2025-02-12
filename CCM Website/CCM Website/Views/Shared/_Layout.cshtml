@@ -24,9 +24,9 @@
     </div>
 </header>
 <div class="container-fluid d-flex flex-column min-vh-100">
-    <div class="row flex-grow-1">
+    <div class="row flex-grow-1 bg-primary">
 
-            <nav class="col-md-2 navbar navbar-expand-md flex-column align-items-start p-3 bg-primary h-auto">
+            <nav class="col-md-2 navbar navbar-expand-md flex-column align-items-start p-3 h-100 overflow-auto sticky-top">
 
                 <ul class="navbar-nav flex-column w-100">
                     <li class="nav-item">
@@ -77,4 +77,15 @@
         padding: 0;
     }   
 </style>
+
+<script>
+    window.addEventListener("resize", function () {
+        const nav = document.querySelector("nav");
+        if (window.innerWidth < 768) {
+            nav.classList.remove("sticky-top");
+        } else {
+            nav.classList.add("sticky-top");
+        }
+    });
+</script>
 
