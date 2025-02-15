@@ -24,6 +24,11 @@
                 <span asp-validation-for="LearningTypeColour" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="LearningTypeTextColour" class="control-label"></label>
+                <input asp-for="LearningTypeTextColour" class="form-control" />
+                <span asp-validation-for="LearningTypeTextColour" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>
