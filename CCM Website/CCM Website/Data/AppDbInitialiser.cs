@@ -53,36 +53,43 @@ namespace CCM_Website.Data
                         {
                             LearningTypeName = "Acquisition",
                             LearningTypeColour = "#A1F5ED",
+                            LearningTypeTextColour = "#000000",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Collaboration",
                             LearningTypeColour = "#FFD21A",
+                            LearningTypeTextColour = "#000000",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Discussion",
                             LearningTypeColour = "#7AAEEA",
+                            LearningTypeTextColour = "#000000",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Investigation",
                             LearningTypeColour = "#F8807F",
+                            LearningTypeTextColour = "#000000",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Practice",
                             LearningTypeColour = "#BB98DC",
+                            LearningTypeTextColour = "#000000",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Production",
                             LearningTypeColour = "#BDEA75",
+                            LearningTypeTextColour = "#000000",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Assessment",
                             LearningTypeColour = "#44546A",
+                            LearningTypeTextColour = "#fff",
                         },
                     };
 

@@ -35,8 +35,18 @@ public class DatabaseFixture : IDisposable
 
         var learningTypes = new[]
         {
-            new LearningType { LearningTypeName = "Acquisition", LearningTypeColour = "#A1F5ED" },
-            new LearningType { LearningTypeName = "Collaboration", LearningTypeColour = "#FFD21A" },
+            new LearningType
+            {
+                LearningTypeName = "Acquisition",
+                LearningTypeColour = "#A1F5ED",
+                LearningTypeTextColour = "#fff",
+            },
+            new LearningType
+            {
+                LearningTypeName = "Collaboration",
+                LearningTypeColour = "#FFD21A",
+                LearningTypeTextColour = "#fff",
+            },
         };
         var workbooks = new List<Workbook>
         {

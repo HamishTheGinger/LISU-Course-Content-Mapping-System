@@ -12,4 +12,7 @@ public class LearningType
 
     [RegularExpression("^#(?:[0-9a-fA-F]{3}){1,2}$", ErrorMessage = "Invalid hex color code.")]
     public string LearningTypeColour { get; set; }
+
+    [RegularExpression("^#(?:[0-9a-fA-F]{3}){1,2}$", ErrorMessage = "Invalid hex color code.")]
+    public string LearningTypeTextColour { get; set; }
 }
