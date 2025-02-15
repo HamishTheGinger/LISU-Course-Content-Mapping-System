@@ -1,11 +1,21 @@
 @model IEnumerable<CCM_Website.Models.TaskProgressStatus>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Task Progress Status";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Task Status</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col"><h1>Task Status</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
 
 <p>
     <a asp-action="Create">Create New</a>

@@ -5,7 +5,13 @@
     ViewData["LearningPlatform"] = $"{@Model.LearningPlatform.PlatformName}";
 }
 
-
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Workbook Details</li>
+    </ol>
+</nav>
 <!-- Main part of workbook page with buttons-->
 <div class="container-fluid">
 
@@ -150,7 +156,7 @@
             <div class="col-md-2 right-column d-flex flex-column align-items-end">
                 @foreach (var week in @Model.Weeks)
                 {
-                    <a class="btn btn-primary mb-2 rounded-pill" style="background-color: #005398" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
+                    <a class="btn btn-primary mb-2 rounded-pill" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
                 }
             </div>
 

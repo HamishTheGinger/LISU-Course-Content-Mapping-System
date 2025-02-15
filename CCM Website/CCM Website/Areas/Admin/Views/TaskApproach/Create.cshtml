@@ -1,13 +1,23 @@
 @model CCM_Website.Models.TaskApproach
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Task Approach";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="TaskApproach" asp-action="Index">Task Approach</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
+    </ol>
+</nav>
 
-<h4>TaskApproach</h4>
+<div class="row">
+    <div class="col"><h1>Create Task Approach</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
+
 <hr />
 <div class="row">
     <div class="col-md-4">

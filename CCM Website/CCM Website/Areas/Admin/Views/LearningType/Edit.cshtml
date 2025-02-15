@@ -1,13 +1,22 @@
 @model CCM_Website.Models.LearningType
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Learning Type";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="LearningType" asp-action="Index">Learning Type</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+</nav>
 
-<h1>Edit</h1>
+<div class="row">
+    <div class="col"><h1>Edit Learning Type</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
 
-<h4>LearningType</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">

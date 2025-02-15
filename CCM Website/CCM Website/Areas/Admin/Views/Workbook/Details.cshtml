@@ -5,6 +5,19 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Workbook" asp-action="Index">Workbook</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col"><h1>Workbook Details</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
+
 <div>
     <h4>@Html.DisplayFor(model => model.CourseName)</h4>
     <hr/>

@@ -449,11 +449,17 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
-            var weekActivity = await _context.WeekActivities.FindAsync(id);
+            var weekActivity = await _context
+                .WeekActivities.Include(w => w.Week)
+                .FirstOrDefaultAsync(w => w.WeekActivityId == id);
+
             if (weekActivity == null)
             {
                 return NotFound();
             }
+
+            ViewBag.WorkbookId = weekActivity.Week.WorkbookId;
+            ViewBag.CrumbWeekId = weekActivity.Week.WeekId;
 
             ViewData["WeekId"] = new SelectList(
                 _context.Weeks,
@@ -641,11 +647,21 @@ namespace CCM_Website.Controllers
         }
 
         // GET: WeekActivities/Create
-        public IActionResult CreateActivity(int id)
+        public IActionResult CreateActivity(int id, int weekId)
         {
             var filteredWeeks = _context.Weeks.Where(w => w.WorkbookId == id).ToList();
 
             Console.WriteLine($"Filtered Weeks: {filteredWeeks.Count}: {id}");
+
+            var crumbWeek = _context.Weeks.FirstOrDefault(w => w.WeekId == weekId);
+
+            if (crumbWeek == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.CrumbWorkbookId = id;
+            ViewBag.CrumbWeekId = crumbWeek.WeekId;
 
             ViewBag.WeekId = new SelectList(filteredWeeks, "WeekId", "WeekNumber");
             ViewBag.ActivitiesId = new SelectList(
@@ -673,6 +689,7 @@ namespace CCM_Website.Controllers
                 "StatusId",
                 "StatusName"
             );
+
             return View();
         }
 

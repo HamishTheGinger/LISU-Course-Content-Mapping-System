@@ -1,13 +1,22 @@
 @model CCM_Website.Models.GraduateAttribute
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Graduate Attribute";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="GraduateAttribute" asp-action="Index">Graduate Attribute List</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
+    </ol>
+</nav>
 
-<h1>Create</h1>
+<div class="row">
+    <div class="col"><h1>Create Graduate Attribute</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
 
-<h4>GraduateAttribute</h4>
 <hr />
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 <div class="row">
