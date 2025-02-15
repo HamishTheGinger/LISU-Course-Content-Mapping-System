@@ -1,14 +1,26 @@
 @model CCM_Website.Models.TaskProgressStatus
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Task Status Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="TaskProgressStatus" asp-action="Index">Task Status</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col"><h1>Task Status Details</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
+
 
 <div>
-    <h4>TaskStatus</h4>
+    
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">

@@ -1,11 +1,22 @@
 @model CCM_Website.Models.Week
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Week";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Week" asp-action="Index">Week</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col"><h1>Create</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
 
 <h4>Week</h4>
 <hr />

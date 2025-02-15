@@ -1,14 +1,24 @@
 @model CCM_Website.Models.GraduateAttribute
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Graduate Attribute Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="GraduateAttribute" asp-action="Index">Graduate Attribute List</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Details</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col"><h4>Graduate Attribute Details</h4></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
 
 <div>
-    <h4>GraduateAttribute</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">

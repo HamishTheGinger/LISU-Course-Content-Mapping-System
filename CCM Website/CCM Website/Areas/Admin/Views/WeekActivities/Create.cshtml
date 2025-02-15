@@ -1,11 +1,24 @@
 @model CCM_Website.Models.WeekActivities
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Week Activity";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create Week Activity</h2>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="WeekActivities" asp-action="Index">Week Activities</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col"><h1>Create Week Activity</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
+
+
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 <form asp-action="Create">
     <div class="form-group">

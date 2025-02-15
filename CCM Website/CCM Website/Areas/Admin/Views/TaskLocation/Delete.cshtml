@@ -1,11 +1,21 @@
 @model CCM_Website.Models.TaskLocation
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Delete Task Location";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="TaskLocation" asp-action="Index">Task Location</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Delete</li>
+    </ol>
+</nav>
 
-<h1>Delete</h1>
+<div class="row">
+    <div class="col"><h1>Delete Task Location</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
 
 <h3>Are you sure you want to delete this?</h3>
 <div>

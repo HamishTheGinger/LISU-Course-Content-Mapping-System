@@ -29,7 +29,8 @@ namespace CCM_Website.Test
             var controller = new WorkbooksController(_context);
 
             int wbid = 1;
-            var result = controller.CreateActivity(wbid) as ViewResult;
+            int wkid = 1;
+            var result = controller.CreateActivity(wbid, wkid) as ViewResult;
 
             Assert.NotNull(result);
             var selectList = Assert.IsType<SelectList>(result.ViewData["ActivitiesId"]);
@@ -45,7 +46,8 @@ namespace CCM_Website.Test
             var controller = new WorkbooksController(_context);
 
             int wbid = 1;
-            var result = controller.CreateActivity(wbid) as ViewResult;
+            int wkid = 1;
+            var result = controller.CreateActivity(wbid, wkid) as ViewResult;
 
             Assert.NotNull(result);
             var selectList = Assert.IsType<SelectList>(result.ViewData["LearningApproach"]);
@@ -61,8 +63,9 @@ namespace CCM_Website.Test
         {
             var controller = new WorkbooksController(_context);
             int wbId = 1;
+            int wkid = 1;
 
-            var result = controller.CreateActivity(wbId) as ViewResult;
+            var result = controller.CreateActivity(wbId, wkid) as ViewResult;
 
             Assert.NotNull(result);
             var selectList = Assert.IsType<SelectList>(result.ViewData["WeekId"]);

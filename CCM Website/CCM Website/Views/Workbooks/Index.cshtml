@@ -4,9 +4,17 @@
     ViewData["Title"] = "My Workbooks";
 }
 
-<p>
-    <a class="btn btn-success" asp-action="Create">Create New Workbook</a>
-</p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Workbooks</li>
+    </ol>
+</nav>
+
+
+<div class="col"><a class="btn btn-success" asp-action="Create">Create New Workbook</a></div>
+
+
 <table class="table">
     <thead>
         <tr>

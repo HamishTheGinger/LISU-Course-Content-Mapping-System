@@ -1,9 +1,22 @@
 @model IEnumerable<CCM_Website.Models.Workbook>
 
 @{
-    ViewData["Title"] = "Workbooks";
+    ViewData["Title"] = "Workbook";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Workbook</li>
+    </ol>
+</nav>
+
+<div class="row">
+    <div class="col"><h1>Workbook</h1></div>
+    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+</div>
+
 <p>
     <a class="btn btn-success" asp-action="Create">Create New</a>
 </p>
