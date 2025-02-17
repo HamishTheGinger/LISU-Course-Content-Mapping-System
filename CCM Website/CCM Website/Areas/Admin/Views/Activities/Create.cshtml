@@ -36,7 +36,7 @@
                 <label asp-for="LearningPlatformActivities" class="control-label"></label>
                 <select asp-for="LearningPlatformActivities" class="form-select form-control">
                     <option value="">-- Select a Platform --</option>
-                    @foreach (var platform in ViewBag.LearningPlatforms as SelectList)
+                    @foreach (var platform in (ViewBag.LearningPlatforms as SelectList) ?? new SelectList(Enumerable.Empty<SelectListItem>()))
                     {
                         <option value="@platform.Value">
                             @platform.Text

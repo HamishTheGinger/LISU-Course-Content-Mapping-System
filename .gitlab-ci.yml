@@ -3,6 +3,7 @@ image: mcr.microsoft.com/dotnet/sdk:8.0
 stages:
   - build
   - test
+  - lint
   - deploy
 
 variables:
@@ -10,6 +11,7 @@ variables:
   DOTNET_NOLOGO: 1
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   ASPNETCORE_ENVIRONMENT: 'Development'
+  NUGET_PACKAGES: "$CI_PROJECT_DIR/.nuget/packages"
 
 cache:
   key: ${CI_COMMIT_REF_SLUG}
@@ -26,10 +28,8 @@ before_script:
 build-website:
   stage: build
   script:
-    - echo "Compiling the code..."
     - dotnet restore
     - dotnet build --no-restore --configuration Release
-    - echo "Compile complete"
   only:
     - merge_requests
 
@@ -37,13 +37,10 @@ build-database:
   stage: build
   script:
     - cd "CCM Website/"
-    - echo "Installing EF Core tools..."
     - dotnet tool install --global dotnet-ef
-    - echo "Adding tools directory to PATH..."
     - export PATH="$PATH:/root/.dotnet/tools"
-    - echo "Adding migrations..."
-    - dotnet ef migrations add TestMigration
-    - echo "Applying migrations to database..."
+    - MIGRATION_NAME="auto_$(date +%Y%m%d%H%M%S)"
+    - dotnet ef migrations add $MIGRATION_NAME
     - dotnet ef database update
   artifacts:
     paths:
@@ -51,24 +48,33 @@ build-database:
   only:
     - merge_requests
 
-unit-test-website:
+unit-tests:
   stage: test
   script:
-    - echo "Running unit tests..."
     - dotnet restore
     - dotnet test --no-restore --configuration Release
-    - echo "Tests complete"
   only:
     - merge_requests
 
-lint-test-website:
+dotnet-warning-check:
   stage: test
   script:
-    - echo "Linting code..."
+    - dotnet clean
+    - dotnet restore
+    - dotnet build /p:TreatWarningsAsErrors=true
+  cache:
+    key: none
+  only:
+    - merge_requests
+
+linting-csharpier:
+  stage: lint
+  script:
     - dotnet tool install --global csharpier
     - export PATH="$PATH:/root/.dotnet/tools"
     - dotnet csharpier --check .
-    - echo "Linting Complete"
+  cache:
+    key: none
   only:
     - merge_requests
 

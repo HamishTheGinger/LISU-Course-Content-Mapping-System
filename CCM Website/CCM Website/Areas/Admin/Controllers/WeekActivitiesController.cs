@@ -199,23 +199,16 @@ namespace CCM_Website.Areas.Admin.Controllers
                 var weekEntity = await _context.Weeks.FirstOrDefaultAsync(wk =>
                     wk.WeekId == weekActivities.WeekId
                 );
-                weekActivities.Week = weekEntity;
 
                 var activity = await _context.Activities.FirstOrDefaultAsync(a =>
                     a.ActivityId == weekActivities.ActivitiesId
                 );
-                weekActivities.Activities = activity;
 
                 var learningType = await _context.LearningType.FirstOrDefaultAsync(lt =>
                     lt.LearningTypeId == weekActivities.LearningTypeId
                 );
-                weekActivities.LearningType = learningType;
 
-                if (
-                    weekActivities.Week == null
-                    || weekActivities.Activities == null
-                    || weekActivities.LearningType == null
-                )
+                if (weekEntity == null || activity == null || learningType == null)
                 {
                     Console.WriteLine("ERROR: Link Fail");
                     ModelState.AddModelError(
@@ -224,6 +217,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                     );
                     return View(weekActivities);
                 }
+                weekActivities.Week = weekEntity;
+                weekActivities.Activities = activity;
+                weekActivities.LearningType = learningType;
             }
             catch (Exception e)
             {
@@ -347,20 +343,13 @@ namespace CCM_Website.Areas.Admin.Controllers
                 var week = await _context.Weeks.FirstOrDefaultAsync(wk =>
                     wk.WeekId == weekActivities.WeekId
                 );
-                weekActivities.Week = week;
                 var activity = await _context.Activities.FirstOrDefaultAsync(a =>
                     a.ActivityId == weekActivities.ActivitiesId
                 );
-                weekActivities.Activities = activity;
-                var learingType = await _context.LearningType.FirstOrDefaultAsync(lt =>
+                var learningType = await _context.LearningType.FirstOrDefaultAsync(lt =>
                     lt.LearningTypeId == weekActivities.LearningTypeId
                 );
-                weekActivities.LearningType = learingType;
-                if (
-                    weekActivities.Week == null
-                    || weekActivities.Activities == null
-                    || weekActivities.LearningType == null
-                )
+                if (week == null || activity == null || learningType == null)
                 {
                     Console.WriteLine($"ERROR: Link Fail");
                     ModelState.AddModelError(
@@ -369,6 +358,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                     );
                     return View(weekActivities);
                 }
+                weekActivities.Week = week;
+                weekActivities.Activities = activity;
+                weekActivities.LearningType = learningType;
             }
             catch (Exception e)
             {
@@ -427,6 +419,11 @@ namespace CCM_Website.Areas.Admin.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var weekActivity = await _context.WeekActivities.FindAsync(id);
+            if (weekActivity == null)
+            {
+                Console.WriteLine($"ERROR: WeekActivity with ID {id} not found.");
+                return NotFound();
+            }
             _context.WeekActivities.Remove(weekActivity);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

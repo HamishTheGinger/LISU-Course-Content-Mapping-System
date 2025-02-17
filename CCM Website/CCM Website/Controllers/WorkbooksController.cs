@@ -109,7 +109,7 @@ namespace CCM_Website.Controllers
             // Create a dictionary to store total time spent per learning type per week
             var timeBreakdown = new Dictionary<int, Dictionary<string, TimeSpan>>();
 
-            foreach (var week in workbook.Weeks)
+            foreach (var week in workbook.Weeks ?? Enumerable.Empty<Week>())
             {
                 var weekData = new Dictionary<string, TimeSpan>
                 {
@@ -122,7 +122,7 @@ namespace CCM_Website.Controllers
                     { "Assessment", TimeSpan.Zero },
                 };
 
-                foreach (var activity in week.WeekActivities)
+                foreach (var activity in week.WeekActivities ?? Enumerable.Empty<WeekActivities>())
                 {
                     if (weekData.ContainsKey(activity.LearningType.LearningTypeName))
                     {
@@ -166,10 +166,7 @@ namespace CCM_Website.Controllers
                 var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp =>
                     lp.PlatformId == workbook.LearningPlatformId
                 );
-
-                workbook.LearningPlatform = learningPlatform;
-
-                if (workbook.LearningPlatform == null)
+                if (learningPlatform == null)
                 {
                     Console.WriteLine("ERROR: Failed to link Workbook to Learning Platform");
                     ModelState.AddModelError(
@@ -185,6 +182,7 @@ namespace CCM_Website.Controllers
 
                     return View(workbook);
                 }
+                workbook.LearningPlatform = learningPlatform;
             }
             catch (Exception e)
             {

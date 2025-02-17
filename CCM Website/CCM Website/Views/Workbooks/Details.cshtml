@@ -43,7 +43,7 @@
                     <div id="legend" style="display: none;">
                         <table class="table table-bordered table-responsive">
                             <thead>
-                                <th>Legend</th>
+                                <tr><th>Legend</th></tr>
                             </thead>
                             <tbody>
                                 <tr><td style="background-color: #A1F5ED">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
@@ -74,19 +74,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var week in Model.Weeks)
+                                @foreach (var week in Model!.Weeks ?? Enumerable.Empty<Week>())
                                 {
-                                var weekData = ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>;
+                                var weekData = ViewBag.TimeBreakdown != null && ViewBag.TimeBreakdown.ContainsKey(week.WeekNumber)
+                                ? ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>
+                                : new Dictionary<string, TimeSpan>();
 
                                 <tr>
                                     <td style="text-align: center;">@week.WeekNumber</td> <!-- Week number -->
-                                    <td style="text-align: center;">@weekData["Acquisition"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData["Collaboration"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData["Discussion"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData["Investigation"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData["Practice"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData["Production"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData["Assessment"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Acquisition"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Collaboration"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Discussion"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Investigation"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Practice"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Production"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Assessment"].ToString(@"hh\:mm")</td>
                                     <td style="text-align: center; font-weight:bold;">
                                         @{
                                         var totalTime = weekData.Values.Aggregate(TimeSpan.Zero, (sum, next) => sum + next);
@@ -116,8 +118,8 @@
                                 <tr style="background-color: #005398; color: white; text-align: center;">
                                     <th>Graduate Attributes</th>
                                     <th>Total Attributes</th>
-                                    
-                                        @foreach (var week in Model.Weeks)
+
+                                    @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
                                         {
                                             <th>W @week.WeekNumber</th>
                                         }
@@ -125,20 +127,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var graduateAttribute in Model.Weeks.SelectMany(week => week.WeekGraduateAttributes.Select(wga => wga.GraduateAttribute)).Distinct())
+                                @foreach (var graduateAttribute in (Model.Weeks ?? Enumerable.Empty<Week>())
+                                    .Where(week => week.WeekGraduateAttributes != null)
+                                    .SelectMany(week => week.WeekGraduateAttributes!
+                                    .Select(wga => wga.GraduateAttribute))
+                                    .Where(attr => attr != null)
+                                    .Distinct())
                                 {
                                     <tr>
                                         <td style="text-align: center; background-color: #44546A; color: white;">
                                             @graduateAttribute.AttributeName
                                         </td> <!-- Graduate Attribute Name -->
                                         <td style="text-align: center;">
-                                            @graduateAttribute.WeekGraduateAttributes.Count()  <!-- Total Attributes (Count of WeekGraduateAttributes for this GraduateAttribute) -->
+                                            @graduateAttribute.WeekGraduateAttributes?.Count()  <!-- Total Attributes (Count of WeekGraduateAttributes for this GraduateAttribute) -->
                                         </td>
-                                        @foreach (var week in Model.Weeks)
+                                        @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
                                         {
                                             // Get the count of occurrences of the current graduate attribute for the current week
-                                            var attributeCountForWeek = week.WeekGraduateAttributes
-                                            .Count(wga => wga.GraduateAttributeId == graduateAttribute.AttributeId);
+                                            var attributeCountForWeek = week.WeekGraduateAttributes?
+                                            .Count(wga => wga.GraduateAttributeId == graduateAttribute.AttributeId) ?? 0;
                                             <td style="text-align: center;">
                                                 @attributeCountForWeek  <!-- Display the count of this graduate attribute for the current week -->
                                             </td> <!-- Week Columns -->
@@ -154,7 +161,7 @@
 
             <!-- Right Column -->
             <div class="col-md-2 right-column d-flex flex-column align-items-end">
-                @foreach (var week in @Model.Weeks)
+                @foreach (var week in @Model.Weeks ?? Enumerable.Empty<Week>())
                 {
                     <a class="btn btn-primary mb-2 rounded-pill" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
                 }
@@ -200,7 +207,7 @@
     // Time breakdown graph
      
     const data = [
-        @foreach (var week in Model.Weeks)
+    @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
             {
             var weekData = ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>;
 
