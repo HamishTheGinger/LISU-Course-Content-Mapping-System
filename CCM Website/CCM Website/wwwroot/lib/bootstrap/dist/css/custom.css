@@ -60,8 +60,14 @@
 
 .btn-primary:hover {
     color: #fff;
-    background-color: #005398;
+    background-color: #003865;
     border-color: #005398;
+}
+
+.btn-secondary:hover {
+    color: #fff;
+    background-color: #5c636a;
+    border-color: #565e64;
 }
 
 .btn-check:focus + .btn-primary, .btn-primary:focus {

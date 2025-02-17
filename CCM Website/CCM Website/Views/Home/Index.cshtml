@@ -35,7 +35,7 @@
             {
                 <div class="col-md-3 mb-3">
                     <a href="@Url.Action("Details", "Workbooks", new { id = workbook.WorkbookId })" class="text-decoration-none text-dark">
-                        <div class="card">
+                        <div class="card w-100 h-100">
                             <div class="card-body">
                                 <h5 class="card-title">@workbook.CourseName</h5>
                                 <p class="card-text">Last Edited: @workbook.LastEdited.ToShortDateString()</p>
@@ -59,7 +59,7 @@
             {
                 <div class="col-md-3 mb-3">
                     <a href="@Url.Action("Details", "Workbooks", new { id = workbook.WorkbookId })" class="text-decoration-none text-dark">
-                        <div class="card">
+                        <div class="card w-100 h-100">
                             <div class="card-body">
                                 <h5 class="card-title">@workbook.CourseName</h5>
                                 <p class="card-text">@workbook.CourseLead</p>
