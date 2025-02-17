@@ -1,7 +1,7 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @model CCM_Website.ViewModels.WeekDetailsViewModel
 @{
-    ViewData["Title"] = $"{@Model.Week.Workbook.CourseCode} - Week {@Model.Week.WeekNumber}";
+    ViewData["Title"] = $"{@Model.Week!.Workbook.CourseCode} - Week {@Model.Week.WeekNumber}";
     ViewData["LearningPlatform"] = $"{@Model.Week.Workbook.LearningPlatform.PlatformName}";
     var learningLocationCounts = ViewBag.locationCount as Dictionary<string, int>;
     var taskProgressCounts = ViewBag.progressCount as Dictionary<string, int>;
@@ -59,7 +59,7 @@
                 <div id="legend" style="display: none">
                     <table class="table table-bordered table-responsive">
                         <thead>
-                        <th>Legend</th>
+                            <tr><th>Legend</th></tr>
                         </thead>
                         <tbody>
                         <tr><td id="Acquisition_legend">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
@@ -164,10 +164,10 @@
 
 
         <div class="col-md-2 d-flex flex-column">
-            @foreach (var week in Model.Week.Workbook.Weeks.OrderBy(w => w.WeekNumber))
+            @foreach (var week in Model.Week?.Workbook?.Weeks?.OrderBy(w => w.WeekNumber) ?? Enumerable.Empty<Week>())
             {
                 <div class="d-flex justify-content-center">
-                    @if (Model.Week.WeekNumber != week.WeekNumber) {
+                    @if (Model.Week?.WeekNumber != week.WeekNumber) {
                         <a class="btn btn-primary mb-2 rounded-pill bg-secondary" asp-action="Week" asp-route-id="@week.WeekId">
                             Week @week.WeekNumber
                         </a>
@@ -190,7 +190,8 @@
     //Data for the main table
     var weekTableBody = document.getElementById('weekTable').querySelector('tbody');
     var weekTableData = [];
-    @foreach (var item in Model.ActivitiesList)
+
+    @foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
     {
         <text>
             weekTableData.push({
@@ -311,14 +312,14 @@
 
     //Stats table data 
     var statsData = [];
-    var unassigned = @Model.ActivitiesList.Count(a => a.TasksStatus.StatusName == "Unassigned");
-    var inProgress = @Model.ActivitiesList.Count(a => a.TasksStatus.StatusName == "In-Progress");
-    var completed = @Model.ActivitiesList.Count(a => a.TasksStatus.StatusName == "Completed");
-    var onCampus = @Model.ActivitiesList.Count(a => a.TaskLocation.LocationName == "On Campus");
-    var remote = @Model.ActivitiesList.Count(a => a.TaskLocation.LocationName == "Remote (Home)");
+    var unassigned = @Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Unassigned");
+    var inProgress = @Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "In-Progress");
+    var completed = @Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Completed");
+    var onCampus = @Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "On Campus");
+    var remote = @Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "Remote (Home)");
     var total = unassigned + inProgress + completed;
     @{
-        double totalTime = Model.ActivitiesList
+        double totalTime = Model.ActivitiesList?
             .Select(a => (double?)a.TaskTime.TotalMinutes)
             .Sum() ?? 0;
     }
@@ -341,9 +342,9 @@
     totalTimeCell.textContent = `${hoursTotal.toString().padStart(2, '0')}:${minutesTotal.toString().padStart(2, '0')}`;
 
     @{
-        foreach (var type in learningTypes)
+        foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
         {
-            var time = Model.ActivitiesList
+            var time = Model.ActivitiesList?
                 .Where(a => a.LearningType.LearningTypeName == type.LearningTypeName)
                 .Select(a => (double?)a.TaskTime.TotalMinutes)
                 .Sum() ?? 0; 

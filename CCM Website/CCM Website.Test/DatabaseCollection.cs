@@ -1,7 +1,5 @@
 ﻿using CCM_Website.Controllers;
 using CCM_Website.Data;
-using CCM_Website.Data;
-using CCM_Website.Models;
 using CCM_Website.Models;
 using Microsoft.EntityFrameworkCore;
 using Xunit;

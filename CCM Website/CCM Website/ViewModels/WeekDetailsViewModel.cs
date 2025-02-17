@@ -4,6 +4,6 @@ namespace CCM_Website.ViewModels;
 
 public class WeekDetailsViewModel
 {
-    public Week Week { get; set; }
-    public IEnumerable<WeekActivities> ActivitiesList { get; set; }
+    public Week? Week { get; set; }
+    public IEnumerable<WeekActivities>? ActivitiesList { get; set; }
 }

@@ -24,7 +24,7 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public async Task WeekActivities_CreateActivityDropdownFilter()
+        public void WeekActivities_CreateActivityDropdownFilter()
         {
             var controller = new WorkbooksController(_context);
 
@@ -41,7 +41,7 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public async Task WeekActivities_CreateLearningTypeDropdownFilter()
+        public void WeekActivities_CreateLearningTypeDropdownFilter()
         {
             var controller = new WorkbooksController(_context);
 
@@ -59,7 +59,7 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public async Task WeekActivities_CreateWeekDropdownFilter()
+        public void WeekActivities_CreateWeekDropdownFilter()
         {
             var controller = new WorkbooksController(_context);
             int wbId = 1;

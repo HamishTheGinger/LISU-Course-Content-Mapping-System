@@ -72,9 +72,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                     lp.PlatformId == workbook.LearningPlatformId
                 );
 
-                workbook.LearningPlatform = learningPlatform;
-
-                if (workbook.LearningPlatform == null)
+                if (learningPlatform == null)
                 {
                     Console.WriteLine("ERROR: Failed to link Workbook to Learning Platform");
                     ModelState.AddModelError(
@@ -90,6 +88,8 @@ namespace CCM_Website.Areas.Admin.Controllers
 
                     return View(workbook);
                 }
+
+                workbook.LearningPlatform = learningPlatform;
             }
             catch (Exception e)
             {

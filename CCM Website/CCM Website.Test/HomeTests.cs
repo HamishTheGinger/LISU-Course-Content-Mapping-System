@@ -25,7 +25,7 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public async Task HomePage_A_BlankPage()
+        public void HomePage_A_BlankPage()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "BlankTestDatabase")
@@ -46,7 +46,7 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public async Task HomePage_MultipleWorkbooks()
+        public void HomePage_MultipleWorkbooks()
         {
             // Arrange: Create in-memory database options
 
