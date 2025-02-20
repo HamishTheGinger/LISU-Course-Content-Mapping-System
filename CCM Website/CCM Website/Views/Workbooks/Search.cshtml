@@ -11,7 +11,9 @@ ViewData["Title"] = "Search";
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
         <li class="breadcrumb-item active" aria-current="page">Search</li>
     </ol>
+    <hr/>
 </nav>
+
 <div class="row mb-4">
     <div class="col-12">
         <form asp-action="Search" method="post">
@@ -38,7 +40,7 @@ ViewData["Title"] = "Search";
 
 
 <h3>Search Results</h3>
-<table class="table">
+<table class="table table responsive">
     <thead>
         <tr>
             <th>
@@ -66,9 +68,12 @@ ViewData["Title"] = "Search";
                 @Html.DisplayFor(modelItem => item.CourseLead)
             </td>
             <td>
-                <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.WorkbookId">View Workbook</a>
-                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.WorkbookId">Edit Workbook</a>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-secondary flex-fill" asp-action="Details" asp-route-id="@item.WorkbookId">View Workbook</a>
+                    <a class="btn btn-primary flex-fill" asp-action="Edit" asp-route-id="@item.WorkbookId">Edit Workbook</a>
+                </div>
             </td>
+
         </tr>
 }
     </tbody>

@@ -11,16 +11,18 @@
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
         <li class="breadcrumb-item active" aria-current="page">Workbook Details</li>
     </ol>
+    <hr/>
 </nav>
+
 <!-- Main part of workbook page with buttons-->
 <div class="container-fluid">
-    <div class="row my-3">
+    <div class="row my-3 align-items-center">
         <div class="col-md-10">
             <h1 class="text-wrap">@Html.DisplayFor(model => model.CourseName)</h1>
             <h4 class="text-wrap">Course Leads: @Html.DisplayFor(model => model.CourseLead)</h4>
         </div>
-        <div class="col-md-2 d-flex text-center justify-content-center">
-            <a class="btn btn-primary rounded-pill text-decoration-none d-flex align-items-center h-50 p-3 m-2" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Overview</a>
+        <div class="col-md-2 d-flex justify-content-center align-items-stretch">
+            <a class="btn btn-primary d-flex align-items-center justify-content-center" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Overview</a>
         </div>
     </div>
     <div class="container-fluid">

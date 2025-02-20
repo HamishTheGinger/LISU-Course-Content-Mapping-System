@@ -72,9 +72,8 @@
 
 .btn-check:focus + .btn-primary, .btn-primary:focus {
     color: #fff;
-    background-color: #005398;
-    border-color: #0a58ca;
-    box-shadow: 0 0 0 0.25rem rgba(49, 132, 253, 0.5);
+    background-color: #003865;
+    border-color: #005398;
 }
 
 .bg-red {
@@ -99,5 +98,9 @@
 
 .bg-remote {
     background-color: var(--bs-remote) !important;
+}
+
+.table th {
+    border-bottom-color: #000000 !important; 
 }
 

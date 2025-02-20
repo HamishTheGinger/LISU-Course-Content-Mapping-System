@@ -13,12 +13,13 @@
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Week" asp-route-id=@ViewBag.CrumbWeekId>Week</a></li>
         <li class="breadcrumb-item active" aria-current="page">Edit Activity</li>
     </ol>
+    <hr/>
 </nav>
 
 <h4>Enter updated activity details</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-lg-6 col-md-8">
         <form asp-action="EditActivity">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="WeekActivityId" />
