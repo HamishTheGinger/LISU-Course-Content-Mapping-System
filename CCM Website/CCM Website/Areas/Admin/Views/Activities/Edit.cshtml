@@ -6,16 +6,19 @@
 }
 
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
-        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Activities" asp-action="Index">Activities</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Activities" asp-action="Index">Activities</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </div>
     </ol>
+    <hr/>
 </nav>
 
-<div class="row">
-    <div class="col"><h1>Edit Activity</h1></div>
-    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
+<div class="row my-3 align-items-center">
+    <div class="col-md-10"><h1>Edit Activity</h1></div>
 </div>
 
 <hr />
@@ -29,6 +32,7 @@
                 <input asp-for="ActivityName" class="form-control" />
                 <span asp-validation-for="ActivityName" class="text-danger"></span>
             </div>
+            <br/>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>

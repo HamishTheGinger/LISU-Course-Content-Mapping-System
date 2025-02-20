@@ -15,16 +15,22 @@
         <li class="breadcrumb-item"><a asp-area="" asp-controller="Workbooks" asp-action="Details" asp-route-id="@Model.Week.WorkbookId">Workbook Details</a></li>
         <li class="breadcrumb-item active" aria-current="page">Week @Model.Week.WeekNumber</li>
     </ol>
+    <hr/>
 </nav>
 
 <div class="container-fluid">
-    <div class="row my-3">
+    <div class="row my-3 align-items-center">
         <div class="col-md-10">
             <h1 class="text-wrap">@Model.Week.Workbook.CourseName</h1>
-            <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4> 
+            <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4>
         </div>
-        <div class="col-md-2 d-flex text-center justify-content-center">
-            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" asp-route-weekId="@Model.Week.WeekId" class="btn btn-primary rounded-pill text-decoration-none d-flex align-items-center h-75 p-3 m-2" >Create Activity</a>
+        <div class="col-md-2 d-flex justify-content-center align-items-stretch">
+            <a asp-controller="Workbooks" asp-action="CreateActivity"
+               asp-route-id="@Model.Week.WorkbookId"
+               asp-route-weekId="@Model.Week.WeekId"
+               class="btn btn-success d-flex align-items-center justify-content-center">
+                Create Activity
+            </a>
         </div>
     </div>
     <div class="row">

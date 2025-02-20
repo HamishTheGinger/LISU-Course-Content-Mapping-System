@@ -4,27 +4,26 @@
 }
 
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page">Admin</li>
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item active" aria-current="page">Admin</li>
+        </div>
     </ol>
+    <hr/>
 </nav>
 
-<div class="row">
-    <div class="col"><h1>Admin Panel</h1></div>
-    <div class="col text-end"><button class="btn btn-primary" onclick="history.back();">Back</button></div>
-</div>
-
-<div>
-    <h2>Manage Workbooks</h2>
-    <hr/>
+<h2>Manage Workbooks</h2>
+<hr/>
+<div class="d-flex flex-wrap justify-content-start gap-2">
     <a class="btn btn-primary" asp-area="Admin" asp-controller="Workbook" asp-action="Index">
         View Workbooks
     </a>
 </div>
 <br/>
-<div>
-    <h2>Manage Fields</h2>
-    <hr/>
+<h2>Manage Fields</h2>
+<hr/>
+<div class="d-flex flex-wrap justify-content-start gap-2">
     <a class="btn btn-primary" asp-area="Admin" asp-controller="Activities" asp-action="Index">
         Activities
     </a>
@@ -48,10 +47,10 @@
     </a>
 </div>
 <br/>
-<div>
-    <h2>Links and Dependency Tables</h2>
-    <hr/>
-    <p>This section should only be used to edit values if there is an issue occuring that cannot be fixed on the user pages.</p>
+<h2>Links and Dependency Tables</h2>
+<hr/>
+<p>This section should only be used to edit values if there is an issue occuring that cannot be fixed on the user pages.</p>
+<div class="d-flex flex-wrap justify-content-start gap-2">
     <a class="btn btn-danger" asp-area="Admin" asp-controller="Week" asp-action="Index">
         Weeks
     </a>
