@@ -1,7 +1,7 @@
 @model IEnumerable<CCM_Website.Models.Activities>
 
 @{
-    ViewData["Title"] = "Activities";
+    ViewData["Title"] = "Activity";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -16,12 +16,12 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-center">
+<div class="row my-3 align-items-start">
     <div class="col-md-10">
-        <h1>Activities</h1>
+        <h2>Activities</h2>
     </div>
-    <div class="col-md-2 d-flex justify-content-center align-items-stretch">
-        <a class="btn btn-success d-flex align-items-center justify-content-center"
+    <div class="col-md-2 d-flex justify-content-center">
+        <a class="btn btn-success"
            asp-area="Admin" asp-controller="Activities" asp-action="Create">
             Create New Activity
         </a>
@@ -33,7 +33,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.ActivityName)
+                Activity Name
             </th>
             <th></th>
         </tr>

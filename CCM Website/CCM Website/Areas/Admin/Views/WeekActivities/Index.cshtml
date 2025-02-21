@@ -1,7 +1,7 @@
 @model IEnumerable<CCM_Website.Models.WeekActivities>
 
 @{
-    ViewData["Title"] = "Week Activites";
+    ViewData["Title"] = "Week Activity";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -16,40 +16,37 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-center">
+<div class="row my-3 align-items-start">
     <div class="col-md-10">
-        <h1>Week Activities</h1>
+        <h2>Week Activities</h2>
     </div>
-    <div class="col-md-2 d-flex justify-content-center align-items-stretch">
-        <a class="btn btn-success d-flex align-items-center justify-content-center"
+    <div class="col-md-2 d-flex justify-content-center">
+        <a class="btn btn-success"
            asp-action="Create">Create New Week Activity
         </a>
     </div>
 </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Week)
+                Week ID
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Activities)
+                Activities
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TaskTitle)
+                Task Title
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TaskStaff)
+                Task Staff
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TaskTime)
+                Task Time
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TasksStatus)
+                Task Status
             </th>
             <th></th>
         </tr>

@@ -1,7 +1,7 @@
 @model CCM_Website.Models.Activities
 
 @{
-    ViewData["Title"] = "Edit Activity";
+    ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -17,8 +17,8 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-center">
-    <div class="col-md-10"><h1>Edit Activity</h1></div>
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Edit Activity</h2></div>
 </div>
 
 <hr />
@@ -28,13 +28,13 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="ActivityId" />
             <div class="form-group">
-                <label asp-for="ActivityName" class="control-label"></label>
+                <label asp-for="ActivityName" class="control-label">Activity Name</label>
                 <input asp-for="ActivityName" class="form-control" />
                 <span asp-validation-for="ActivityName" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-success" />
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>
         </form>

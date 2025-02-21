@@ -1,7 +1,7 @@
 @model CCM_Website.Models.Workbook
 
 @{
-    ViewData["Title"] = "Workbook Details";
+    ViewData["Title"] = "Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -17,8 +17,8 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-center">
-    <div class="col-md-10"><h1>Workbook Details</h1></div>
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Workbook Details</h2></div>
 </div>
 
 <div>
@@ -26,44 +26,40 @@
     <hr/>
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseName)
+            Course Name
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CourseName)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseCode)
+            Course Code
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CourseCode)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLead)
+            Course Lead
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CourseLead)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LearningPlatform)
+            Learning Platform
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LearningPlatform.PlatformName)
+            @Html.DisplayFor(model => model.LearningPlatformId) <!-- Should be platform name however nothing was displayed --> 
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CourseLength)
+           Course Length
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CourseLength)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LastEdited)
+            Last Edited
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LastEdited)
         </dd>
     </dl>
-</div>
-<div>
-    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Workbook</a>
-    <a class="btn btn-secondary" asp-action="Index">Workbook List</a>
 </div>
