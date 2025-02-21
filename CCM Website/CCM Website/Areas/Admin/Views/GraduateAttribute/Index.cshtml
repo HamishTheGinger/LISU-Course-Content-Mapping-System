@@ -1,7 +1,7 @@
 @model IEnumerable<CCM_Website.Models.GraduateAttribute>
 
 @{
-    ViewData["Title"] = "Graduate Attributes";
+    ViewData["Title"] = "Graduate Attribute";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,18 +11,18 @@
         <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
         <div class="d-flex m-2">
             <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Graduate Attribute List</li>
+            <li class="breadcrumb-item active" aria-current="page">Graduate Attributes</li>
         </div>
     </ol>
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-center">
+<div class="row my-3 align-items-start">
     <div class="col-md-10">
-        <h1>Graduate Attributes</h1>
+        <h2>Graduate Attributes</h2>
     </div>
-    <div class="col-md-2 d-flex justify-content-center align-items-stretch">
-        <a class="btn btn-success d-flex align-items-center justify-content-center"
+    <div class="col-md-2 d-flex justify-content-center">
+        <a class="btn btn-success"
            asp-action="Create">Create New Attribute
         </a>
     </div>
@@ -33,7 +33,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.AttributeName)
+                Attribute Name
             </th>
             <th></th>
         </tr>

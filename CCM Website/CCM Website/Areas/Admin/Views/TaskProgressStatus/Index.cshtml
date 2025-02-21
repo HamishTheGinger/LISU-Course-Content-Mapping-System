@@ -10,18 +10,18 @@
         <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
         <div class="d-flex m-2">
             <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Task Status</li>
+            <li class="breadcrumb-item active" aria-current="page">Task Progress Status</li>
         </div>
     </ol>
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-center">
+<div class="row my-3 align-items-start">
     <div class="col-md-10">
-        <h1>Task Status'</h1>
+        <h2>Task Progress Status'</h2>
     </div>
-    <div class="col-md-2 d-flex justify-content-center align-items-stretch">
-        <a class="btn btn-success d-flex align-items-center justify-content-center"
+    <div class="col-md-2 d-flex justify-content-center">
+        <a class="btn btn-success d-flex align-items-center"
            asp-action="Create">Create New Task Status
         </a>
     </div>
@@ -31,7 +31,7 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.StatusName)
+                Progress Status
             </th>
             <th></th>
         </tr>

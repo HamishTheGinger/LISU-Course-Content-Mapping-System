@@ -1,7 +1,7 @@
 @model CCM_Website.Models.Week
 
 @{
-    ViewData["Title"] = "Create Week";
+    ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -17,8 +17,8 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-center">
-    <div class="col-md-10"><h1>Create</h1></div>
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Create Week</h2></div>
 </div>
 
 <h4>Week</h4>
@@ -29,22 +29,21 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
             <div class="form-group">
-                <label asp-for="WeekNumber" class="control-label"></label>
+                <label asp-for="WeekNumber" class="control-label">Week Number</label>
                 <input asp-for="WeekNumber" class="form-control" />
                 <span asp-validation-for="WeekNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="WorkbookId" class="control-label"></label>
+                <label asp-for="WorkbookId" class="control-label">Workbook ID</label>
                 <select asp-for="WorkbookId" class ="form-control" asp-items="ViewBag.WorkbookId"></select>
             </div>
+            <br/>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-success" />
+                <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 

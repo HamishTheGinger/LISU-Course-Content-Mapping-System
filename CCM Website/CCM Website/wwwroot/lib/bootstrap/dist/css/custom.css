@@ -104,3 +104,6 @@
     border-bottom-color: #000000 !important; 
 }
 
+.minh-50{
+    min-height: 50px !important;
+}

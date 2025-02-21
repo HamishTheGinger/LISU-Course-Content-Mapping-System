@@ -19,16 +19,13 @@
 </nav>
 
 <div class="container-fluid">
-    <div class="row my-3 align-items-center">
+    <div class="row my-3 align-items-start">
         <div class="col-md-10">
             <h1 class="text-wrap">@Model.Week.Workbook.CourseName</h1>
             <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4>
         </div>
-        <div class="col-md-2 d-flex justify-content-center align-items-stretch">
-            <a asp-controller="Workbooks" asp-action="CreateActivity"
-               asp-route-id="@Model.Week.WorkbookId"
-               asp-route-weekId="@Model.Week.WeekId"
-               class="btn btn-success d-flex align-items-center justify-content-center">
+        <div class="col-md-2 d-flex justify-content-center ">
+            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" asp-route-weekId="@Model.Week.WeekId" class="btn btn-success ">
                 Create Activity
             </a>
         </div>
@@ -156,7 +153,7 @@
                     <div class="d-flex flex-column justify-content-center align-items-center">
                         <div id="lt_chart" style="display:block"></div>
                         <div id="lt_chart_key" style="display:block"></div>
-                        <div id="lt_chart_details" style="display:none"></div>
+                        <div id="lt_chart_details" class="minh-50"></div>
                     </div>
 
                 </div>
@@ -213,6 +210,23 @@
                 approach: "@item.TaskApproach.ApproachName"
             });
         </text>
+    }
+    @if (!(Model.ActivitiesList?.Any() ?? false)) // Correctly checking if the list is empty
+    {
+    <text>
+    weekTableData.push({
+        id: "N/A",
+        taskOrder : "N/A",
+        staffResponsible: "N/A",
+        title: "N/A",
+        learningActivity: "N/A",
+        learningType: "N/A",
+        time: "N/A",
+        status: "N/A",
+        activityLocation:"N/A",
+        approach: "N/A"
+    });
+    </text>
     }
     
     //Populating the heading for the table
@@ -289,8 +303,10 @@
             var editCell = document.createElement('td');
             var editLink = document.createElement('a');
             editLink.textContent = "Edit Activity";
-            editLink.href = `/Workbooks/EditActivity/${rowData.id}`;
-            editLink.className = "btn btn-primary";
+            if(rowData.id !== "N/A"){
+                editLink.href = `/Workbooks/EditActivity/${rowData.id}`;
+            }
+            editLink.className = "d-flex justify-content-center btn btn-primary";
             editCell.appendChild(editLink);
             row.appendChild(editCell);
             weekTableBody.appendChild(row);
@@ -579,11 +595,11 @@
         var percentage = @totalTime > 0 ? ((d.time / @totalTime) * 100).toFixed(2) : 0;
         let detailsDiv = d3.select("#lt_chart_details");
         detailsDiv.html(`<strong>${d.label}</strong>: (${percentage}%)`);
-        detailsDiv.style("display", "block");
     }
 
     function hideDetails() {
-        d3.select("#lt_chart_details").style("display", "none");
+        let detailsDiv = d3.select("#lt_chart_details");
+        detailsDiv.html('');
     }
 
 </script>

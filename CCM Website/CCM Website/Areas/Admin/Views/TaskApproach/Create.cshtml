@@ -1,7 +1,7 @@
 @model CCM_Website.Models.TaskApproach
 
 @{
-    ViewData["Title"] = "Create Task Approach";
+    ViewData["Title"] = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -17,8 +17,8 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-center">
-    <div class="col-md-10"><h1>Create Task Approach</h1></div>
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Create Task Approach</h2></div>
 </div>
 
 <hr />
@@ -27,18 +27,17 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="ApproachName" class="control-label"></label>
+                <label asp-for="ApproachName" class="control-label">Approach Name</label>
                 <input asp-for="ApproachName" class="form-control" />
                 <span asp-validation-for="ApproachName" class="text-danger"></span>
             </div>
+            <br/>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-success" />
+                <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 

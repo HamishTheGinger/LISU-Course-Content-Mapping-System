@@ -1,7 +1,7 @@
 @model CCM_Website.Models.Workbook
 
 @{
-    ViewData["Title"] = "Admin Edit Workbook";
+    ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -17,11 +17,10 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-center">
-    <div class="col-md-10"><h1>Edit Workbook</h1></div>
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Edit Workbook</h2></div>
 </div>
 
-<h4>Enter new workbook details</h4>
 <hr />
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 <div class="row">
@@ -30,27 +29,27 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="WorkbookId" />
             <div class="form-group">
-                <label asp-for="CourseName" class="control-label"></label>
+                <label asp-for="CourseName" class="control-label">Course Name</label>
                 <input asp-for="CourseName" class="form-control" />
                 <span asp-validation-for="CourseName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CourseCode" class="control-label"></label>
+                <label asp-for="CourseCode" class="control-label">Course Code</label>
                 <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code" />
                 <span asp-validation-for="CourseCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PipReference" class="control-label"></label>
+                <label asp-for="PipReference" class="control-label">Pip Reference</label>
                 <input asp-for="PipReference" class="form-control" placeholder="Enter PIP Reference (Optional)" />
                 <span asp-validation-for="PipReference" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CourseLead" class="control-label"></label>
+                <label asp-for="CourseLead" class="control-label">Course Lead</label>
                 <input asp-for="CourseLead" class="form-control" />
                 <span asp-validation-for="CourseLead" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CourseLength" class="control-label"></label>
+                <label asp-for="CourseLength" class="control-label">Course Length</label>
                 <input asp-for="CourseLength" disabled class="form-control" />
                 <input type="hidden" asp-for="CourseLength" class="form-control" />
                 <span asp-validation-for="CourseLength" class="text-danger"></span>
@@ -63,13 +62,13 @@
                 <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Collaborators" class="control-label"></label>
+                <label asp-for="Collaborators" class="control-label">Collaborators</label>
                 <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
                 <span asp-validation-for="Collaborators" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn btn-success" />
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>
         </form>
