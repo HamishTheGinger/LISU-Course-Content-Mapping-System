@@ -1,15 +1,32 @@
 @model IEnumerable<CCM_Website.Models.LearningPlatform>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Learning Platform";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Learning Platform</li>
+        </div>
+    </ol>
+    <hr/>
+</nav>
 
-<p>
-    <a class="btn btn-success" asp-action="Create">Create New</a>
-</p>
+<div class="row my-3 align-items-start">
+    <div class="col-md-10">
+        <h2>Learning Platforms</h2>
+    </div>
+    <div class="col-md-2 d-flex justify-content-center">
+        <a class="btn btn-success"
+           asp-action="Create">Create New Learning Platform
+        </a>
+    </div>
+</div>
+
 <table class="table">
     <thead>
         <tr>
@@ -26,9 +43,11 @@
                 @Html.DisplayFor(modelItem => item.PlatformName)
             </td>
             <td>
-                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.PlatformId">Edit</a>
-                <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.PlatformId">Details</a>
-                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.PlatformId">Delete</a>
+                <div class="d-flex justify-content-end gap-2">
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.PlatformId">Edit</a>
+                    <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.PlatformId">Details</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.PlatformId">Delete</a>
+                </div>
             </td>
         </tr>
 }

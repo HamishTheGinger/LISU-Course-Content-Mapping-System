@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CCM_Website.Models {
-
-    public class Week {
+namespace CCM_Website.Models
+{
+    public class Week
+    {
         [Key]
         public int WeekId { get; set; }
 

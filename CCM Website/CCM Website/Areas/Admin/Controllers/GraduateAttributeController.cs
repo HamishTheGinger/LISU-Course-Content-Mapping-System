@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CCM_Website.Data;
-using CCM_Website.Models;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -34,8 +34,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var graduateAttribute = await _context.GraduateAttributes
-                .FirstOrDefaultAsync(m => m.AttributeId == id);
+            var graduateAttribute = await _context.GraduateAttributes.FirstOrDefaultAsync(m =>
+                m.AttributeId == id
+            );
             if (graduateAttribute == null)
             {
                 return NotFound();
@@ -55,7 +56,9 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("AttributeId,AttributeName")] GraduateAttribute graduateAttribute)
+        public async Task<IActionResult> Create(
+            [Bind("AttributeId,AttributeName")] GraduateAttribute graduateAttribute
+        )
         {
             try
             {
@@ -67,9 +70,11 @@ namespace CCM_Website.Areas.Admin.Controllers
             catch (Exception exp)
             {
                 Console.WriteLine($"Model Creation Error: {exp.Message}");
-                ModelState.AddModelError("", "An error occurred while saving the workbook. Please try again later.");
+                ModelState.AddModelError(
+                    "",
+                    "An error occurred while saving the workbook. Please try again later."
+                );
                 return View(graduateAttribute);
-
             }
         }
 
@@ -94,7 +99,10 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("AttributeId,AttributeName")] GraduateAttribute graduateAttribute)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("AttributeId,AttributeName")] GraduateAttribute graduateAttribute
+        )
         {
             if (id != graduateAttribute.AttributeId)
             {
@@ -132,8 +140,9 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var graduateAttribute = await _context.GraduateAttributes
-                .FirstOrDefaultAsync(m => m.AttributeId == id);
+            var graduateAttribute = await _context.GraduateAttributes.FirstOrDefaultAsync(m =>
+                m.AttributeId == id
+            );
             if (graduateAttribute == null)
             {
                 return NotFound();

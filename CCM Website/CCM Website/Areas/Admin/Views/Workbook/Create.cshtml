@@ -5,9 +5,22 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Workbook" asp-action="Index">Workbook</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </div>
+    </ol>
+    <hr/>
+</nav>
 
-<h4>Workbook</h4>
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Create Workbook</h2></div>
+</div>
+
 <hr />
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 <div class="row">
@@ -15,40 +28,45 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
             <div class="form-group">
-                <label asp-for="CourseName" class="control-label"></label>
+                <label asp-for="CourseName" class="control-label">Course Name</label>
                 <input asp-for="CourseName" class="form-control" />
                 <span asp-validation-for="CourseName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CourseCode" class="control-label"></label>
+                <label asp-for="CourseCode" class="control-label">Course Code</label>
                 <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code" />
                 <span asp-validation-for="CourseCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CourseLead" class="control-label"></label>
+                <label asp-for="PipReference" class="control-label">Pip Reference</label>
+                <input asp-for="PipReference" class="form-control" placeholder="Enter PIP Reference (Optional)" />
+                <span asp-validation-for="PipReference" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CourseLead" class="control-label">Course Lead</label>
                 <input asp-for="CourseLead" class="form-control" />
                 <span asp-validation-for="CourseLead" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CourseLength" class="control-label"></label>
-                <input  value="11" disabled class="form-control" />
-                <input type="hidden" asp-for="CourseLength" value="11" class="form-control" />
+                <label asp-for="CourseLength" class="control-label">Course Length (Weeks)</label>
+                <input asp-for="CourseLength" value="10" type="number" min="1" max="30" class="form-control" />
                 <span asp-validation-for="CourseLength" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LearningPlatformId" class="control-label">Learning Platform</label>
-                <input  value="1" disabled class="form-control" />
-                <input type="hidden" asp-for="LearningPlatformId" value="1" class="form-control" />
+                <select asp-for="LearningPlatformId" asp-items="ViewBag.LearningPlatforms" class="form-control" required>
+                    <option value="">-- Select a Learning Platform --</option>
+                </select>
                 <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Collaborators" class="control-label"></label>
+                <label asp-for="Collaborators" class="control-label">Collaborators</label>
                 <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
                 <span asp-validation-for="Collaborators" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-success" />
                 <a asp-action="Index" class="btn btn-secondary">Cancel</a>
             </div>
         </form>
