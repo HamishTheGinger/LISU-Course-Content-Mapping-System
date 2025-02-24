@@ -8,9 +8,22 @@
 
 }
 
-<h1>Create</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Activities" asp-action="Index">Activities</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </div>
+    </ol>
+    <hr/>
+</nav>
 
-<h4>Activities</h4>
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Create Activity</h2></div>
+</div>
+
 <hr />
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 <div class="row">
@@ -18,25 +31,20 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
             <div class="form-group">
-                <label asp-for="ActivityName" class="control-label"></label>
+                <label asp-for="ActivityName" class="control-label">Activity Name</label>
                 <input asp-for="ActivityName" class="form-control" />
                 <span asp-validation-for="ActivityName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LearningPlatformActivities" class="control-label"></label>
-                <select asp-for="LearningPlatformActivities" class="form-select form-control">
+                <label asp-for="LearningPlatformActivities" class="form-label">Learning Platform</label>
+                <select asp-for="LearningPlatformActivities" class="form-select" asp-items="ViewBag.LearningPlatforms">
                     <option value="">-- Select a Platform --</option>
-                    @foreach (var platform in ViewBag.LearningPlatforms as SelectList)
-                    {
-                        <option value="@platform.Value">
-                            @platform.Text
-                        </option>
-                    }
                 </select>
                 <span asp-validation-for="LearningPlatformActivities" class="text-danger"></span>
             </div>
+            <br/>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-success" />
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>
         </form>

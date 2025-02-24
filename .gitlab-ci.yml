@@ -1,0 +1,88 @@
+image: mcr.microsoft.com/dotnet/sdk:8.0
+
+stages:
+  - build
+  - test
+  - lint
+  - deploy
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  DOTNET_NOLOGO: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  ASPNETCORE_ENVIRONMENT: 'Development'
+  NUGET_PACKAGES: "$CI_PROJECT_DIR/.nuget/packages"
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .nuget/packages/
+    - "**/bin/"
+    - "**/obj/"
+
+before_script:
+  - echo "Using .NET Core version:"
+  - dotnet --version
+  - cd "CCM Website/"
+
+build-website:
+  stage: build
+  script:
+    - dotnet restore
+    - dotnet build --no-restore --configuration Release
+  only:
+    - merge_requests
+
+build-database:
+  stage: build
+  script:
+    - cd "CCM Website/"
+    - dotnet tool install --global dotnet-ef
+    - export PATH="$PATH:/root/.dotnet/tools"
+    - MIGRATION_NAME="auto_$(date +%Y%m%d%H%M%S)"
+    - dotnet ef migrations add $MIGRATION_NAME
+    - dotnet ef database update
+  artifacts:
+    paths:
+      - "CCM Website/CCM Website/ccm_website.db"
+  only:
+    - merge_requests
+
+unit-tests:
+  stage: test
+  script:
+    - dotnet restore
+    - dotnet test --no-restore --configuration Release
+  only:
+    - merge_requests
+
+dotnet-warning-check:
+  stage: test
+  script:
+    - dotnet clean
+    - dotnet restore
+    - dotnet build /p:TreatWarningsAsErrors=true
+  cache:
+    key: none
+  only:
+    - merge_requests
+
+linting-csharpier:
+  stage: lint
+  script:
+    - dotnet tool install --global csharpier
+    - export PATH="$PATH:/root/.dotnet/tools"
+    - dotnet csharpier --check .
+  cache:
+    key: none
+  only:
+    - merge_requests
+
+deploy-job: 
+  stage: deploy
+  environment: production
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed"
+  only:
+    - main

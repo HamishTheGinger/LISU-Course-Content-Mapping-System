@@ -1,0 +1,13 @@
+﻿@model TimeSpan
+
+@if (Model.TotalMinutes > 0)
+{
+    var hours = Model.Hours + (int)Model.TotalDays * 24; // Include days in the hour calculation
+    var minutes = Model.Minutes;
+
+    @($"{hours} Hours {minutes} Mins")
+}
+else
+{
+    @("0 Hours 0 Mins")
+}

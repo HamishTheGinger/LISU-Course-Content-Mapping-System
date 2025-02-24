@@ -5,11 +5,21 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h4>Enter new workbook details</h4>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+    <hr/>
+</nav>
+
+
+<h4>Enter updated workbook details</h4>
 <hr />
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-lg-6 col-md-8">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="WorkbookId" />
@@ -24,20 +34,26 @@
                 <span asp-validation-for="CourseCode" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="PipReference" class="control-label"></label>
+                <input asp-for="PipReference" class="form-control" placeholder="Enter PIP Reference (Optional)" />
+                <span asp-validation-for="PipReference" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="CourseLead" class="control-label"></label>
                 <input asp-for="CourseLead" class="form-control" />
                 <span asp-validation-for="CourseLead" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="CourseLength" class="control-label"></label>
-                <input  value="11" disabled class="form-control" />
-                <input type="hidden" asp-for="CourseLength" value="11" class="form-control" />
+                <input asp-for="CourseLength" disabled class="form-control" />
+                <input type="hidden" asp-for="CourseLength" class="form-control" />
                 <span asp-validation-for="CourseLength" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="LearningPlatformId" class="control-label">Learning Platform</label>
-                <input  value="1" disabled class="form-control" />
-                <input type="hidden" asp-for="LearningPlatformId" value="1" class="form-control" />
+                <select asp-for="LearningPlatformId" asp-items="ViewBag.LearningPlatforms" class="form-control">
+                    <option value="">-- Select Learning Platform --</option>
+                </select>
                 <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -45,6 +61,7 @@
                 <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
                 <span asp-validation-for="Collaborators" class="text-danger"></span>
             </div>
+            <br/>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>

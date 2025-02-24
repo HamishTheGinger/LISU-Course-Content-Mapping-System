@@ -1,68 +1,84 @@
 ﻿@model CCM_Website.Models.WeekActivities
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Activity";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Details" asp-route-id="@ViewBag.CrumbWorkbookId">Workbook Details</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Week" asp-route-id=@ViewBag.CrumbWeekId>Week</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create Activity</li>
+    </ol>
+    <hr/>
+</nav>
 
-<h2>Create Week Activity</h2>
+<h4>Enter new activity details</h4>
+<hr/>
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
-<form asp-action="CreateActivity">
-    <div class="form-group">
-        <label asp-for="TaskOrder" class="control-label">Task Order</label>
-        <input asp-for="TaskOrder" class="form-control" />
-        <span asp-validation-for="TaskOrder" class="text-danger"></span>
+<div class="row">
+    <div class="col-lg-6 col-md-8">
+        <form asp-action="CreateActivity">
+            <div class="form-group">
+                <label asp-for="TaskOrder" class="control-label">Task Order</label>
+                <input asp-for="TaskOrder" class="form-control" />
+                <span asp-validation-for="TaskOrder" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="WeekId" class="control-label">Week</label>
+                <select asp-for="WeekId" class="form-control" asp-items="ViewBag.WeekId"></select>
+                <span asp-validation-for="WeekId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ActivitiesId" class="control-label">Activity</label>
+                <select asp-for="ActivitiesId" class="form-control" asp-items="ViewBag.ActivitiesId"></select>
+                <span asp-validation-for="ActivitiesId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskTitle" class="control-label">Task Title</label>
+                <input asp-for="TaskTitle" class="form-control"/>
+                <span asp-validation-for="TaskTitle" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskStaff" class="control-label">Task Staff</label>
+                <input asp-for="TaskStaff" class="form-control"/>
+                <span asp-validation-for="TaskStaff" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskTime" class="control-label">Task Time</label>
+                <input asp-for="TaskTime" class="form-control" type="time"/>
+                <span asp-validation-for="TaskTime" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TasksStatusId" class="control-label">Task Status</label>
+                <select  asp-for="TasksStatusId" class="form-control" asp-items="ViewBag.TaskStatus"></select>
+                <span asp-validation-for="TasksStatusId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LearningTypeId" class="control-label"></label>
+                <select asp-for="LearningTypeId" class="form-control" asp-items="ViewBag.LearningApproach"></select>
+                <span asp-validation-for="LearningTypeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskLocationId" class="control-label">Task Location</label>
+                <select  asp-for="TaskLocationId" class="form-control" asp-items="ViewBag.TaskLocation"></select>
+                <span asp-validation-for="TaskLocationId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskApproachId" class="control-label">Task Approach</label>
+                <select  asp-for="TaskApproachId" class="form-control" asp-items="ViewBag.TaskApproach"></select>
+                <span asp-validation-for="TaskApproachId" class="text-danger"></span>
+            </div>
+            <br/>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary"/>
+                <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+            </div>
+        </form>
     </div>
-    <div class="form-group">
-        <label asp-for="WeekId" class="control-label">Week</label>
-        <select asp-for="WeekId" class="form-control" asp-items="ViewBag.WeekId"></select>
-        <span asp-validation-for="WeekId" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="ActivitiesId" class="control-label">Activity</label>
-        <select asp-for="ActivitiesId" class="form-control" asp-items="ViewBag.ActivitiesId"></select>
-        <span asp-validation-for="ActivitiesId" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="TaskTitle" class="control-label">Task Title</label>
-        <input asp-for="TaskTitle" class="form-control"/>
-        <span asp-validation-for="TaskTitle" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="TaskStaff" class="control-label">Task Staff</label>
-        <input asp-for="TaskStaff" class="form-control"/>
-        <span asp-validation-for="TaskStaff" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="TaskTime" class="control-label">Task Time</label>
-        <input asp-for="TaskTime" class="form-control" type="time"/>
-        <span asp-validation-for="TaskTime" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="TasksStatus" class="control-label">Task Status</label>
-        <input asp-for="TasksStatus" class="form-control"/>
-        <span asp-validation-for="TasksStatus" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="LearningTypeId" class="control-label"></label>
-        <select asp-for="LearningTypeId" class="form-control" asp-items="ViewBag.LearningApproach"></select>
-        <span asp-validation-for="LearningTypeId" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="TaskLocation" class="control-label">Task Location</label>
-        <input asp-for="TaskLocation" class="form-control"/>
-        <span asp-validation-for="TaskLocation" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="TaskApproach" class="control-label">Task Approach</label>
-        <input asp-for="TaskApproach" class="form-control"/>
-        <span asp-validation-for="TaskApproach" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary"/>
-        <a class="btn btn-secondary" asp-action="Index">Cancel</a>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")

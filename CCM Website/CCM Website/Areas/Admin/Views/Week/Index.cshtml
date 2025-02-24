@@ -1,39 +1,53 @@
 @model IEnumerable<CCM_Website.Models.Week>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Week";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Week</li>
+        </div>
+    </ol>
+    <hr/>
+</nav>
+
+<div class="row my-3 align-items-start">
+    <div class="col-md-10">
+        <h2>Weeks</h2>
+    </div>
+</div>
 
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.WeekNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Workbook.CourseName)
-            </th>
-            <th></th>
-        </tr>
+        
+    <tr>
+        <th>Week Number</th>
+        <th>Course Name</th>
+        <th></th>
+    </tr>
+    
+    <tr></tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+        
+    @foreach (var item in Model)
+    {
         <tr>
+            <td>@Html.DisplayFor(modelItem => item.WeekNumber)</td>
+            <td>@Html.DisplayFor(modelItem => item.Workbook.CourseName)</td>
             <td>
-                @Html.DisplayFor(modelItem => item.WeekNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Workbook.CourseName)
-            </td>
-            <td>
-                <a class="btn-sm btn-primary" asp-action="Edit" asp-route-id="@item.WeekId">Edit</a>
-                <a class="btn-sm btn-secondary" asp-action="Details" asp-route-id="@item.WeekId">Details</a>
-                <a class="btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.WeekId">Delete</a>
+                <div class="d-flex flex-wrap justify-content-end gap-2">
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.WeekId">Edit</a>
+                    <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.WeekId">Details</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.WeekId">Delete</a>
+                </div>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>

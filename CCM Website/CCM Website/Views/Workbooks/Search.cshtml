@@ -1,7 +1,19 @@
 ﻿@model IEnumerable<CCM_Website.Models.Workbook>
 
-<h4>Search</h4>
-<hr />
+@{
+ViewData["Title"] = "Search";
+}
+
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Search</li>
+    </ol>
+    <hr/>
+</nav>
+
 <div class="row mb-4">
     <div class="col-12">
         <form asp-action="Search" method="post">
@@ -13,13 +25,29 @@
     </div>
 </div>
 
+<div class="row mb-4">
+    <div class="col-12">
+        <form asp-action="Filter" method="get">
+            <input type="hidden" name="SearchPhrase" value="@ViewData["SearchPhrase"]" /> <!-- Preserve Search Term -->
+            <div class="input-group">
+                <input type="text" name="FilterPhrase" class="form-control" placeholder="Filter Results" value="@ViewData["FilterPhrase"]" />
+                <button type="submit" class="btn btn-primary">Filter</button>
+                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Search")'">Reset</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 <h3>Search Results</h3>
-<table class="table">
+<table class="table table responsive">
     <thead>
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.CourseName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CourseCode)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.CourseLead)
@@ -34,13 +62,18 @@
                 @Html.DisplayFor(modelItem => item.CourseName)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.CourseCode)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.CourseLead)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.WorkbookId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.WorkbookId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.WorkbookId">Delete</a>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-secondary flex-fill" asp-action="Details" asp-route-id="@item.WorkbookId">View Workbook</a>
+                    <a class="btn btn-primary flex-fill" asp-action="Edit" asp-route-id="@item.WorkbookId">Edit Workbook</a>
+                </div>
             </td>
+
         </tr>
 }
     </tbody>

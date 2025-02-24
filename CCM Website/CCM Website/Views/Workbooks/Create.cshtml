@@ -4,51 +4,67 @@
     ViewData["Title"] = "Create Workbook";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
+    </ol>
+    <hr/>
+</nav>
 
-<div class="container">
-    <h4>Please enter the details for your new workbook</h4>
-    <form asp-action="Create" method="post">
-        @Html.AntiForgeryToken()
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group">
-            <label asp-for="CourseName" class="control-label"></label>
-            <input asp-for="CourseName" class="form-control" />
-            <span asp-validation-for="CourseName" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="CourseCode" class="control-label"></label>
-            <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code" />
-            <span asp-validation-for="CourseCode" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="CourseLead" class="control-label"></label>
-            <input asp-for="CourseLead" class="form-control" />
-            <span asp-validation-for="CourseLead" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="CourseLength" class="control-label"></label>
-            <input  value="11" disabled class="form-control" />
-            <input type="hidden" asp-for="CourseLength" value="11" class="form-control" />
-            <span asp-validation-for="CourseLength" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="LearningPlatformId" class="control-label">Learning Platform</label>
-            <input  value="1" disabled class="form-control" />
-            <input type="hidden" asp-for="LearningPlatformId" value="1" class="form-control" />
-            <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Collaborators" class="control-label"></label>
-            <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
-            <span asp-validation-for="Collaborators" class="text-danger"></span>
-        </div>
-        <br/>
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Create</button>
-            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
 
+<h4>Enter new workbook details</h4>
+<hr/>
+<div class="row">
+    <div class="col-lg-6 col-md-8">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="CourseName" class="control-label"></label>
+                <input asp-for="CourseName" class="form-control" />
+                <span asp-validation-for="CourseName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CourseCode" class="control-label"></label>
+                <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code" />
+                <span asp-validation-for="CourseCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PipReference" class="control-label"></label>
+                <input asp-for="PipReference" class="form-control" placeholder="Enter PIP Reference (Optional)" />
+                <span asp-validation-for="PipReference" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CourseLead" class="control-label"></label>
+                <input asp-for="CourseLead" class="form-control" />
+                <span asp-validation-for="CourseLead" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CourseLength" class="control-label">Course Length (Weeks)</label>
+                <input asp-for="CourseLength" value="10" type="number" min="1" max="30" class="form-control" />
+                <span asp-validation-for="CourseLength" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LearningPlatformId" class="control-label">Learning Platform</label>
+                <select asp-for="LearningPlatformId" asp-items="ViewBag.LearningPlatforms" class="form-control" required>
+                    <option value="">-- Select a Learning Platform --</option>
+                </select>
+                <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Collaborators" class="control-label"></label>
+                <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
+                <span asp-validation-for="Collaborators" class="text-danger"></span>
+            </div>
+            <br/>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
 </div>
 
 @section Scripts {

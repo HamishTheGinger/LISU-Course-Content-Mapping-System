@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CCM_Website.Data;
-using CCM_Website.Models;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -15,15 +15,15 @@ namespace CCM_Website.Areas.Admin.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public AdminController(ApplicationDbContext context) {
+        public AdminController(ApplicationDbContext context)
+        {
             _context = context;
         }
 
         // List all entities
-        public IActionResult Index() {
+        public IActionResult Index()
+        {
             return View();
         }
-   
     }
-
 }

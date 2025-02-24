@@ -5,7 +5,22 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create Week Activity</h2>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="WeekActivities" asp-action="Index">Week Activities</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </div>
+    </ol>
+    <hr/>
+</nav>
+
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Create Week Activity</h2></div>
+</div>
+
 @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 <form asp-action="Create">
     <div class="form-group">
@@ -14,7 +29,7 @@
         <span asp-validation-for="TaskOrder" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="WeekId" class="control-label">Week</label>
+        <label asp-for="WeekId" class="control-label">Week ID</label>
         <select asp-for="WeekId" class="form-control" asp-items="ViewBag.WeekId"></select>
         <span asp-validation-for="WeekId" class="text-danger"></span>
     </div>
@@ -44,7 +59,7 @@
         <span asp-validation-for="TasksStatus" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label asp-for="LearningTypeId" class="control-label"></label>
+        <label asp-for="LearningTypeId" class="control-label">Learning Type</label>
         <select asp-for="LearningTypeId" class="form-control" asp-items="ViewBag.LearningApproach"></select>
         <span asp-validation-for="LearningTypeId" class="text-danger"></span>
     </div>
@@ -58,8 +73,9 @@
         <input asp-for="TaskApproach" class="form-control"/>
         <span asp-validation-for="TaskApproach" class="text-danger"></span>
     </div>
+    <br/>
     <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary"/>
+        <input type="submit" value="Create" class="btn btn-success"/>
         <a class="btn btn-secondary" asp-action="Index">Cancel</a>
     </div>
 </form>

@@ -1,383 +1,262 @@
 ﻿@model CCM_Website.Models.Workbook
 
 @{
-    ViewData["Title"] = $"{@Model.CourseCode}";
+    ViewData["Title"] = $"{@Model.CourseCode} - Overview";
     ViewData["LearningPlatform"] = $"{@Model.LearningPlatform.PlatformName}";
 }
-<link rel="stylesheet" href="~/css/Details.css" asp-append-version="true" />
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Workbook Details</li>
+    </ol>
+    <hr/>
+</nav>
 
 <!-- Main part of workbook page with buttons-->
 <div class="container-fluid">
-
-    <div class="row">
-        <div class="col">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="left-head">@Html.DisplayFor(model => model.CourseName)</h1>
-                <a class="edit-workbook" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit</a>
-            </div>
-            <h2 class="left-head">Course Leads: @Html.DisplayFor(model => model.CourseLead)</h2>
+    <div class="row my-3 align-items-start">
+        <div class="col-md-10">
+            <h1 class="text-wrap">@Html.DisplayFor(model => model.CourseName)</h1>
+            <h4 class="text-wrap">Course Leads: @Html.DisplayFor(model => model.CourseLead)</h4>
+        </div>
+        <div class="col-md-2 d-flex justify-content-center ">
+            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Overview</a>
         </div>
     </div>
-
-    <div class="container-fluid">
+    
+    
         <div class="row">
             <!-- Left Column with Toggle Buttons -->
-            <div class="col-md-2 left-column d-flex flex-column justify-content-start align-items-start">
+            <div class="col-md-2 left-column d-flex flex-column justify-content-center align-items-center">
                 <br />
                 <br />
-                <button id="toggleBreakdownButton" class="toggle-button">Time Breakdown</button>
-                <button id="toggleBreakdownGraphButton" class="toggle-button">Time Breakdown Graph</button>
-                <button id="toggleGradAttributesButton" class="toggle-button">Graduate Attributes</button>
+                
+                <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_btn"> <span id="arrow_time_breakdown">◀</span>Time Breakdown</button>
+                <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_graph_btn"> <span id="arrow_time_breakdown_graph">▶</span>Time Breakdown Graph</button>
+                <button class="btn btn-primary m-3 rounded-pill" id="graduate_attributes_btn"> <span id="arrow_graduate_attributes">▶</span>Graduate Attributes</button>
             </div>
 
             <!-- Center Content -->
             <div class="col-md-8 center-column d-flex align-items-center justify-content-center">
-                <div id="graph-container">
-                    <div id="legend">
-                        <table class="table table-bordered table-responsive">
-                            <thead>
-                                <th>Legend</th>
-                            </thead>
-                            <tbody>
-                                <tr><td id="acquisition">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
-                                <tr><td id="collaboration">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
-                                <tr><td id="discussion">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
-                                <tr><td id="investigation">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
-                                <tr><td id="practice">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
-                                <tr><td id="production">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
-                                <tr><td id="assessment">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
-                            </tbody>
-                        </table>
+                <div id="graph-container" class="overflow-auto flex-column">
 
-                    </div>
-
-                    <div id="time-breakdown">
+                    <div id="time-breakdown" style="display: block;">
                         <table class="table table-bordered table-responsive w-auto">
                             <thead>
-                                <tr style="background-color: #005398; color: white; text-align: center;">
-                                    <th>Week</th>
-                                    <th style="background-color: #A1F5ED">Acquisition</th>
-                                    <th style="background-color: #FFD21A">Collaboration</th>
-                                    <th style="background-color: #7AAEEA">Discussion</th>
-                                    <th style="background-color: #F8807F">Investigation</th>
-                                    <th style="background-color: #BB98DC">Practice</th>
-                                    <th style="background-color: #BDEA75">Production</th>
-                                    <th style="background-color: #44546A">Assessment</th>
-                                    <th>Total Time</th>
+                                <tr class="bg-secondary text-center">
+                                    <th class="text-white">Week</th>
+                                    <th id="Acquisition" style="background-color: #A1F5ED">Acquisition</th>
+                                    <th id="Collaboration" style="background-color: #FFD21A">Collaboration</th>
+                                    <th id="Discussion" style="background-color: #7AAEEA">Discussion</th>
+                                    <th id="Investigation" style="background-color: #F8807F">Investigation</th>
+                                    <th id="Practice" style="background-color: #BB98DC">Practice</th>
+                                    <th id="Production" style="background-color: #BDEA75">Production</th>
+                                    <th id="Assessment" class="text-white" style="background-color: #44546A">Assessment</th>
+                                    <th class="text-white">Total Time</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (Model.Weeks != null && Model.Weeks.Any())
+                                @foreach (var week in Model!.Weeks ?? Enumerable.Empty<Week>())
                                 {
-                                    int weekNumber = 1;
-                                    @foreach (var week in @Model.Weeks)
-                                    {
-                                        <tr>
-                                            <td style="text-align: center;">@weekNumber</td> <!-- Week number -->
-                                            <td style="text-align: center;">00:00</td> <!-- Acquisition -->
-                                            <td style="text-align: center;">00:00</td> <!-- Collaboration -->
-                                            <td style="text-align: center;">00:00</td> <!-- Discussion -->
-                                            <td style="text-align: center;">00:00</td> <!-- Investigation -->
-                                            <td style="text-align: center;">00:00</td> <!-- Practice -->
-                                            <td style="text-align: center;">00:00</td> <!-- Production -->
-                                            <td style="text-align: center;">00:00</td> <!-- Assessment -->
-                                            <td style="text-align: center;">00:00</td> <!-- Total Time -->
-                                        </tr>
-                                        weekNumber++;
-                                    }
+                                var weekData = ViewBag.TimeBreakdown != null && ViewBag.TimeBreakdown.ContainsKey(week.WeekNumber)
+                                ? ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>
+                                : new Dictionary<string, TimeSpan>();
+
+                                <tr>
+                                    <td style="text-align: center;">@week.WeekNumber</td> <!-- Week number -->
+                                    <td style="text-align: center;">@weekData!["Acquisition"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Collaboration"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Discussion"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Investigation"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Practice"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Production"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center;">@weekData!["Assessment"].ToString(@"hh\:mm")</td>
+                                    <td style="text-align: center; font-weight:bold;">
+                                        @{
+                                        var totalTime = weekData.Values.Aggregate(TimeSpan.Zero, (sum, next) => sum + next);
+                                        }
+                                        @totalTime.ToString(@"hh\:mm")
+                                    </td>
+                                </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
 
-                    <div id="time-breakdown-graph">
+                    <div id="time-breakdown-graph" style="display: none;">
                         <!-- Graph that shows up in this div is found in js -->
+                        <div class="d-flex">
+                            <div id="bar_chart_legend"></div>
+                            <div id="bar_chart_details"></div>
+                        </div>
+                        
                     </div>
+                
 
-                    <div id="grad-attributes">
-                        <table class="table table-bordered table-responsive">
+
+                    <div id="grad-attributes" style="display: none;">
+                        <table class="table table-bordered table-responsive text-center">
                             <thead>
-                                <tr style="background-color: #005398; color: white; text-align: center;">
+                                <tr class="bg-secondary text-white">
                                     <th>Graduate Attributes</th>
                                     <th>Total Attributes</th>
-                                    @if (Model.Weeks != null && Model.Weeks.Any())
-                                    {
-                                        int weekNumber = 1;
-                                        @foreach (var week in @Model.Weeks)
+
+                                    @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
                                         {
-                                            <th>W @weekNumber</th>
-                                            weekNumber++;
+                                            <th>W @week.WeekNumber</th>
                                         }
-                                    }
+                                    
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Adaptable</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Confident</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Effective Communication</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Ethically and Socially Aware</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Experienced Collaborators</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Independent and Critical Thinkers</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Investigative</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Reflective Learners</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Resourceful and Responsible</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
-                                <tr>
-                                    <td style="text-align: center; background-color: #44546A; color: white;">Subject Specialists</td> <!-- Graduate Attribute -->
-                                    <td style="text-align: center;">0</td> <!-- Total Attributes -->
-                                    @foreach (var week in Model.Weeks)
-                                    {
-                                        <td style="text-align: center;">0</td> <!-- Week Columns -->
-                                    }
-                                </tr>
+                                @foreach (var graduateAttribute in (Model.Weeks ?? Enumerable.Empty<Week>())
+                                    .Where(week => week.WeekGraduateAttributes != null)
+                                    .SelectMany(week => week.WeekGraduateAttributes!
+                                    .Select(wga => wga.GraduateAttribute))
+                                    .Where(attr => attr != null)
+                                    .Distinct())
+                                {
+                                    <tr>
+                                        <td class="bg-grad-attributes-table text-white">
+                                            @graduateAttribute.AttributeName
+                                        </td> <!-- Graduate Attribute Name -->
+                                        <td>
+                                            @graduateAttribute.WeekGraduateAttributes?.Count()  <!-- Total Attributes (Count of WeekGraduateAttributes for this GraduateAttribute) -->
+                                        </td>
+                                        @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
+                                        {
+                                            // Get the count of occurrences of the current graduate attribute for the current week
+                                            var attributeCountForWeek = week.WeekGraduateAttributes?
+                                            .Count(wga => wga.GraduateAttributeId == graduateAttribute.AttributeId) ?? 0;
+                                            <td>
+                                                @attributeCountForWeek  <!-- Display the count of this graduate attribute for the current week -->
+                                            </td> <!-- Week Columns -->
+                                        }
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
+
+                    <div id="legend" style="display: none;">
+                        <table class="table table-bordered table-responsive">
+                            <thead>
+                            <tr><th>Legend</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr><td style="background-color: #A1F5ED">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q & A Walls, Readings, Videos</td></tr>
+                            <tr><td style="background-color: #FFD21A">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
+                            <tr><td style="background-color: #7AAEEA">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
+                            <tr><td style="background-color: #F8807F">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
+                            <tr><td style="background-color: #BB98DC">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
+                            <tr><td style="background-color: #BDEA75">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
+                            <tr><td style="background-color: #44546A" class="text-white">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    
                 </div>
             </div>
 
 
             <!-- Right Column -->
-            <div class="col-md-2 right-column d-flex flex-column align-items-end">
-                @foreach (var week in @Model.Weeks)
+            
+            <div class="col-md-2 right-column d-flex flex-column align-items-center">
+                @foreach (var week in @Model.Weeks ?? Enumerable.Empty<Week>())
                 {
-                    <a class="edit-workbook" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
+                    <a class="btn btn-primary mb-2 rounded-pill" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
                 }
             </div>
 
-            <div class="row justify-content-center mt-auto">
-                <div class="col-md-8 text-center">
-                    <button id="toggleLegendButton" class="toggle-button-bottom"><span id="arrow_legend">▲</span>  Legend</button>
-                </div>
+            <div class="text-center d-flex justify-content-center">
+                <button class="btn btn-primary m-3 rounded-pill" id="legend_btn"> <span id="arrow_legend">▲</span>Legend</button>
             </div>
 
         </div>
     </div>
-    
-</div>
+
+
 
 <script>
+    function refocusButton(id) {
+
+        let content = document.getElementById(`${id}`);
+        content.focus();
+        content.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    
     // Get the sections and buttons
-    var sections = {
-    legend: document.getElementById('legend'),
-    timeBreakdown: document.getElementById('time-breakdown'),
-    timeBreakdownGraph: document.getElementById('time-breakdown-graph'),
-    gradAttributes: document.getElementById('grad-attributes')
-    };
+    function toggleSection(buttonId, sectionId, arrowId) {
+        const button = document.getElementById(buttonId);
+        const section = document.getElementById(sectionId);
+        const arrow = document.getElementById(arrowId);
 
-    var buttons = {
-    toggleLegendButton: document.getElementById('toggleLegendButton'),
-    toggleBreakdownButton: document.getElementById('toggleBreakdownButton'),
-    toggleBreakdownGraphButton: document.getElementById('toggleBreakdownGraphButton'),
-    toggleGradAttributesButton: document.getElementById('toggleGradAttributesButton')
-    };
-
-    // Function to hide all sections
-    function hideAllSections() {
-    for (var key in sections) {
-    sections[key].style.display = 'none';
-    }
+        button.addEventListener("click", function () {
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+                arrow.textContent = "◀"; 
+                refocusButton(sectionId);
+            } else {
+                section.style.display = "none";
+                arrow.textContent = "▶"; 
+            }
+        });
     }
 
-    // Add event listeners for each button to show the relevant section
-    buttons.toggleLegendButton.addEventListener('click', function() {
-    hideAllSections();
-    sections.legend.style.display = 'block';
-    });
+    function toggleLegendSection(buttonId, sectionId, arrowId) {
+        const button = document.getElementById(buttonId);
+        const section = document.getElementById(sectionId);
+        const arrow = document.getElementById(arrowId);
 
-    buttons.toggleBreakdownButton.addEventListener('click', function() {
-    hideAllSections();
-    sections.timeBreakdown.style.display = 'block';
-    });
+        button.addEventListener("click", function () {
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+                arrow.textContent = "▼";
+                refocusButton(sectionId);
+            } else {
+                section.style.display = "none";
+                arrow.textContent = "▲";
+            }
+        });
 
-    buttons.toggleBreakdownGraphButton.addEventListener('click', function() {
-    hideAllSections();
-    sections.timeBreakdownGraph.style.display = 'block';
-    });
+        
+    }
 
-    buttons.toggleGradAttributesButton.addEventListener('click', function() {
-    hideAllSections();
-    sections.gradAttributes.style.display = 'block';
-    });
+    // Apply toggle functionality to each button-section pair
+    toggleSection("time_breakdown_btn", "time-breakdown", "arrow_time_breakdown");
+    toggleSection("time_breakdown_graph_btn", "time-breakdown-graph", "arrow_time_breakdown_graph");
+    toggleSection("graduate_attributes_btn", "grad-attributes", "arrow_graduate_attributes");
+    toggleLegendSection("legend_btn", "legend", "arrow_legend");
+
+
+
+
 
     // Time breakdown graph
-     const data = [
-        {
-            week: "W1",
-            acquisition: 2.5,
-            collaboration: 1.0,
-            discussion: 0.5,
-            investigation: 1.0,
-            practice: 1.5,
-            production: 2.0,
-            assessment: 0.5
-        },
-        {
-            week: "W2",
-            acquisition: 3.0,
-            collaboration: 1.5,
-            discussion: 1.0,
-            investigation: 0.5,
-            practice: 2.0,
-            production: 1.5,
-            assessment: 0.5
-        },
-        {
-            week: "W3",
-            acquisition: 1.0,
-            collaboration: 1.5,
-            discussion: 1.0,
-            investigation: 0.5,
-            practice: 2.0,
-            production: 1.5,
-            assessment: 0.5
-        },
-        {
-            week: "W4",
-            acquisition: 2.0,
-            collaboration: 1.5,
-            discussion: 2.0,
-            investigation: 0.5,
-            practice: 2.0,
-            production: 1.5,
-            assessment: 0.5
-        },
-        {
-            week: "W5",
-            acquisition: 3.0,
-            collaboration: 1.5,
-            discussion: 1.0,
-            investigation: 0.5,
-            practice: 2.0,
-            production: 1.5,
-            assessment: 0.5
-        },
-        {
-            week: "W6",
-            acquisition: 1.0,
-            collaboration: 1.5,
-            discussion: 1.0,
-            investigation: 0.5,
-            practice: 3.0,
-            production: 2.5,
-            assessment: 0.5
-        },
-        {
-            week: "W7",
-            acquisition: 3.0,
-            collaboration: 1.5,
-            discussion: 2.0,
-            investigation: 0.5,
-            practice: 2.0,
-            production: 1.5,
-            assessment: 0.5
-        },
-        {
-            week: "W8",
-            acquisition: 3.0,
-            collaboration: 1.5,
-            discussion: 1.0,
-            investigation: 0.5,
-            practice: 2.0,
-            production: 1.5,
-            assessment: 0.5
-        },
-        {
-            week: "W9",
-            acquisition: 3.0,
-            collaboration: 1.5,
-            discussion: 1.0,
-            investigation: 0.5,
-            practice: 2.0,
-            production: 1.5,
-            assessment: 0.5
-        },
-        {
-            week: "W10",
-            acquisition: 1.0,
-            collaboration: 1.0,
-            discussion: 1.0,
-            investigation: 1.0,
-            practice: 1.0,
-            production: 1.0,
-            assessment: 1.0
-        },
-        {
-            week: "W11",
-            acquisition: 3.0,
-            collaboration: 1.5,
-            discussion: 1.0,
-            investigation: 0.5,
-            practice: 2.0,
-            production: 1.5,
-            assessment: 3
-        },
+     
+    const data = [
+    @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
+            {
+            var weekData = ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>;
 
-        
-    ];
-        
+            if (weekData != null)
+            {
+            @: {
+                @:    week: @week.WeekNumber,
+                @:    acquisition: @weekData["Acquisition"].TotalHours.ToString("0.##"),
+                @:    collaboration: @weekData["Collaboration"].TotalHours.ToString("0.##"),
+                @:    discussion: @weekData["Discussion"].TotalHours.ToString("0.##"),
+                @:    investigation: @weekData["Investigation"].TotalHours.ToString("0.##"),
+                @:    practice: @weekData["Practice"].TotalHours.ToString("0.##"),
+                @:    production: @weekData["Production"].TotalHours.ToString("0.##"),
+                @:    assessment: @weekData["Assessment"].TotalHours.ToString("0.##")
+            @: },
+            }
+            }
+    ] 
 
     const activities = [
         "acquisition",
@@ -418,6 +297,8 @@
         .domain(activities)
         .range(["#A1F5ED", "#FFD21A", "#7AAEEA", "#F8807F", "#BB98DC", "#BDEA75", "#44546A"]);
 
+    const hoverValues = d3.select("#hoverValues");
+
     svg
         .selectAll("g")
         .data(stackedData)
@@ -429,7 +310,15 @@
         .attr("x", d => xScale(d.data.week))
         .attr("y", d => yScale(d[1]))
         .attr("height", d => yScale(d[0]) - yScale(d[1]))
-        .attr("width", xScale.bandwidth());
+        .attr("width", xScale.bandwidth())
+        .on("mouseover", function (event, d) {
+            let activityType = d3.select(this.parentNode).datum().key;
+            displayDetails(d.data, activityType);
+        })
+        .on("mouseout", function () {
+            hideDetails();
+        });
+
 
     // Add X-axis
     svg
@@ -446,6 +335,45 @@
             const minutes = Math.round((d - hours) * 60);
             return `${hours}:${minutes.toString().padStart(2, "0")}`;
         }));
+
+    // Create a container for the legend
+    const barChartLegend = d3.select("#bar_chart_legend")
+        .style("display", "flex")
+        .style("flex-direction", "column")
+        .style("margin-left", "20px")
+        .style("margin-top", "20px");
+
+    // Populate the legend with activity names and their corresponding colors
+    barChartLegend.selectAll("div")
+        .data(activities) // Use the activities array
+        .enter()
+        .append("div")
+        .style("display", "flex")
+        .style("align-items", "center")
+        .style("margin-bottom", "5px")
+        .html(activity => {
+            return `
+                <div style="width: 12px; height: 12px; background-color: ${colorScale(activity)}; margin-right: 8px; border: 1px solid black;"></div>
+                ${activity}
+            `;
+        });
+
+    function displayDetails(d, activityType) {
+        let detailsDiv = d3.select("#bar_chart_details");
+
+        let totalHours = d[activityType];
+
+        // Convert to 00:00 format
+        let hours = Math.floor(totalHours);
+        let minutes = Math.round((totalHours - hours) * 60);
+
+        detailsDiv.html(`<strong>Week ${d.week}</strong><br>${activityType}: <strong>${hours}:${minutes.toString().padStart(2, "0")}</strong>`);
+        
+        detailsDiv.style("display", "block");
+    }
+    function hideDetails() {
+        d3.select("#bar_chart_details").style("display", "none");
+    }
     
 
 </script>

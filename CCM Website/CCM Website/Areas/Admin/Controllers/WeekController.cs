@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using CCM_Website.Data;
-using CCM_Website.Models;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -35,8 +35,8 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var week = await _context.Weeks
-                .Include(w => w.Workbook)
+            var week = await _context
+                .Weeks.Include(w => w.Workbook)
                 .FirstOrDefaultAsync(m => m.WeekId == id);
             if (week == null)
             {
@@ -66,7 +66,12 @@ namespace CCM_Website.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["WorkbookId"] = new SelectList(_context.Workbooks, "WorkbookId", "WorkbookId", week.WorkbookId);
+            ViewData["WorkbookId"] = new SelectList(
+                _context.Workbooks,
+                "WorkbookId",
+                "WorkbookId",
+                week.WorkbookId
+            );
             return View(week);
         }
 
@@ -83,7 +88,12 @@ namespace CCM_Website.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["WorkbookId"] = new SelectList(_context.Workbooks, "WorkbookId", "WorkbookId", week.WorkbookId);
+            ViewData["WorkbookId"] = new SelectList(
+                _context.Workbooks,
+                "WorkbookId",
+                "WorkbookId",
+                week.WorkbookId
+            );
             return View(week);
         }
 
@@ -92,7 +102,10 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("WeekId,WeekNumber,WorkbookId")] Week week)
+        public async Task<IActionResult> Edit(
+            int id,
+            [Bind("WeekId,WeekNumber,WorkbookId")] Week week
+        )
         {
             if (id != week.WeekId)
             {
@@ -119,7 +132,12 @@ namespace CCM_Website.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["WorkbookId"] = new SelectList(_context.Workbooks, "WorkbookId", "WorkbookId", week.WorkbookId);
+            ViewData["WorkbookId"] = new SelectList(
+                _context.Workbooks,
+                "WorkbookId",
+                "WorkbookId",
+                week.WorkbookId
+            );
             return View(week);
         }
 
@@ -131,8 +149,8 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var week = await _context.Weeks
-                .Include(w => w.Workbook)
+            var week = await _context
+                .Weeks.Include(w => w.Workbook)
                 .FirstOrDefaultAsync(m => m.WeekId == id);
             if (week == null)
             {

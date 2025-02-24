@@ -1,0 +1,114 @@
+@charset "UTF-8";
+/*!
+ * Bootstrap v5.1.0 (https://getbootstrap.com/)
+ * Copyright 2011-2021 The Bootstrap Authors
+ * Copyright 2011-2021 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+:root {
+    --bs-primary: #003865; /*UOFG Primary*/
+    --bs-secondary: #005398; /*UOFG Secondary*/
+    --bs-main: #f7f7f7; /*Grey for main content*/
+    --bs-week-table: #00B050;
+    --bs-stats-table: #0070C0;
+    --bs-red: #FF0000;
+    --bs-amber: #FFC000;
+    --bs-green: #00B050;
+    --bs-stats-total: #FFFFCC;
+    --bs-remote: #FDEBAC;
+    --bs-on-campus: #FBCED0;
+    --bs-grad-attributes-table: #44546A;
+    --bs-font-pt-sans: "PT Sans", Tahoma, Verdana, sans-serif;
+    --bs-body-font-family: var(--bs-font-pt-sans);
+    --bs-body-font-size: 14px;
+    --bs-body-font-weight: 400;
+    --bs-body-font-style: normal;
+    
+}
+.bg-primary {
+    background-color: var(--bs-primary) !important;
+}
+
+.bg-secondary {
+    background-color: var(--bs-secondary) !important;
+}
+
+.bg-main {
+    background-color: var(--bs-main) !important;
+}
+
+.bg-week-table {
+    background-color: var(--bs-week-table) !important;
+}
+
+.bg-gray-600 {
+    background-color: var(--bs-gray-600) !important;
+}
+
+.border-gray-600  {
+    border-color: #6c757d !important;
+}
+
+.bg-stats-table {
+    background-color: var(--bs-stats-table) !important;
+}
+
+.bg-grad-attributes-table {
+    background-color: var(--bs-grad-attributes-table) !important;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #005398;
+    border-color: #005398;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #003865;
+    border-color: #005398;
+}
+
+.btn-secondary:hover {
+    color: #fff;
+    background-color: #5c636a;
+    border-color: #565e64;
+}
+
+.btn-check:focus + .btn-primary, .btn-primary:focus {
+    color: #fff;
+    background-color: #003865;
+    border-color: #005398;
+}
+
+.bg-red {
+    background-color: var(--bs-red) !important;
+}
+
+.bg-amber {
+    background-color: var(--bs-amber) !important;
+}
+
+.bg-green {
+    background-color: var(--bs-green) !important;
+}
+
+.bg-stats-total {
+    background-color: var(--bs-stats-total) !important;
+}
+
+.bg-on-campus {
+    background-color: var(--bs-on-campus) !important;
+}
+
+.bg-remote {
+    background-color: var(--bs-remote) !important;
+}
+
+.table th {
+    border-bottom-color: #000000 !important; 
+}
+
+.minh-50{
+    min-height: 50px !important;
+}

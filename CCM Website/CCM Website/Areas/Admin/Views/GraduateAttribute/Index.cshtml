@@ -1,36 +1,58 @@
 @model IEnumerable<CCM_Website.Models.GraduateAttribute>
 
 @{
-    ViewData["Title"] = "Admin Panel - Graduate Attributes";
+    ViewData["Title"] = "Graduate Attribute";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Graduate Attributes List</h1>
 
-<p>
-    <a class="btn btn-success" asp-action="Create">Create New</a>
-</p>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Graduate Attributes</li>
+        </div>
+    </ol>
+    <hr/>
+</nav>
+
+<div class="row my-3 align-items-start">
+    <div class="col-md-10">
+        <h2>Graduate Attributes</h2>
+    </div>
+    <div class="col-md-2 d-flex justify-content-center">
+        <a class="btn btn-success"
+           asp-action="Create">Create New Attribute
+        </a>
+    </div>
+</div>
+
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.AttributeName)
+                Attribute Name
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AttributeName)
-            </td>
-            <td>
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.AttributeName)
+        </td>
+        <td>
+            <div class="d-flex flex-wrap justify-content-end gap-2">
                 <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.AttributeId">Edit</a>
                 <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.AttributeId">Details</a>
                 <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.AttributeId">Delete</a>
-            </td>
-        </tr>
+            </div>
+        </td>
+    </tr>
+
 }
     </tbody>
 </table>

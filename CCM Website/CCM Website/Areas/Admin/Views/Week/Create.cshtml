@@ -5,7 +5,21 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Week" asp-action="Index">Week</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </div>
+    </ol>
+    <hr/>
+</nav>
+
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Create Week</h2></div>
+</div>
 
 <h4>Week</h4>
 <hr />
@@ -15,22 +29,21 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
             <div class="form-group">
-                <label asp-for="WeekNumber" class="control-label"></label>
+                <label asp-for="WeekNumber" class="control-label">Week Number</label>
                 <input asp-for="WeekNumber" class="form-control" />
                 <span asp-validation-for="WeekNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="WorkbookId" class="control-label"></label>
+                <label asp-for="WorkbookId" class="control-label">Workbook ID</label>
                 <select asp-for="WorkbookId" class ="form-control" asp-items="ViewBag.WorkbookId"></select>
             </div>
+            <br/>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-success" />
+                <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
