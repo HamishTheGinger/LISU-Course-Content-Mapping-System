@@ -17,6 +17,7 @@
     --bs-stats-total: #FFFFCC;
     --bs-remote: #FDEBAC;
     --bs-on-campus: #FBCED0;
+    --bs-grad-attributes-table: #44546A;
     --bs-font-pt-sans: "PT Sans", Tahoma, Verdana, sans-serif;
     --bs-body-font-family: var(--bs-font-pt-sans);
     --bs-body-font-size: 14px;
@@ -50,6 +51,10 @@
 
 .bg-stats-table {
     background-color: var(--bs-stats-table) !important;
+}
+
+.bg-grad-attributes-table {
+    background-color: var(--bs-grad-attributes-table) !important;
 }
 
 .btn-primary {

@@ -15,6 +15,7 @@
 </nav>
 
 <!-- Main part of workbook page with buttons-->
+<div class="container-fluid">
     <div class="row my-3 align-items-start">
         <div class="col-md-10">
             <h1 class="text-wrap">@Html.DisplayFor(model => model.CourseName)</h1>
@@ -25,52 +26,35 @@
         </div>
     </div>
     
-    <div class="container-fluid">
+    
         <div class="row">
             <!-- Left Column with Toggle Buttons -->
-            <div class="col-md-2 left-column d-flex flex-column justify-content-start align-items-start">
+            <div class="col-md-2 left-column d-flex flex-column justify-content-center align-items-center">
                 <br />
                 <br />
                 
-                <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_btn" style="background-color: #005398"> <span id="arrow_time_breakdown">▲</span>Time Breakdown</button>
-                <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_graph_btn" style="background-color: #005398"> <span id="arrow_time_breakdown_graph">▲</span>Time Breakdown Graph</button>
-                <button class="btn btn-primary m-3 rounded-pill" id="graduate_attributes_btn" style="background-color: #005398"> <span id="arrow_graduate_attributes">▲</span>Graduate Attributes</button>
+                <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_btn"> <span id="arrow_time_breakdown">◀</span>Time Breakdown</button>
+                <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_graph_btn"> <span id="arrow_time_breakdown_graph">▶</span>Time Breakdown Graph</button>
+                <button class="btn btn-primary m-3 rounded-pill" id="graduate_attributes_btn"> <span id="arrow_graduate_attributes">▶</span>Graduate Attributes</button>
             </div>
 
             <!-- Center Content -->
             <div class="col-md-8 center-column d-flex align-items-center justify-content-center">
                 <div id="graph-container" class="overflow-auto flex-column">
-                    <div id="legend" style="display: none;">
-                        <table class="table table-bordered table-responsive">
-                            <thead>
-                                <tr><th>Legend</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td style="background-color: #A1F5ED">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
-                                <tr><td style="background-color: #FFD21A">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
-                                <tr><td style="background-color: #7AAEEA">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
-                                <tr><td style="background-color: #F8807F">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
-                                <tr><td style="background-color: #BB98DC">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
-                                <tr><td style="background-color: #BDEA75">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
-                                <tr><td style="background-color: #44546A">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
-                            </tbody>
-                        </table>
-
-                    </div>
 
                     <div id="time-breakdown" style="display: block;">
                         <table class="table table-bordered table-responsive w-auto">
                             <thead>
-                                <tr style="background-color: #005398; color: white; text-align: center;">
-                                    <th>Week</th>
-                                    <th style="background-color: #A1F5ED">Acquisition</th>
-                                    <th style="background-color: #FFD21A">Collaboration</th>
-                                    <th style="background-color: #7AAEEA">Discussion</th>
-                                    <th style="background-color: #F8807F">Investigation</th>
-                                    <th style="background-color: #BB98DC">Practice</th>
-                                    <th style="background-color: #BDEA75">Production</th>
-                                    <th style="background-color: #44546A">Assessment</th>
-                                    <th>Total Time</th>
+                                <tr class="bg-secondary text-center">
+                                    <th class="text-white">Week</th>
+                                    <th id="Acquisition" style="background-color: #A1F5ED">Acquisition</th>
+                                    <th id="Collaboration" style="background-color: #FFD21A">Collaboration</th>
+                                    <th id="Discussion" style="background-color: #7AAEEA">Discussion</th>
+                                    <th id="Investigation" style="background-color: #F8807F">Investigation</th>
+                                    <th id="Practice" style="background-color: #BB98DC">Practice</th>
+                                    <th id="Production" style="background-color: #BDEA75">Production</th>
+                                    <th id="Assessment" class="text-white" style="background-color: #44546A">Assessment</th>
+                                    <th class="text-white">Total Time</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -109,13 +93,13 @@
                         </div>
                         
                     </div>
-                    
+                
 
 
                     <div id="grad-attributes" style="display: none;">
-                        <table class="table table-bordered table-responsive">
+                        <table class="table table-bordered table-responsive text-center">
                             <thead>
-                                <tr style="background-color: #005398; color: white; text-align: center;">
+                                <tr class="bg-secondary text-white">
                                     <th>Graduate Attributes</th>
                                     <th>Total Attributes</th>
 
@@ -135,10 +119,10 @@
                                     .Distinct())
                                 {
                                     <tr>
-                                        <td style="text-align: center; background-color: #44546A; color: white;">
+                                        <td class="bg-grad-attributes-table text-white">
                                             @graduateAttribute.AttributeName
                                         </td> <!-- Graduate Attribute Name -->
-                                        <td style="text-align: center;">
+                                        <td>
                                             @graduateAttribute.WeekGraduateAttributes?.Count()  <!-- Total Attributes (Count of WeekGraduateAttributes for this GraduateAttribute) -->
                                         </td>
                                         @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
@@ -146,7 +130,7 @@
                                             // Get the count of occurrences of the current graduate attribute for the current week
                                             var attributeCountForWeek = week.WeekGraduateAttributes?
                                             .Count(wga => wga.GraduateAttributeId == graduateAttribute.AttributeId) ?? 0;
-                                            <td style="text-align: center;">
+                                            <td>
                                                 @attributeCountForWeek  <!-- Display the count of this graduate attribute for the current week -->
                                             </td> <!-- Week Columns -->
                                         }
@@ -155,12 +139,32 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <div id="legend" style="display: none;">
+                        <table class="table table-bordered table-responsive">
+                            <thead>
+                            <tr><th>Legend</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr><td style="background-color: #A1F5ED">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q & A Walls, Readings, Videos</td></tr>
+                            <tr><td style="background-color: #FFD21A">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
+                            <tr><td style="background-color: #7AAEEA">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
+                            <tr><td style="background-color: #F8807F">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
+                            <tr><td style="background-color: #BB98DC">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
+                            <tr><td style="background-color: #BDEA75">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
+                            <tr><td style="background-color: #44546A" class="text-white">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    
                 </div>
             </div>
 
 
             <!-- Right Column -->
-            <div class="col-md-2 right-column d-flex flex-column align-items-end">
+            
+            <div class="col-md-2 right-column d-flex flex-column align-items-center">
                 @foreach (var week in @Model.Weeks ?? Enumerable.Empty<Week>())
                 {
                     <a class="btn btn-primary mb-2 rounded-pill" asp-action="Week" asp-route-id="@week.WeekId">Week @week.WeekNumber</a>
@@ -168,14 +172,22 @@
             </div>
 
             <div class="text-center d-flex justify-content-center">
-                <button class="btn btn-primary m-3 rounded-pill" id="legend_btn"> <span id="arrow_legend">▲</span> Legend</button>
+                <button class="btn btn-primary m-3 rounded-pill" id="legend_btn"> <span id="arrow_legend">▲</span>Legend</button>
             </div>
 
         </div>
     </div>
 
 
+
 <script>
+    function refocusButton(id) {
+
+        let content = document.getElementById(`${id}`);
+        content.focus();
+        content.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+    
     // Get the sections and buttons
     function toggleSection(buttonId, sectionId, arrowId) {
         const button = document.getElementById(buttonId);
@@ -185,19 +197,42 @@
         button.addEventListener("click", function () {
             if (section.style.display === "none" || section.style.display === "") {
                 section.style.display = "block";
-                arrow.textContent = "▼"; // Expand
+                arrow.textContent = "◀"; 
+                refocusButton(sectionId);
             } else {
                 section.style.display = "none";
-                arrow.textContent = "▲"; 
+                arrow.textContent = "▶"; 
             }
         });
+    }
+
+    function toggleLegendSection(buttonId, sectionId, arrowId) {
+        const button = document.getElementById(buttonId);
+        const section = document.getElementById(sectionId);
+        const arrow = document.getElementById(arrowId);
+
+        button.addEventListener("click", function () {
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+                arrow.textContent = "▼";
+                refocusButton(sectionId);
+            } else {
+                section.style.display = "none";
+                arrow.textContent = "▲";
+            }
+        });
+
+        
     }
 
     // Apply toggle functionality to each button-section pair
     toggleSection("time_breakdown_btn", "time-breakdown", "arrow_time_breakdown");
     toggleSection("time_breakdown_graph_btn", "time-breakdown-graph", "arrow_time_breakdown_graph");
     toggleSection("graduate_attributes_btn", "grad-attributes", "arrow_graduate_attributes");
-    toggleSection("legend_btn", "legend", "arrow_legend");
+    toggleLegendSection("legend_btn", "legend", "arrow_legend");
+
+
+
 
 
     // Time breakdown graph
