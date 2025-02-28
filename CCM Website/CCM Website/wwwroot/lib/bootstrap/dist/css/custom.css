@@ -69,6 +69,21 @@
     border-color: #005398;
 }
 
+.btn-primary:active,
+.btn-primary.active {
+    color: #fff;
+    background-color: #0066CC; 
+    border-color: #0066CC;
+    box-shadow: 0px 0px 10px rgba(0, 83, 152, 0.5)
+}
+
+.btn-primary.active:hover {
+    color: #fff;
+    background-color: #003865;
+    border-color: #005398;
+}
+
+
 .btn-secondary:hover {
     color: #fff;
     background-color: #5c636a;
