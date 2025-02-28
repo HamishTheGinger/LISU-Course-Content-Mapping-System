@@ -107,24 +107,27 @@ namespace CCM_Website.Controllers
             }
 
             // Create a dictionary to store total time spent per learning type per week
+            // Fetch all learning types from the database
+            var allLearningTypes = _context.LearningType.ToList();
+
+            // Create a dictionary to store total time spent per learning type per week
             var timeBreakdown = new Dictionary<int, Dictionary<string, TimeSpan>>();
 
             foreach (var week in workbook.Weeks ?? Enumerable.Empty<Week>())
             {
-                var weekData = new Dictionary<string, TimeSpan>
-                {
-                    { "Acquisition", TimeSpan.Zero },
-                    { "Collaboration", TimeSpan.Zero },
-                    { "Discussion", TimeSpan.Zero },
-                    { "Investigation", TimeSpan.Zero },
-                    { "Practice", TimeSpan.Zero },
-                    { "Production", TimeSpan.Zero },
-                    { "Assessment", TimeSpan.Zero },
-                };
+                // Initialize weekData dynamically with all learning types
+                var weekData = allLearningTypes.ToDictionary(
+                    type => type.LearningTypeName,
+                    type => TimeSpan.Zero
+                );
 
+                // Aggregate activity times based on learning type
                 foreach (var activity in week.WeekActivities ?? Enumerable.Empty<WeekActivities>())
                 {
-                    if (weekData.ContainsKey(activity.LearningType.LearningTypeName))
+                    if (
+                        activity.LearningType != null
+                        && weekData.ContainsKey(activity.LearningType.LearningTypeName)
+                    )
                     {
                         weekData[activity.LearningType.LearningTypeName] += activity.TaskTime;
                     }
@@ -133,7 +136,13 @@ namespace CCM_Website.Controllers
                 timeBreakdown[week.WeekNumber] = weekData;
             }
 
+            // Pass to ViewBag or Model
             ViewBag.TimeBreakdown = timeBreakdown;
+            ViewBag.LearningTypes = allLearningTypes;
+
+            ViewBag.TimeBreakdown = timeBreakdown;
+            ViewData["GraduateAttributes"] = await _context.GraduateAttributes.ToListAsync();
+            ViewData["LearningTypes"] = await _context.LearningType.ToListAsync();
 
             return View(workbook);
         }
