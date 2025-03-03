@@ -30,10 +30,9 @@
                 <select disabled asp-for="WeekId" class="form-control" asp-items="ViewBag.WeekId"></select>
                 <span asp-validation-for="WeekId" class="text-danger"></span>
             </div>
-            <input type="hidden" asp-for="ActivitiesId" />
             <div class="form-group">
                 <label asp-for="ActivitiesId" class="control-label">Activity</label>
-                <select disabled asp-for="ActivitiesId" class="form-control" asp-items="ViewBag.ActivitiesId"></select>
+                <select asp-for="ActivitiesId" class="form-control" asp-items="ViewBag.ActivitiesId"></select>
                 <span asp-validation-for="ActivitiesId" class="text-danger"></span>
             </div>
             <div class="form-group">
