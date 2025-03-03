@@ -59,7 +59,7 @@
             </div>
 
             <div class="row mb-10 justify-content-around">
-                <div id="legend" style="display: none">
+                <div id="legend" class="d-none">
                     <table class="table table-bordered table-responsive">
                         <thead>
                             <tr><th>Legend</th></tr>
@@ -81,7 +81,7 @@
                     <button class="btn btn-primary m-3 rounded-pill " id="lt_table_hide"> <span id="arrow_stats">▼</span> Statistics</button>
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <table id="stats_table" class="table table-bordered text-center position-sticky" style="display:block">
+                        <table id="stats_table" class="table table-bordered text-center position-sticky">
                             <thead>
                             <tr>
                                 <th colspan="4" class ="text-white bg-stats-table">Statistics</th>
@@ -151,8 +151,8 @@
                     <button class="btn btn-primary m-3 rounded-pill" id="lt_chart_hide"> <span id="arrow_chart">▼</span> Chart</button>
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <div id="lt_chart" style="display:block"></div>
-                        <div id="lt_chart_key" style="display:block"></div>
+                        <div id="lt_chart"></div>
+                        <div id="lt_chart_key"></div>
                         <div id="lt_chart_details" class="minh-50"></div>
                     </div>
 
@@ -196,21 +196,22 @@
 
     @foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
     {
-        <text>
-            weekTableData.push({
-                id: "@item.WeekActivityId",
-                taskOrder : "@item.TaskOrder",
-                staffResponsible: "@item.TaskStaff",
-                title: "@item.TaskTitle",
-                learningActivity: "@item.Activities.ActivityName",
-                learningType: "@item.LearningType.LearningTypeName",
-                time: "@item.TaskTime.ToString(@"hh\:mm")",
-                status: "@item.TasksStatus.StatusName",
-                activityLocation: "@item.TaskLocation.LocationName",
-                approach: "@item.TaskApproach.ApproachName"
-            });
-        </text>
+    <text>
+        weekTableData.push({
+            id: "@Html.Raw(item.WeekActivityId)",
+            taskOrder : "@Html.Raw(item.TaskOrder)",
+            staffResponsible: "@Html.Raw(item.TaskStaff)",
+            title: "@Html.Raw(item.TaskTitle)",
+            learningActivity: "@Html.Raw(item.Activities.ActivityName)",
+            learningType: "@Html.Raw(item.LearningType.LearningTypeName)",
+            time: "@Html.Raw(item.TaskTime.ToString(@"hh\:mm"))",
+            status: "@Html.Raw(item.TasksStatus.StatusName)",
+            activityLocation: "@Html.Raw(item.TaskLocation.LocationName)",
+            approach: "@Html.Raw(item.TaskApproach.ApproachName)"
+        });
+    </text>
     }
+
     @if (!(Model.ActivitiesList?.Any() ?? false)) // Correctly checking if the list is empty
     {
     <text>
@@ -301,13 +302,15 @@
             row.appendChild(actionCell);
 
             var editCell = document.createElement('td');
-            var editLink = document.createElement('a');
-            editLink.textContent = "Edit Activity";
             if(rowData.id !== "N/A"){
+                var editLink = document.createElement('a');
+                editLink.textContent = "Edit Activity";
                 editLink.href = `/Workbooks/EditActivity/${rowData.id}`;
+                editLink.className = "d-flex justify-content-center btn btn-primary";
+                editCell.appendChild(editLink);
+            }else{
+                editCell.textContent = "N/A";
             }
-            editLink.className = "d-flex justify-content-center btn btn-primary";
-            editCell.appendChild(editLink);
             row.appendChild(editCell);
             weekTableBody.appendChild(row);
         });
@@ -334,11 +337,11 @@
 
     //Stats table data 
     var statsData = [];
-    var unassigned = @Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Unassigned");
-    var inProgress = @Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "In-Progress");
-    var completed = @Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Completed");
-    var onCampus = @Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "On Campus");
-    var remote = @Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "Remote (Home)");
+    var unassigned = @Html.Raw(Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Unassigned"));
+    var inProgress = @Html.Raw(Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "In-Progress"));
+    var completed = @Html.Raw(Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Completed"));
+    var onCampus = @Html.Raw(Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "On Campus"));
+    var remote = @Html.Raw(Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "Remote (Home)"));
     var total = unassigned + inProgress + completed;
     @{
         double totalTime = Model.ActivitiesList?
@@ -372,13 +375,13 @@
                 .Sum() ?? 0; 
             
             <text>
-        statsData.push({
-            label: "@type.LearningTypeName", 
-            time: @time,
-            color: "@type.LearningTypeColour",
-            textColor: "@type.LearningTypeTextColour"
-        });
-    </text>
+                statsData.push({
+                    label: "@Html.Raw(type.LearningTypeName)", 
+                    time: @Html.Raw(time),
+                    color: "@Html.Raw(type.LearningTypeColour)",
+                    textColor: "@Html.Raw(type.LearningTypeTextColour)"
+                });
+            </text>
         }
     }
 
@@ -407,12 +410,13 @@
     function togglePieChart() {
         const chart = document.getElementById("lt_chart");
         const key = document.getElementById("lt_chart_key");
-        const currentDisplay = chart.style.display;
         const arrow = document.getElementById("arrow_chart");
-        const newDisplay = currentDisplay === "none" ? "block" : "none";
-        chart.style.display = newDisplay;
-        key.style.display = newDisplay;
-        if (currentDisplay === "none") {
+        chart.classList.toggle("d-none")
+        chart.classList.toggle("d-block")
+        key.classList.toggle("d-none")
+        key.classList.toggle("d-block")
+        
+        if (chart.classList.contains("d-none")) {
             arrow.innerHTML = "▲";
             refocusButton("lt_chart");
         } else {
@@ -429,38 +433,37 @@
         const buttonChart = document.getElementById("lt_chart_hide");
         const buttonTable = document.getElementById("lt_table_hide");
 
-        const currentDisplay = legend.style.display;
         statsData.forEach(item => {
             const legend_colour = document.getElementById(item.label + "_legend");
             legend_colour.style.backgroundColor = item.color;
         });
 
-        legend.style.display = currentDisplay === "none" || currentDisplay === "" ? "block" : "none";
-        chart.style.display = "none";
-        key.style.display = "none";
-        table.style.display = "none";
-        buttonChart.style.display = "none";
-        buttonTable.style.display = "none";
+        legend.classList.toggle("d-none")
+        legend.classList.toggle("d-block")
+        chart.className = "d-none";
+        key.className = "d-none";
+        table.className = "d-none";
+        buttonChart.className = "d-none";
+        buttonTable.className = "d-none";
 
-        if (legend.style.display === "block") {
+        if (legend.classList.contains("d-block")) {
             arrow.innerHTML = "▼";
             refocusButton("legend");
 
         } else {
             arrow.innerHTML = "▲";
-            buttonChart.style.display = "block";
-            buttonTable.style.display = "block";
+            buttonChart.className = "d-block";
+            buttonTable.className = "d-block";
         }
     }
 
     function toggleStatsTable() {
         const table = document.getElementById("stats_table");
         const arrow = document.getElementById("arrow_stats");
-        const currentDisplay = table.style.display;
-        const newDisplay = currentDisplay === "none" ? "block" : "none";
-        table.style.display = newDisplay;
+        table.classList.toggle("d-none")
+        table.classList.toggle("d-block")
 
-        if (currentDisplay === "none") {
+        if (table.classList.contains("d-none")) {
             arrow.innerHTML = "▲";
             refocusButton("stats_table");
         } else {
@@ -592,7 +595,7 @@
     
     //percentage of time displayed when the user hovers over the pie chart
     function displayDetails(d) {
-        var percentage = @totalTime > 0 ? ((d.time / @totalTime) * 100).toFixed(2) : 0;
+        var percentage = @Html.Raw(totalTime) > 0 ? ((d.time / @Html.Raw(totalTime)) * 100).toFixed(2) : 0;
         let detailsDiv = d3.select("#lt_chart_details");
         detailsDiv.html(`<strong>${d.label}</strong>: (${percentage}%)`);
     }
