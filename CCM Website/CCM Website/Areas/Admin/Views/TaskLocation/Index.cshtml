@@ -1,5 +1,6 @@
-@model IEnumerable<CCM_Website.Models.TaskLocation>
-
+@model X.PagedList.IPagedList<CCM_Website.Models.TaskLocation>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using X.PagedList.Mvc.Core
 @{
     ViewData["Title"] = "Task Location";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -27,6 +28,14 @@
     </div>
 </div>
 
+@using (Html.BeginForm())
+{
+<div class="input-group">
+    @Html.TextBox("searchString")
+    <button type="submit" value="Search" class="btn btn-primary">Search</button>
+</div>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -53,3 +62,8 @@
 }
     </tbody>
 </table>
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 1 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }))

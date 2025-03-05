@@ -1,5 +1,7 @@
-@model IEnumerable<CCM_Website.Models.LearningPlatform>
-
+@model X.PagedList.IPagedList<CCM_Website.Models.LearningPlatform>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using X.PagedList.Mvc;
+@using X.PagedList.Mvc.Core
 @{
     ViewData["Title"] = "Learning Platform";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -27,11 +29,19 @@
     </div>
 </div>
 
+@using (Html.BeginForm())
+{
+<div class="input-group">
+    @Html.TextBox("searchString")
+    <button type="submit" value="Search" class="btn btn-primary">Search</button>
+</div>
+}
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.PlatformName)
+                @Html.DisplayNameFor(model => model.FirstOrDefault()!.PlatformName)
             </th>
             <th></th>
         </tr>
@@ -53,3 +63,9 @@
 }
     </tbody>
 </table>
+
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 1 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }))

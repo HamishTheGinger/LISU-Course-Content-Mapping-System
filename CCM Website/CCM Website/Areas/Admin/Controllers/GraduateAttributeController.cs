@@ -7,6 +7,7 @@ using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.Extensions;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -21,9 +22,23 @@ namespace CCM_Website.Areas.Admin.Controllers
         }
 
         // GET: Admin/GraduateAttribute
-        public async Task<IActionResult> Index()
+
+        public Task<IActionResult> Index(string searchString, int? page)
         {
-            return View(await _context.GraduateAttributes.ToListAsync());
+            var graduateAttributes = _context.GraduateAttributes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                graduateAttributes = graduateAttributes.Where(g =>
+                    g.AttributeName.ToLower().Contains(searchString.ToLower())
+                );
+            }
+
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            var pagedGraduateAttributes = graduateAttributes.ToPagedList(pageNumber, pageSize);
+            return Task.FromResult<IActionResult>(View(pagedGraduateAttributes));
         }
 
         // GET: Admin/GraduateAttribute/Details/5

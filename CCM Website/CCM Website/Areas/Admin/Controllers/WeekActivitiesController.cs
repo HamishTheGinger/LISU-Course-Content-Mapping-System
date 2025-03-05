@@ -7,6 +7,7 @@ using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.Extensions;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -21,12 +22,23 @@ namespace CCM_Website.Areas.Admin.Controllers
         }
 
         // GET: WeekActivities
-        public async Task<IActionResult> Index()
+        public Task<IActionResult> Index(string searchString, int? page)
         {
-            var weekActivities = _context
-                .WeekActivities.Include(wa => wa.Week)
-                .Include(wa => wa.Activities);
-            return View(await weekActivities.ToListAsync());
+            var weekActivities = _context.WeekActivities.Include(wa => wa.Activities).AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                weekActivities = weekActivities.Where(wa =>
+                    wa.TaskTitle.ToLower().Contains(searchString.ToLower())
+                );
+            }
+
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            var pagedWeekActivities = weekActivities.ToPagedList(pageNumber, pageSize);
+
+            return Task.FromResult<IActionResult>(View(pagedWeekActivities));
         }
 
         // GET: WeekActivities/Details/5

@@ -1,5 +1,6 @@
-@model IEnumerable<CCM_Website.Models.WeekActivities>
-
+@model X.PagedList.IPagedList<CCM_Website.Models.WeekActivities>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using X.PagedList.Mvc.Core
 @{
     ViewData["Title"] = "Week Activity";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -27,32 +28,40 @@
     </div>
 </div>
 
+@using (Html.BeginForm())
+{
+    <div class="input-group">
+        @Html.TextBox("searchString")
+        <button type="submit" value="Search" class="btn btn-primary">Search</button>
+    </div>
+}
+
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                Week ID
-            </th>
-            <th>
-                Activities
-            </th>
-            <th>
-                Task Title
-            </th>
-            <th>
-                Task Staff
-            </th>
-            <th>
-                Task Time
-            </th>
-            <th>
-                Task Status
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            Week ID
+        </th>
+        <th>
+            Activities
+        </th>
+        <th>
+            Task Title
+        </th>
+        <th>
+            Task Staff
+        </th>
+        <th>
+            Task Time
+        </th>
+        <th>
+            Task Status
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Week.WeekId)
@@ -80,6 +89,13 @@
                 </div>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 1 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }))
+
+
