@@ -849,64 +849,30 @@ namespace CCM_Website.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ActivityUp([FromBody] int id)
+        public async Task<IActionResult> ChangeActivityOrder(
+            [FromBody] Dictionary<int, int> activityUpdates
+        )
         {
-            var activity = await _context.WeekActivities.FirstOrDefaultAsync(a =>
-                a.WeekActivityId == id
-            );
-
-            if (activity == null)
+            if (activityUpdates == null || !activityUpdates.Any())
             {
-                return NotFound();
+                return BadRequest("No activity data provided.");
             }
 
-            var taskToSwap = await _context.WeekActivities.FirstOrDefaultAsync(a =>
-                a.TaskOrder == activity.TaskOrder - 1
-            );
+            var activityIds = activityUpdates.Keys.ToList();
+            var existingActivities = await _context
+                .WeekActivities.Where(a => activityIds.Contains(a.WeekActivityId))
+                .ToListAsync();
 
-            if (taskToSwap == null)
+            if (existingActivities.Count != activityUpdates.Count)
             {
-                return NoContent();
+                return NotFound("One or more activities not found.");
             }
 
-            int tempOrder = activity.TaskOrder;
-            activity.TaskOrder = taskToSwap.TaskOrder;
-            taskToSwap.TaskOrder = tempOrder;
-
-            _context.Update(activity);
-            _context.Update(taskToSwap);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ActivityDown([FromBody] int id)
-        {
-            var activity = await _context.WeekActivities.FirstOrDefaultAsync(a =>
-                a.WeekActivityId == id
-            );
-
-            if (activity == null)
+            foreach (var activity in existingActivities)
             {
-                return NotFound();
+                activity.TaskOrder = activityUpdates[activity.WeekActivityId];
             }
 
-            var taskToSwap = await _context.WeekActivities.FirstOrDefaultAsync(a =>
-                a.TaskOrder == activity.TaskOrder + 1
-            );
-
-            if (taskToSwap == null)
-            {
-                return NoContent();
-            }
-
-            int tempOrder = activity.TaskOrder;
-            activity.TaskOrder = taskToSwap.TaskOrder;
-            taskToSwap.TaskOrder = tempOrder;
-
-            _context.Update(activity);
-            _context.Update(taskToSwap);
             await _context.SaveChangesAsync();
 
             return NoContent();
