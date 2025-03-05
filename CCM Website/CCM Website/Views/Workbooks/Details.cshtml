@@ -342,24 +342,20 @@
 
     // Time breakdown graph
     const data = [
-        @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
-        {
-        var weekData = ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>;
+        @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>()){
+            var weekData = ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>;
 
-        if (weekData != null)
-            {
-            <text>
-                {
-                    week: @week.WeekNumber,
-                    @foreach (var type in ViewBag.LearningTypes ?? Enumerable.Empty<LearningType>())
-                    {
-                    <text>@type.LearningTypeName.Replace(" ", ""): @weekData[type.LearningTypeName].TotalHours.ToString("0.##"),</text>
+            if (weekData != null) {
+            @: {
+                @:week: @week.WeekNumber,
+                @foreach (var type in ViewBag.LearningTypes ?? Enumerable.Empty<LearningType>()){
+                    @:@type.LearningTypeName.Replace(" ", ""): @weekData[type.LearningTypeName].TotalHours.ToString("0.##"),
                     }
-                },
-            </text>
+            @: },
             }
         }
     ];
+
 
     // Step 3: Create Stacked Data Dynamically
 

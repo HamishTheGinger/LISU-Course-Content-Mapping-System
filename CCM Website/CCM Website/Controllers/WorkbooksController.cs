@@ -728,7 +728,7 @@ namespace CCM_Website.Controllers
                 catch (Exception exp)
                 {
                     Console.WriteLine(exp.Message);
-                    ModelState.AddModelError("", $"Error creating WeekActivity: {exp.Message}");
+                    ModelState.AddModelError("", $"Error creating Weekly Activity: {exp.Message}");
                 }
             }
             else
@@ -743,7 +743,7 @@ namespace CCM_Website.Controllers
                 }
                 ModelState.AddModelError(
                     "",
-                    "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
+                    "An error occurred while creating the Weekly Activity. Please contact an administrator if this problem persists."
                 );
             }
 

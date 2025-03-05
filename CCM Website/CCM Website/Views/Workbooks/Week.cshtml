@@ -39,6 +39,7 @@
                         <th class ="bg-week-table text-white text-center" id="weekTableHeading">Week @Model.Week.WeekNumber</th>
                     </tr>
                     <tr class="bg-week-table text-white text-center">
+                        <th>@Html.DisplayName("Task Order")</th>
                         <th>@Html.DisplayName("Staff Responsible")</th>
                         <th>@Html.DisplayName("Title")</th>
                         <th>@Html.DisplayName("Learning Activity")</th>
@@ -212,7 +213,7 @@
     </text>
     }
 
-    @if (!(Model.ActivitiesList?.Any() ?? false)) // Correctly checking if the list is empty
+    @if (!(Model.ActivitiesList?.Any() ?? false))
     {
     <text>
     weekTableData.push({
@@ -232,7 +233,7 @@
     
     //Populating the heading for the table
     var tableHeading = document.getElementById('weekTableHeading')
-    tableHeading.colSpan = Object.keys(weekTableData[0]).length + 2;
+    tableHeading.colSpan = Object.keys(weekTableData[0]).length + 3;
     
     //Populating the table from the data
     function renderTable() {
@@ -241,7 +242,7 @@
         weekTableData.forEach(function(rowData, index) {
             var row = document.createElement('tr');
             for (var key in rowData) {
-                if (key !== "id" && key !== "taskOrder") {
+                if (key !== "id") {
                     var cell = document.createElement('td');
                     cell.textContent = rowData[key];
                     row.appendChild(cell);
@@ -285,14 +286,14 @@
                 moveRow(index, -1);
                 setTimeout(() => {
                     refocusArrows(index - 1, "up");
-                }, 0);
+                }, 100);
             };
 
             downButton.onclick = function() {
                 moveRow(index, 1);
                 setTimeout(() => {
                     refocusArrows(index + 1, "down");
-                }, 0);
+                }, 100);
             };
 
             actionCell.appendChild(upButton);
