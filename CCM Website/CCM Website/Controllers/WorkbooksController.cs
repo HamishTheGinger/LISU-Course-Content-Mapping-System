@@ -40,7 +40,8 @@ namespace CCM_Website.Controllers
             // Perform search filtering across multiple fields
             var searchResults = await _context
                 .Workbooks.Where(c =>
-                    c.CourseName.Contains(SearchPhrase) || c.CourseLead.Contains(SearchPhrase)
+                    c.CourseName.ToLower().Contains(SearchPhrase.ToLower())
+                    || c.CourseLead.ToLower().Contains(SearchPhrase.ToLower())
                 )
                 .ToListAsync();
 
