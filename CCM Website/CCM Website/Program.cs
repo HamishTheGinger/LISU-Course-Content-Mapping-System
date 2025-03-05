@@ -44,6 +44,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+app.UseStatusCodePagesWithReExecute("/{0}");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
