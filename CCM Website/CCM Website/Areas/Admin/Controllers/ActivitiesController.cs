@@ -8,6 +8,9 @@ using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList;
+using X.PagedList.Extensions;
+using X.PagedList.Mvc.Core;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -22,9 +25,22 @@ namespace CCM_Website.Areas.Admin.Controllers
         }
 
         // GET: Admin/Activities
-        public async Task<IActionResult> Index()
+        public Task<IActionResult> Index(string searchString, int? page)
         {
-            return View(await _context.Activities.ToListAsync());
+            var activities = _context.Activities.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                activities = activities.Where(a =>
+                    a.ActivityName.ToLower().Contains(searchString.ToLower())
+                );
+            }
+
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            var pagedActivities = activities.ToPagedList(pageNumber, pageSize);
+            return Task.FromResult<IActionResult>(View(pagedActivities));
         }
 
         // GET: Admin/Activities/Details/5

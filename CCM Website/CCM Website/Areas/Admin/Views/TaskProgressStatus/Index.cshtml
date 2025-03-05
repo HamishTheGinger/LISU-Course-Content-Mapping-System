@@ -1,5 +1,6 @@
-@model IEnumerable<CCM_Website.Models.TaskProgressStatus>
-
+@model X.PagedList.IPagedList<CCM_Website.Models.TaskProgressStatus>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using X.PagedList.Mvc.Core
 @{
     ViewData["Title"] = "Task Progress Status";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -27,29 +28,44 @@
     </div>
 </div>
 
+@using (Html.BeginForm())
+{
+<div class="input-group">
+    @Html.TextBox("searchString")
+    <button type="submit" value="Search" class="btn btn-primary">Search</button>
+</div>
+}
+
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                Progress Status
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            Progress Status
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.StatusName)
-        </td>
-        <td>
-            <div class="d-flex flex-wrap justify-content-end gap-2">
-                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.StatusId">Edit</a>
-                <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.StatusId">Details</a>
-                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.StatusId">Delete</a>
-            </div>
-        </td>
-    </tr>
-}
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusName)
+            </td>
+            <td>
+                <div class="d-flex flex-wrap justify-content-end gap-2">
+                    <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.StatusId">Edit</a>
+                    <a class="btn btn-secondary" asp-action="Details" asp-route-id="@item.StatusId">Details</a>
+                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.StatusId">Delete</a>
+                </div>
+            </td>
+        </tr>
+    }
     </tbody>
 </table>
+
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 1 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }))
+
