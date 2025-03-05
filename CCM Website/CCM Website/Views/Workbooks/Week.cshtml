@@ -48,7 +48,9 @@
                         <th>@Html.DisplayName("Task Status")</th>
                         <th>@Html.DisplayName("Activity Location")</th>
                         <th>@Html.DisplayName("Learning Approach")</th>
-                        <th>Change Order</th>
+                        <th><btn class="btn btn-primary d-block" id="changeOrder">Change Order</btn>
+                            <btn class="btn btn-success d-none" id="saveOrder">Save Changes</btn>
+                        </th>
                         <th>Edit Activity</th>
 
                     </tr>
@@ -194,6 +196,8 @@
     //Data for the main table
     var weekTableBody = document.getElementById('weekTable').querySelector('tbody');
     var weekTableData = [];
+    var isOrderingActive = false;
+    var changeOrderDisabled = false;
 
     @foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
     {
@@ -233,7 +237,7 @@
     
     //Populating the heading for the table
     var tableHeading = document.getElementById('weekTableHeading')
-    tableHeading.colSpan = Object.keys(weekTableData[0]).length + 3;
+    tableHeading.colSpan = Object.keys(weekTableData[0]).length + 1;
     
     //Populating the table from the data
     function renderTable() {
@@ -273,6 +277,14 @@
             downButton.disabled = index === weekTableData.length - 1;
             downButton.id = `downButton-${index}`;
 
+            if (isOrderingActive) {
+                upButton.style.display = "block";
+                downButton.style.display = "block";
+            } else {
+                upButton.style.display = "none";
+                downButton.style.display = "none";
+            }
+            
             downButton.addEventListener("mouseover", function() {
                 if (!downButton.disabled) {
                     downButton.style.color = "#0d6efd";
@@ -286,14 +298,14 @@
                 moveRow(index, -1);
                 setTimeout(() => {
                     refocusArrows(index - 1, "up");
-                }, 100);
+                }, 0);
             };
 
             downButton.onclick = function() {
                 moveRow(index, 1);
                 setTimeout(() => {
                     refocusArrows(index + 1, "down");
-                }, 100);
+                }, 0);
             };
 
             actionCell.appendChild(upButton);
@@ -311,6 +323,9 @@
                 editCell.appendChild(editLink);
             }else{
                 editCell.textContent = "N/A";
+                var changeOrderButton = document.getElementById("changeOrder");
+                changeOrderButton.className = "btn btn-primary d-block bg-gray-600 border border-gray-600";
+                changeOrderDisabled = true;
             }
             row.appendChild(editCell);
             weekTableBody.appendChild(row);
@@ -323,18 +338,47 @@
         var temp = weekTableData[index];
         weekTableData[index] = weekTableData[newIndex];
         weekTableData[newIndex] = temp;
-
-        if (direction > 0 && weekTableData[index]) {
-            upF(weekTableData[index].id);
-            downF(weekTableData[newIndex].id); 
-        }else{
-            upF(weekTableData[newIndex].id);
-            downF(weekTableData[index].id);  
-        }
         renderTable();
     }
 
     renderTable();
+    var changeOrderButton = document.getElementById("changeOrder");
+    var saveOrderButton = document.getElementById("saveOrder");
+    
+    if (!changeOrderDisabled){
+        changeOrderButton.onclick = function() {
+            isOrderingActive = true;
+            saveOrderButton.className = "btn btn-success d-block";
+            changeOrderButton.className = "btn btn-primary d-none";
+
+            for (let i = 0; i < weekTableData.length; i++) {
+                let buttonD = document.getElementById(`downButton-` + i);
+                let buttonU = document.getElementById(`upButton-` + i);
+                if (buttonD && buttonU) {
+                    buttonD.style.display = "block";
+                    buttonU.style.display = "block";
+                }
+            }
+        };
+
+        saveOrderButton.onclick = function() {
+            isOrderingActive = false;
+            changeOrderButton.className = "btn btn-primary d-block";
+            saveOrderButton.className = "btn btn-success d-none";
+
+            for (let i = 0; i < weekTableData.length; i++) {
+                let buttonD = document.getElementById(`downButton-` + i);
+                let buttonU = document.getElementById(`upButton-` + i);
+                if (buttonD && buttonU) {
+                    buttonD.style.display = "none";
+                    buttonU.style.display = "none";
+                }
+            }
+        saveOrder();
+        };
+    }
+
+
 
     //Stats table data 
     var statsData = [];
@@ -473,26 +517,27 @@
     }
     
     //function to call controller to save new taskOrder to the DB
-    function upF(activityId) {
-        fetch('/Workbooks/activityUp', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(activityId),
-        })
-            .catch(error => console.error('Error:', error));
-    }
+    function saveOrder() {
+        var activities = {};
 
-    function downF(activityId) {
-        fetch('/Workbooks/activityDown', {
+        for (let i = 0; i < weekTableData.length; i++) {
+            activities[weekTableData[i].id] = i+1;
+        }
+
+
+        fetch('/Workbooks/ChangeActivityOrder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(activityId),
+            body: JSON.stringify(activities),  
         })
-            .catch(error => console.error('Error:', error));
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
     }
     
     //functions to focus the screen on the related elements
