@@ -62,34 +62,5 @@ namespace CCM_Website.Test
             Assert.Equal(2, workbookList.Count);
             Assert.Equal(2, workbookList[0].WorkbookId);
         }
-
-        private List<Workbook> GetWorkbooks()
-        {
-            var learningPlatform = new LearningPlatform() { PlatformName = "Moodle" };
-
-            var workbooks = new List<Workbook>
-            {
-                new Workbook
-                {
-                    WorkbookId = 1,
-                    CourseName = "Network and Operating System Essentials",
-                    CourseCode = "COMPSCI2024",
-                    CourseLead = "Awais Aziz Shah",
-                    LearningPlatform = learningPlatform,
-                    LastEdited = new DateTime(2024, 11, 12),
-                },
-                new Workbook
-                {
-                    WorkbookId = 2,
-                    CourseName = "Data Fundamentals",
-                    CourseCode = "COMPSCI4073",
-                    CourseLead = "John Williamson",
-                    LearningPlatform = learningPlatform,
-                    LastEdited = DateTime.Now,
-                },
-            };
-
-            return workbooks;
-        }
     }
 }

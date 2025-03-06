@@ -31,6 +31,8 @@ public class DatabaseFixture : IDisposable
             Activities = activity,
         };
 
+        var cose = new UniversityArea { AreaName = "College of Science & Engineering" };
+
         var learningTypes = new[]
         {
             new LearningType
@@ -56,6 +58,7 @@ public class DatabaseFixture : IDisposable
                 CourseLead = "Awais Aziz Shah",
                 LearningPlatform = learningPlatform,
                 LastEdited = new DateTime(2024, 11, 12),
+                UniversityArea = cose,
             },
             new Workbook
             {
@@ -65,6 +68,7 @@ public class DatabaseFixture : IDisposable
                 CourseLead = "John Williamson",
                 LearningPlatform = learningPlatform,
                 LastEdited = DateTime.Now,
+                UniversityArea = cose,
             },
         };
 
