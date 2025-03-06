@@ -42,5 +42,6 @@ namespace CCM_Website.Data
             default!;
 
         public DbSet<CCM_Website.Models.TaskApproach> TaskApproach { get; set; } = default!;
+        public DbSet<CCM_Website.Models.UniversityArea> UniversityArea { get; set; } = default!;
     }
 }

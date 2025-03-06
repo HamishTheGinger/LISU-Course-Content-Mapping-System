@@ -23,5 +23,9 @@ namespace CCM_Website.Models
         [ForeignKey("LearningPlatform")]
         public int LearningPlatformId { get; set; }
         public required LearningPlatform LearningPlatform { get; set; }
+
+        [ForeignKey("UniversityArea")]
+        public int UniversityAreaId { get; set; }
+        public required UniversityArea UniversityArea { get; set; }
     }
 }

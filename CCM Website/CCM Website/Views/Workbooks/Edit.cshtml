@@ -58,13 +58,20 @@
                 <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="UniversityAreaId" class="control-label">Workbook Area</label>
+                <select asp-for="UniversityAreaId" asp-items="ViewBag.UniversityAreas" class="form-control" required>
+                    <option value="">-- Select an Area --</option>
+                </select>
+                <span asp-validation-for="UniversityAreaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Collaborators" class="control-label"></label>
                 <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
                 <span asp-validation-for="Collaborators" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save Changes" class="btn btn-success" />
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>
         </form>

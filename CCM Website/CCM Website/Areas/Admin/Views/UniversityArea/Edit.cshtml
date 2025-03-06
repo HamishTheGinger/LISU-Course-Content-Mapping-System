@@ -1,4 +1,4 @@
-@model CCM_Website.Models.TaskApproach
+@model CCM_Website.Models.UniversityArea
 
 @{
     ViewData["Title"] = "Edit";
@@ -10,7 +10,7 @@
         <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
         <div class="d-flex m-2">
             <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
-            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="TaskApproach" asp-action="Index">Task Approach</a></li>
+            <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="UniversityArea" asp-action="Index">Workbook Area</a></li>
             <li class="breadcrumb-item active" aria-current="page">Edit</li>
         </div>
     </ol>
@@ -18,7 +18,7 @@
 </nav>
 
 <div class="row my-3 align-items-start">
-    <div class="col-md-10"><h2>Edit Task Approach</h2></div>
+    <div class="col-md-10"><h2>Edit Workbook Area</h2></div>
 </div>
 
 <hr />
@@ -26,11 +26,11 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ApproachId" />
+            <input type="hidden" asp-for="AreaId" />
             <div class="form-group">
-                <label asp-for="ApproachName" class="control-label">Approach Name</label>
-                <input asp-for="ApproachName" class="form-control" />
-                <span asp-validation-for="ApproachName" class="text-danger"></span>
+                <label asp-for="AreaName" class="control-label">Area Name</label>
+                <input asp-for="AreaName" class="form-control" />
+                <span asp-validation-for="AreaName" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">

@@ -134,6 +134,24 @@ namespace CCM_Website.Data
                     context.SaveChanges();
                 }
 
+                if (!context.UniversityArea.Any())
+                {
+                    var universityAreas = new[]
+                    {
+                        new UniversityArea { AreaName = "College of Arts & Humanities" },
+                        new UniversityArea
+                        {
+                            AreaName = "College of Medical, Veterinary & Life Sciences",
+                        },
+                        new UniversityArea { AreaName = "College of Science & Engineering" },
+                        new UniversityArea { AreaName = "College of Social Sciences" },
+                        new UniversityArea { AreaName = "University Services" },
+                    };
+
+                    context.UniversityArea.AddRange(universityAreas);
+                    context.SaveChanges();
+                }
+
                 if (!context.LearningPlatforms.Any())
                 {
                     var platforms = new[]
