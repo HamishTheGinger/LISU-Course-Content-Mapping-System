@@ -459,12 +459,22 @@ namespace CCM_Website.Controllers
 
             var weekActivity = await _context
                 .WeekActivities.Include(w => w.Week)
+                .ThenInclude(week => week.Workbook)
                 .FirstOrDefaultAsync(w => w.WeekActivityId == id);
 
             if (weekActivity == null)
             {
                 return NotFound();
             }
+
+            var learningPlatformId = weekActivity.Week.Workbook.LearningPlatformId;
+
+            var allowedActivities = _context
+                .LearningPlatformActivities.Where(lpa =>
+                    lpa.LearningPlatformId == learningPlatformId
+                )
+                .Select(lpa => lpa.Activities)
+                .ToList();
 
             ViewBag.WorkbookId = weekActivity.Week.WorkbookId;
             ViewBag.CrumbWeekId = weekActivity.Week.WeekId;
@@ -476,7 +486,7 @@ namespace CCM_Website.Controllers
                 weekActivity.WeekId
             );
             ViewData["ActivitiesId"] = new SelectList(
-                _context.Activities,
+                allowedActivities,
                 "ActivityId",
                 "ActivityName",
                 weekActivity.ActivitiesId
@@ -661,7 +671,9 @@ namespace CCM_Website.Controllers
 
             Console.WriteLine($"Filtered Weeks: {filteredWeeks.Count}: {id}");
 
-            var crumbWeek = _context.Weeks.FirstOrDefault(w => w.WeekId == weekId);
+            var crumbWeek = _context
+                .Weeks.Include(week => week.Workbook)
+                .FirstOrDefault(w => w.WeekId == weekId);
 
             if (crumbWeek == null)
             {
@@ -671,12 +683,17 @@ namespace CCM_Website.Controllers
             ViewBag.CrumbWorkbookId = id;
             ViewBag.CrumbWeekId = crumbWeek.WeekId;
 
+            var learningPlatformId = crumbWeek.Workbook.LearningPlatformId;
+
+            var allowedActivities = _context
+                .LearningPlatformActivities.Where(lpa =>
+                    lpa.LearningPlatformId == learningPlatformId
+                )
+                .Select(lpa => lpa.Activities)
+                .ToList();
+
             ViewBag.WeekId = new SelectList(filteredWeeks, "WeekId", "WeekNumber");
-            ViewBag.ActivitiesId = new SelectList(
-                _context.Activities,
-                "ActivityId",
-                "ActivityName"
-            );
+            ViewBag.ActivitiesId = new SelectList(allowedActivities, "ActivityId", "ActivityName");
             ViewBag.LearningApproach = new SelectList(
                 _context.LearningType,
                 "LearningTypeId",
