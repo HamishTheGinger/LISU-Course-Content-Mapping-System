@@ -974,5 +974,99 @@ namespace CCM_Website.Controllers
 
             return NoContent();
         }
+
+        // GET: Workbook/AssignAttributes
+        public IActionResult AssignAttributes(int weekId)
+        {
+            if (weekId == 0)
+            {
+                return BadRequest("Invalid weekId received.");
+            }
+
+            var week = _context.Weeks.FirstOrDefault(w => w.WeekId == weekId);
+            if (week == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.WeekId = weekId;
+            ViewBag.GraduateAttributes = new SelectList(
+                (_context.GraduateAttributes?.ToList() ?? new List<GraduateAttribute>()),
+                "AttributeId",
+                "AttributeName"
+            );
+
+            return View("~/Views/Workbooks/AssignAttributes.cshtml");
+        }
+
+        // POST: Workbook/AssignAttributes
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignAttributes(int weekId, List<int> attributeIds)
+        {
+            Console.WriteLine(
+                $"DEBUG: Received POST request for AssignAttributes - weekId={weekId}"
+            );
+
+            if (weekId == 0)
+            {
+                Console.WriteLine("ERROR: weekId is 0! Check hidden input field.");
+                return BadRequest("Invalid weekId received.");
+            }
+
+            var week = await _context
+                .Weeks.Include(w => w.Workbook)
+                .FirstOrDefaultAsync(w => w.WeekId == weekId);
+
+            if (week == null)
+            {
+                Console.WriteLine($"ERROR: Week with ID {weekId} not found.");
+                return NotFound();
+            }
+
+            if (attributeIds == null || !attributeIds.Any())
+            {
+                ModelState.AddModelError("", "Please select at least one attribute.");
+                ViewBag.WeekId = weekId;
+                ViewBag.GraduateAttributes = new SelectList(
+                    _context.GraduateAttributes.ToList(),
+                    "AttributeId",
+                    "AttributeName"
+                );
+                return View("AssignAttributes");
+            }
+
+            foreach (var attrId in attributeIds)
+            {
+                if (
+                    !_context.WeekGraduateAttributes.Any(wga =>
+                        wga.WeekId == weekId && wga.GraduateAttributeId == attrId
+                    )
+                )
+                {
+                    var attribute = await _context.GraduateAttributes.FindAsync(attrId);
+                    if (attribute == null)
+                    {
+                        Console.WriteLine($"DEBUG: Attribute with ID {attrId} not found.");
+                        continue;
+                    }
+
+                    _context.WeekGraduateAttributes.Add(
+                        new WeekGraduateAttributes
+                        {
+                            WeekId = weekId,
+                            GraduateAttributeId = attrId,
+                            Week = week,
+                            GraduateAttribute = attribute,
+                        }
+                    );
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            Console.WriteLine($"DEBUG: Successfully assigned attributes to weekId={weekId}");
+
+            return RedirectToAction("Details", "Workbooks", new { id = week.Workbook.WorkbookId });
+        }
     }
 }

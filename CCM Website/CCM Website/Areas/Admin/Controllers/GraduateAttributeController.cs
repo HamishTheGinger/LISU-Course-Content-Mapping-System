@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CCM_Website.Data;
 using CCM_Website.Models;
+using CCM_Website.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;

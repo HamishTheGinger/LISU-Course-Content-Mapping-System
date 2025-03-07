@@ -1,0 +1,90 @@
+﻿@model X.PagedList.IPagedList<CCM_Website.Models.WeekGraduateAttributes>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using X.PagedList.Mvc.Core
+@{
+    ViewData["Title"] = "Week Graduate Attributes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Week Graduate Attributes</li>
+        </div>
+    </ol>
+    <hr />
+</nav>
+
+<div class="row my-3 align-items-start">
+    <div class="col-md-10">
+        <h2>Week Graduate Attributes</h2>
+    </div>
+    <div class="col-md-2 d-flex justify-content-center">
+        <a class="btn btn-success"
+           asp-action="Create"
+           asp-route-weekId="@(ViewData["DefaultWeekId"] ?? Model.FirstOrDefault()?.WeekId)">
+            Create New Graduate Attribute
+        </a>
+
+    </div>
+</div>
+
+@using (Html.BeginForm())
+{
+    <div class="input-group">
+        @Html.TextBox("searchString")
+        <button type="submit" value="Search" class="btn btn-primary">Search</button>
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Week ID
+            </th>
+            <th>
+                Graduate Attribute ID
+            </th>
+            <th>
+                Graduate Attribute Name
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Week.WeekId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GraduateAttribute.AttributeId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GraduateAttribute.AttributeName)
+                </td>
+                <td>
+                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                        <a asp-action="Details" asp-route-weekId="@item.WeekId" asp-route-graduateAttributeId="@item.GraduateAttributeId" class="btn btn-secondary">Details</a>
+                        <a class="btn btn-danger"
+                           asp-action="Delete"
+                           asp-route-weekId="@item.WeekId"
+                           asp-route-graduateAttributeId="@item.GraduateAttributeId">
+                            Delete
+                        </a>
+
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<br />
+Page @(Model.PageCount < Model.PageNumber ? 1 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }))
