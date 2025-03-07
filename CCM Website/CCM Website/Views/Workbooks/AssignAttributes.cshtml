@@ -1,0 +1,32 @@
+﻿@model int
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Assign Attributes to Week";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Assign Attributes to Week</h2>
+
+<form asp-action="AssignAttributes" asp-controller="Workbooks" method="post">
+    @Html.AntiForgeryToken()
+
+    <input type="hidden" name="weekId" value="@ViewBag.WeekId" />
+
+    <label>Select Attributes:</label>
+    <select name="attributeIds" multiple class="form-control">
+        @if (ViewBag.GraduateAttributes != null && ViewBag.GraduateAttributes is SelectList)
+        {
+            foreach (var attr in (SelectList)ViewBag.GraduateAttributes)
+            {
+                <option value="@attr.Value">@attr.Text</option>
+            }
+        }
+        else
+        {
+            <option disabled>No attributes available</option>
+        }
+    </select>
+
+    <button type="submit" class="btn btn-primary mt-3">Assign Attributes</button>
+</form>

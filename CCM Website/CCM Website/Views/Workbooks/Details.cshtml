@@ -13,7 +13,7 @@
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
         <li class="breadcrumb-item active" aria-current="page">Workbook Details</li>
     </ol>
-    <hr/>
+    <hr />
 </nav>
 
 <!-- Main part of workbook page with buttons-->
@@ -27,14 +27,13 @@
             <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Overview</a>
         </div>
     </div>
-    
-    
+
+    <div class="container-fluid">
         <div class="row">
             <!-- Left Column with Toggle Buttons -->
             <div class="col-md-2 left-column d-flex flex-column justify-content-center align-items-center">
                 <br />
                 <br />
-                
                 <button class="btn btn-primary m-3 rounded-pill active" id="time_breakdown_btn"> <span id="arrow_time_breakdown">◀</span>Student Notional Working Hours</button>
                 <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_graph_btn"> <span id="arrow_time_breakdown_graph">▶</span>Time Breakdown Graph</button>
                 <button class="btn btn-primary m-3 rounded-pill" id="graduate_attributes_btn"> <span id="arrow_graduate_attributes">▶</span>Graduate Attributes Table</button>
@@ -47,155 +46,100 @@
                     <div id="time-breakdown" class="show">
                         <table class="table table-bordered table-responsive w-auto">
                             <thead>
-                            <tr class="bg-secondary text-center">
-                                <th class="text-white">Week</th>
-
-                                @foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
-                                {
-                                <th id="@type.LearningTypeName">@type.LearningTypeName</th>
-                                }
-
-                                <th class="text-white">Total Time</th>
-                            </tr>
+                                <tr class="bg-secondary text-center">
+                                    <th class="text-white">Week</th>
+                                    @foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
+                                    {
+                                        <th id="@type.LearningTypeName">@type.LearningTypeName</th>
+                                    }
+                                    <th class="text-white">Total Time</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            @foreach (var week in Model!.Weeks ?? Enumerable.Empty<Week>())
-                            {
-                            var weekData = ViewBag.TimeBreakdown != null && ViewBag.TimeBreakdown.ContainsKey(week.WeekNumber)
-                            ? ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>
-                            : new Dictionary<string, TimeSpan>();
-
-                            <tr>
-                                <td class="text-center">@week.WeekNumber</td> <!-- Week number -->
-
-                                @foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
+                                @foreach (var week in Model!.Weeks ?? Enumerable.Empty<Week>())
                                 {
-                                var timeValue = weekData!.ContainsKey(type.LearningTypeName) ? weekData[type.LearningTypeName] : TimeSpan.Zero;
-                                <td class="text-center">@timeValue.ToString(@"hh\:mm")</td>
-                                }
+                                    var weekData = ViewBag.TimeBreakdown != null && ViewBag.TimeBreakdown.ContainsKey(week.WeekNumber)
+                                    ? ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>
+                                    : new Dictionary<string, TimeSpan>();
 
-                                <td class="text-center fw-bold">
-                                    @{
-                                        var totalTime = TimeSpan.Zero;
-                                        if (weekData?.Values != null)
+                                    <tr>
+                                        <td class="text-center">@week.WeekNumber</td>
+                                        @foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
                                         {
-                                            totalTime = weekData.Values.Aggregate(TimeSpan.Zero, (sum, next) => sum + next);
+                                            var timeValue = weekData!.ContainsKey(type.LearningTypeName) ? weekData[type.LearningTypeName] : TimeSpan.Zero;
+                                            <td class="text-center">@timeValue.ToString(@"hh\:mm")</td>
                                         }
-                                     
-                                    }
-                                    @totalTime.ToString(@"hh\:mm")
-                                </td>
-                            </tr>
-                            }
+                                        <td class="text-center fw-bold">
+                                            @{
+                                                var totalTime = weekData?.Values.Aggregate(TimeSpan.Zero, (sum, next) => sum + next) ?? TimeSpan.Zero;
+                                            }
+                                            @totalTime.ToString(@"hh\:mm")
+                                        </td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
 
                     <div id="time-breakdown-graph" class="d-none">
-                        <!-- Graph that shows up in this div is found in js -->
                         <div class="d-flex">
                             <div id="bar_chart_legend"></div>
                             <div id="bar_chart_details"></div>
                         </div>
-                        
                     </div>
-                
 
-
-                    <div id="grad-attributes" class="d-none">
+                    <!-- Graduate Attributes Table -->
+                    <div id="grad-attributes" style="display: block;">
+                        <!-- Changed to 'block' to ensure visibility -->
                         <table class="table table-bordered table-responsive text-center">
                             <thead>
-                            <tr class="bg-secondary text-white">
-                                <th>Graduate Attributes</th>
-                                <th>Total Attributes</th>
+                                <tr style="background-color: #005398; color: white;">
+                                    <th>Graduate Attributes</th>
+                                    <th>Total Attributes</th>
 
-                                @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
-                                {
-                                    <th>W @week.WeekNumber</th>
-                                }
-                                    
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var graduateAttribute in (Model.Weeks ?? Enumerable.Empty<Week>())
-                                      .Where(week => week.WeekGraduateAttributes != null)
-                                      .SelectMany(week => week.WeekGraduateAttributes!
-                                          .Select(wga => wga.GraduateAttribute))
-                                      .Where(attr => attr != null)
-                                      .Distinct())
-                            {
-                                <tr>
-                                    <td class="bg-grad-attributes-table text-white">
-                                        @graduateAttribute.AttributeName
-                                    </td> <!-- Graduate Attribute Name -->
-                                    <td>
-                                        @graduateAttribute.WeekGraduateAttributes?.Count()  <!-- Total Attributes (Count of WeekGraduateAttributes for this GraduateAttribute) -->
-                                    </td>
                                     @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
                                     {
-                                        // Get the count of occurrences of the current graduate attribute for the current week
-                                        var attributeCountForWeek = week.WeekGraduateAttributes?
-                                            .Count(wga => wga.GraduateAttributeId == graduateAttribute.AttributeId) ?? 0;
-                                        <td>
-                                            @attributeCountForWeek  <!-- Display the count of this graduate attribute for the current week -->
-                                        </td> <!-- Week Columns -->
+                                        <th>
+                                            W @week.WeekNumber
+                                            <br />
+                                            <a asp-action="AssignAttributes" asp-controller="Workbooks"
+                                               asp-route-weekId="@week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1"
+                                               style="background-color: #44546A; color: white; border: none;">
+                                                Assign
+                                            </a>
+                                        </th>
                                     }
                                 </tr>
-                            }
-                            </tbody>
-                        </table>
-
-                        <table class="table table-bordered table-responsive text-center">
-                            <thead>
-                            <tr class="bg-secondary text-white">
-                                <th>Graduate Attributes</th>
-                                <th>Total Attributes</th>
-                                @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
-                                {
-                                <th>W @week.WeekNumber</th>
-                                }
-                            </tr>
                             </thead>
                             <tbody>
-                            @{
-                            // get all graduate attributes
-                            var allGraduateAttributes = (graduateAttributes ?? Enumerable.Empty<GraduateAttribute>())
-                            .Select(ga => ga.AttributeName)
-                            .Union((Model.Weeks ?? Enumerable.Empty<Week>())
-                            .Where(w => w.WeekGraduateAttributes != null)
-                            .SelectMany(w => w.WeekGraduateAttributes!.Select(wga => wga.GraduateAttribute.AttributeName)))
-                            .Distinct()
-                            .ToList();
-                            }
-
-                            @foreach (var attributeName in allGraduateAttributes)
-                            {
-                            <tr>
-                                <td class="bg-grad-attributes-table text-white">@attributeName</td>
-
-                                <!-- Total count of attribute across weeks -->
-                                <td>
-                                    @{
-                                    var totalAttributeCount = (Model.Weeks ?? Enumerable.Empty<Week>())
-                                    .Sum(week => week.WeekGraduateAttributes?.Count(wga => wga.GraduateAttribute.AttributeName == attributeName) ?? 0);
-                                    }
-                                    @totalAttributeCount
-                                </td>
-
-                                <!-- Count for each week -->
-                                @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
+                                @foreach (var graduateAttribute in (Model.Weeks ?? Enumerable.Empty<Week>())
+                                .Where(week => week.WeekGraduateAttributes != null)
+                                .SelectMany(week => week.WeekGraduateAttributes!
+                                .Select(wga => wga.GraduateAttribute))
+                                .Where(attr => attr != null)
+                                .Distinct())
                                 {
-                                var countForWeek = week.WeekGraduateAttributes?
-                                .Count(wga => wga.GraduateAttribute.AttributeName == attributeName) ?? 0;
-
-                                <td>@countForWeek</td> <!-- Display 0 if not found -->
+                                    <tr>
+                                        <td style="text-align: center; background-color: #44546A; color: white;">
+                                            @graduateAttribute.AttributeName
+                                        </td>
+                                        <td class="text-center">
+                                            @graduateAttribute.WeekGraduateAttributes?.Count()
+                                        </td>
+                                        @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
+                                        {
+                                            var attributeCountForWeek = week.WeekGraduateAttributes?
+                                            .Count(wga => wga.GraduateAttributeId == graduateAttribute.AttributeId) ?? 0;
+                                            <td class="text-center">
+                                                @attributeCountForWeek
+                                            </td>
+                                        }
+                                    </tr>
                                 }
-                            </tr>
-                            }
                             </tbody>
                         </table>
-                        
                     </div>
+
 
                     <div id="legend" class="d-none">
                         <table class="table table-bordered table-responsive">
@@ -237,7 +181,7 @@
 
 
 
-<script>
+<script>    
 
     //get learning type colours from database for graphs and tables
     //get list of learning types for graph
