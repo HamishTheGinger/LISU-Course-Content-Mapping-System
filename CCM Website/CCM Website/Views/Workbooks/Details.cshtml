@@ -1,8 +1,8 @@
 ﻿@model CCM_Website.Models.Workbook
 
 @{
-    ViewData["Title"] = $"{@Model.CourseCode} - Overview";
-    ViewData["LearningPlatform"] = $"{@Model.LearningPlatform.PlatformName}";
+    ViewData["Title"] = $"{@Model?.CourseCode ?? @Model?.CourseName ?? "N/A"} - Overview";
+    ViewData["LearningPlatform"] = $"{@Model?.LearningPlatform.PlatformName}";
     var learningTypes = ViewData["LearningTypes"] as List<LearningType>;
     var graduateAttributes = ViewData["GraduateAttributes"] as List<GraduateAttribute>;
 }
