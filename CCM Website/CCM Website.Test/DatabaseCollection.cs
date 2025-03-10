@@ -72,11 +72,18 @@ public class DatabaseFixture : IDisposable
             },
         };
 
+        var taskStatus = new TaskProgressStatus { StatusName = "Completed" };
+        var taskLocation = new TaskLocation { LocationName = "On-Campus" };
+        var learningApproach = new TaskApproach { ApproachName = "Async" };
+
         Context.Workbooks.AddRange(workbooks);
         Context.LearningPlatforms.Add(learningPlatform);
         Context.Activities.Add(activity);
         Context.LearningPlatformActivities.Add(lpActivity);
         Context.LearningType.AddRange(learningTypes);
+        Context.TaskProgressStatus.Add(taskStatus);
+        Context.TaskLocation.Add(taskLocation);
+        Context.TaskApproach.Add(learningApproach);
 
         Context.Weeks.AddRange(
             new List<Week>

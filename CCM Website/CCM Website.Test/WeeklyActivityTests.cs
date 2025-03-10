@@ -9,6 +9,7 @@ using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NuGet.ContentModel;
 using Xunit;
 
 namespace CCM_Website.Test
@@ -24,7 +25,7 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public void WeekActivities_CreateActivityDropdownFilter()
+        public void WeekActivities_CreateActivity_DropdownFilter()
         {
             var controller = new WorkbooksController(_context);
 
@@ -41,7 +42,7 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public void WeekActivities_CreateLearningTypeDropdownFilter()
+        public void WeekActivities_CreateActivity_LearningTypeDropdownFilter()
         {
             var controller = new WorkbooksController(_context);
 
@@ -59,7 +60,7 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public void WeekActivities_CreateWeekDropdownFilter()
+        public void WeekActivities_CreateActivity_WeekDropdownFilter()
         {
             var controller = new WorkbooksController(_context);
             int wbId = 1;
@@ -73,6 +74,118 @@ namespace CCM_Website.Test
 
             Assert.Equal(2, filteredWeeks.Count);
             Assert.All(filteredWeeks, w => Assert.Equal(wbId, w.WorkbookId));
+        }
+
+        [Fact]
+        public async void WeekActivities_CreateActivity_TestCreationPass()
+        {
+            var controller = new WorkbooksController(_context);
+
+            var week = await _context.Weeks.FirstOrDefaultAsync(w => w.WeekId == 1);
+            var activity = await _context.Activities.FirstOrDefaultAsync(a => a.ActivityId == 1);
+            var lt = await _context.LearningType.FirstOrDefaultAsync(w => w.LearningTypeId == 1);
+            var la = await _context.TaskApproach.FirstOrDefaultAsync(w => w.ApproachId == 1);
+            var ll = await _context.TaskLocation.FirstOrDefaultAsync(w => w.LocationId == 1);
+            var ls = await _context.TaskProgressStatus.FirstOrDefaultAsync(s => s.StatusId == 1);
+
+            Assert.NotNull(week);
+            Assert.NotNull(activity);
+            Assert.NotNull(lt);
+            Assert.NotNull(la);
+            Assert.NotNull(ll);
+            Assert.NotNull(ls);
+
+            var newActivity = new WeekActivities
+            {
+                WeekActivityId = 1,
+                TaskOrder = 1,
+                WeekId = 1,
+                ActivitiesId = 1,
+                TaskTitle = "Lecture 1",
+                TaskStaff = "John Smith",
+                TaskTime = new TimeSpan(1, 30, 0),
+                TasksStatusId = 1,
+                LearningTypeId = 1,
+                TaskLocationId = 1,
+                TaskApproachId = 1,
+                Week = week,
+                Activities = activity,
+                LearningType = lt,
+                TaskApproach = la,
+                TaskLocation = ll,
+                TasksStatus = ls,
+            };
+
+            var result = await controller.CreateActivity(newActivity) as RedirectToActionResult;
+
+            // Result Checks
+            Assert.NotNull(result);
+            Assert.Equal("Week", result.ActionName);
+            // This check ensures that the page correctly redirects to the appropriate week page.
+            Assert.Equal(newActivity.WeekId, result.RouteValues?["id"]);
+
+            // Database Checks
+            var savedActivity = await _context
+                .WeekActivities.Include(weekActivities => weekActivities.TasksStatus)
+                .Include(weekActivities => weekActivities.LearningType)
+                .FirstOrDefaultAsync(w => w.WeekActivityId == newActivity.WeekActivityId);
+            Assert.NotNull(savedActivity);
+            Assert.Equal("Lecture 1", savedActivity.TaskTitle);
+            Assert.Equal("John Smith", savedActivity.TaskStaff);
+            Assert.Equal("Completed", savedActivity.TasksStatus.StatusName);
+            Assert.Equal(new TimeSpan(1, 30, 0), savedActivity.TaskTime);
+            Assert.Equal("Acquisition", savedActivity.LearningType.LearningTypeName);
+        }
+
+        [Fact]
+        public async Task WeekActivities_CreateActivity_TestCreationFail()
+        {
+            var controller = new WorkbooksController(_context);
+
+            var week = await _context.Weeks.FirstOrDefaultAsync(w => w.WeekId == 1);
+            var activity = await _context.Activities.FirstOrDefaultAsync(a => a.ActivityId == 1);
+            var lt = await _context.LearningType.FirstOrDefaultAsync(w => w.LearningTypeId == 1);
+            var la = await _context.TaskApproach.FirstOrDefaultAsync(w => w.ApproachId == 1);
+            var ll = await _context.TaskLocation.FirstOrDefaultAsync(w => w.LocationId == 1);
+            var ls = await _context.TaskProgressStatus.FirstOrDefaultAsync(s => s.StatusId == 1);
+
+            Assert.NotNull(week);
+            Assert.NotNull(activity);
+            Assert.NotNull(lt);
+            Assert.NotNull(la);
+            Assert.NotNull(ll);
+            Assert.NotNull(ls);
+
+            var incompleteActivity = new WeekActivities
+            {
+                TaskOrder = 1,
+                // No WeekId
+                ActivitiesId = 1,
+                TaskTitle = "New Task",
+                TaskStaff = "John Doe",
+                TaskTime = new TimeSpan(1, 30, 0),
+                TasksStatusId = 1,
+                LearningTypeId = 1,
+                TaskLocationId = 1,
+                TaskApproachId = 1,
+                Week = week,
+                Activities = activity,
+                LearningType = lt,
+                TaskApproach = la,
+                TaskLocation = ll,
+                TasksStatus = ls,
+            };
+
+            controller.ModelState.AddModelError("WeekId", "The WeekId field is required.");
+
+            var result = await controller.CreateActivity(incompleteActivity) as ViewResult;
+
+            Assert.NotNull(result);
+            Assert.False(controller.ModelState.IsValid);
+            var savedActivity = await _context.WeekActivities.FirstOrDefaultAsync(w =>
+                w.TaskTitle == "New Task"
+            );
+            Assert.Null(savedActivity);
         }
     }
 }

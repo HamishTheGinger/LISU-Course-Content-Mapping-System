@@ -25,7 +25,7 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public void HomePage_A_BlankPage()
+        public void HomePage_Index_BlankPage()
         {
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseInMemoryDatabase(databaseName: "BlankTestDatabase")
@@ -46,11 +46,8 @@ namespace CCM_Website.Test
         }
 
         [Fact]
-        public void HomePage_MultipleWorkbooks()
+        public void HomePage_Index_MultipleWorkbooks()
         {
-            // Arrange: Create in-memory database options
-
-
             var mockLogger = new Mock<ILogger<HomeController>>();
             var controller = new HomeController(mockLogger.Object, _context);
             var result = controller.Index() as ViewResult;
@@ -61,6 +58,23 @@ namespace CCM_Website.Test
 
             Assert.Equal(2, workbookList.Count);
             Assert.Equal(2, workbookList[0].WorkbookId);
+            Assert.Equal("Network and Operating System Essentials", workbookList[1].CourseName);
+        }
+
+        [Fact]
+        public void HomePage_Index_MultipleWorkbooksSorting()
+        {
+            var mockLogger = new Mock<ILogger<HomeController>>();
+            var controller = new HomeController(mockLogger.Object, _context);
+            var result = controller.Index() as ViewResult;
+
+            Assert.NotNull(result);
+
+            var workbookList = Assert.IsType<List<Workbook>>(result.ViewData["MyWorkbooks"]);
+
+            Assert.Equal(2, workbookList[0].WorkbookId);
+            Assert.Equal(1, workbookList[1].WorkbookId);
+            Assert.True(workbookList[0].LastEdited > workbookList[1].LastEdited);
         }
     }
 }
