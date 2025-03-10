@@ -16,7 +16,6 @@
     <hr />
 </nav>
 
-<!-- Main part of workbook page with buttons-->
 <div class="container-fluid">
     <div class="row my-3 align-items-start">
         <div class="col-md-10">
@@ -30,7 +29,6 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Left Column with Toggle Buttons -->
             <div class="col-md-2 left-column d-flex flex-column justify-content-center align-items-center">
                 <br />
                 <br />
@@ -38,8 +36,7 @@
                 <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_graph_btn"> <span id="arrow_time_breakdown_graph">▶</span>Time Breakdown Graph</button>
                 <button class="btn btn-primary m-3 rounded-pill" id="graduate_attributes_btn"> <span id="arrow_graduate_attributes">▶</span>Graduate Attributes Table</button>
             </div>
-
-            <!-- Center Content -->
+            
             <div class="col-md-8 center-column d-flex align-items-center justify-content-center">
                 <div id="graph-container" class="overflow-auto flex-column">
 
@@ -87,55 +84,60 @@
                             <div id="bar_chart_details"></div>
                         </div>
                     </div>
-
-                    <!-- Graduate Attributes Table -->
-                    <div id="grad-attributes" style="display: block;">
-                        <!-- Changed to 'block' to ensure visibility -->
+                    
+                    <div id="grad-attributes" class="d-none">
                         <table class="table table-bordered table-responsive text-center">
                             <thead>
-                                <tr style="background-color: #005398; color: white;">
-                                    <th>Graduate Attributes</th>
-                                    <th>Total Attributes</th>
-
-                                    @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
-                                    {
-                                        <th>
-                                            W @week.WeekNumber
-                                            <br />
-                                            <a asp-action="AssignAttributes" asp-controller="Workbooks"
-                                               asp-route-weekId="@week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1"
-                                               style="background-color: #44546A; color: white; border: none;">
-                                                Assign
-                                            </a>
-                                        </th>
-                                    }
-                                </tr>
+                            <tr class="bg-secondary text-white">
+                                <th>Graduate Attributes</th>
+                                <th>Total Attributes</th>
+                                @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
+                                {
+                                    <th>
+                                        W @week.WeekNumber
+                                        <br />
+                                        <a asp-action="AssignAttributes" asp-controller="Workbooks"
+                                           asp-route-weekId="@week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1 text-white bg-grad-attributes-table">
+                                            Assign
+                                        </a>
+                                    </th>
+                                }
+                            </tr>
                             </thead>
                             <tbody>
-                                @foreach (var graduateAttribute in (Model.Weeks ?? Enumerable.Empty<Week>())
-                                .Where(week => week.WeekGraduateAttributes != null)
-                                .SelectMany(week => week.WeekGraduateAttributes!
-                                .Select(wga => wga.GraduateAttribute))
-                                .Where(attr => attr != null)
-                                .Distinct())
+                            @{
+                            // get all graduate attributes
+                            var allGraduateAttributes = (graduateAttributes ?? Enumerable.Empty<GraduateAttribute>())
+                            .Select(ga => ga.AttributeName)
+                            .Union((Model.Weeks ?? Enumerable.Empty<Week>())
+                            .Where(w => w.WeekGraduateAttributes != null)
+                            .SelectMany(w => w.WeekGraduateAttributes!.Select(wga => wga.GraduateAttribute.AttributeName)))
+                            .Distinct()
+                            .ToList();
+                            }
+
+                            @foreach (var attributeName in allGraduateAttributes)
+                            {
+                            <tr>
+                                <td class="bg-grad-attributes-table text-white">@attributeName</td>
+                                
+                                <td>
+                                    @{
+                                    var totalAttributeCount = (Model.Weeks ?? Enumerable.Empty<Week>())
+                                    .Sum(week => week.WeekGraduateAttributes?.Count(wga => wga.GraduateAttribute.AttributeName == attributeName) ?? 0);
+                                    }
+                                    @totalAttributeCount
+                                </td>
+                                
+                                @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
                                 {
-                                    <tr>
-                                        <td style="text-align: center; background-color: #44546A; color: white;">
-                                            @graduateAttribute.AttributeName
-                                        </td>
-                                        <td class="text-center">
-                                            @graduateAttribute.WeekGraduateAttributes?.Count()
-                                        </td>
-                                        @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
-                                        {
-                                            var attributeCountForWeek = week.WeekGraduateAttributes?
-                                            .Count(wga => wga.GraduateAttributeId == graduateAttribute.AttributeId) ?? 0;
-                                            <td class="text-center">
-                                                @attributeCountForWeek
-                                            </td>
-                                        }
-                                    </tr>
+                                var countForWeek = week.WeekGraduateAttributes?
+                                .Count(wga => wga.GraduateAttribute.AttributeName == attributeName) ?? 0;
+
+                                <td>@countForWeek</td>
                                 }
+                            </tr>
+                            }
                             </tbody>
                         </table>
                     </div>
@@ -161,9 +163,6 @@
                     
                 </div>
             </div>
-
-
-            <!-- Right Column -->
             
             <div class="col-md-2 right-column d-flex flex-column align-items-center">
                 @foreach (var week in @Model.Weeks ?? Enumerable.Empty<Week>())
@@ -178,7 +177,7 @@
 
         </div>
     </div>
-
+</div>
 
 
 <script>    
@@ -212,7 +211,6 @@
         content.scrollIntoView({ behavior: "smooth", block: "center" });
     }
     
-    // Get the sections and buttons
     function toggleSection(buttonId, sectionId, arrowId) {
         const button = document.getElementById(buttonId);
         const section = document.getElementById(sectionId);
@@ -275,7 +273,6 @@
         
     }
 
-    // Apply toggle functionality to each button-section pair
     toggleSection("time_breakdown_btn", "time-breakdown", "arrow_time_breakdown");
     toggleSection("time_breakdown_graph_btn", "time-breakdown-graph", "arrow_time_breakdown_graph");
     toggleSection("graduate_attributes_btn", "grad-attributes", "arrow_graduate_attributes");
@@ -301,8 +298,6 @@
     ];
 
 
-    // Step 3: Create Stacked Data Dynamically
-
     const stackedData = d3.stack().keys(activities)(data);
 
     const colorScale = d3.scaleOrdinal()
@@ -324,7 +319,7 @@
         .padding(0.1);
 
     const yScale = d3.scaleLinear()
-        .domain([0, d3.max(stackedData, layer => d3.max(layer, d => d[1] || 0))]) // Fallback to 0 if d[1] is NaN
+        .domain([0, d3.max(stackedData, layer => d3.max(layer, d => d[1] || 0))]) 
         .nice()
         .range([height - margin.bottom, margin.top]);
 
@@ -350,13 +345,11 @@
             hideDetails();
         });
 
-    // Add X-axis
     svg
         .append("g")
         .attr("transform", `translate(0, ${height - margin.bottom})`)
         .call(d3.axisBottom(xScale));
 
-    // Add Y-axis
     svg
         .append("g")
         .attr("transform", `translate(${margin.left}, 0)`)
@@ -366,16 +359,13 @@
             return `${hours}:${minutes.toString().padStart(2, "0")}`;
         }));
 
-
-
-    // Create a container for the legend
+    //legend for graph
     const barChartLegend = d3.select("#bar_chart_legend")
         .style("display", "flex")
         .style("flex-direction", "column")
         .style("margin-left", "20px")
         .style("margin-top", "20px");
 
-    // Populate the legend with activity names and their corresponding colors
     barChartLegend.selectAll("div")
         .data(activities)
         .enter()
@@ -397,7 +387,6 @@
 
         let totalHours = d[activityType];
 
-        // Convert to 00:00 format
         let hours = Math.floor(totalHours);
         let minutes = Math.round((totalHours - hours) * 60);
 
