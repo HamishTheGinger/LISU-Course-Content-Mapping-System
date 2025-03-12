@@ -62,10 +62,44 @@
             </div>
 
             <div class="row mb-10 justify-content-around">
+                    <div class="row-md-6 d-flex justify-content-center align-items-center">
+                        <table id="attributes_table" class="table table-bordered text-center position-sticky w-auto">
+                            <thead>
+                                <tr class="bg-week-table text-white">
+                                    <th colspan = "2" >Weekly Graduate Attribute 
+                                        <a asp-action="AssignAttributes" asp-controller="Workbooks" asp-route-weekId="@Model.Week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1 text-white">
+                                            Assign
+                                        </a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var counter = 1;
+                                }
+
+
+                                @{
+                                    System.Diagnostics.Debug.Assert(Model.Week.WeekGraduateAttributes != null, "Model.Week.WeekGraduateAttributes != null");
+                                }
+                                @foreach (var graduateAttribute in Model.Week.WeekGraduateAttributes)
+                                {
+                                    <tr>
+                                        <td class="bg-thistle text-white">Graduate Attribute @counter</td>
+                                        <td>@graduateAttribute.GraduateAttribute.AttributeName</td>
+                                    </tr>
+
+                                    counter++;
+                                }
+
+                            </tbody>
+                        </table>
+                </div>
+                
                 <div id="legend" class="d-none">
                     <table class="table table-bordered table-responsive">
                         <thead>
-                            <tr><th>Legend</th></tr>
+                        <tr><th>Legend</th></tr>
                         </thead>
                         <tbody>
                         <tr><td id="Acquisition_legend">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
@@ -87,9 +121,9 @@
                         <table id="stats_table" class="table table-bordered text-center position-sticky d-block">
                             <thead>
                             <tr>
-                                <th colspan="4" class ="text-white bg-stats-table">Statistics</th>
+                                <th colspan="4" class="text-white bg-stats-table">Statistics</th>
                             </tr>
-                            <tr class ="text-white bg-stats-table">
+                            <tr class="text-white bg-stats-table">
                                 <th>Learning Type</th>
                                 <th>Allocation</th>
                                 <th>Status</th>
@@ -138,7 +172,7 @@
                                 <td id="Assessment_data"></td>
                                 <td class="bg-on-campus">On Campus</td>
                                 <td id="OnCampus"></td>
-                            </tr> 
+                            </tr>
                             <tr>
                                 <td class="fw-bold">Total Time</td>
                                 <td id="TotalTime" class="fw-bold bg-stats-total"></td>
@@ -149,7 +183,10 @@
                         </table>
                     </div>
 
+
                 </div>
+
+
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center">
                     <button class="btn btn-primary m-3 rounded-pill d-block" id="lt_chart_hide"> <span id="arrow_chart">▼</span> Chart</button>
 
@@ -515,6 +552,8 @@
             arrow.innerHTML = "▼";
         }
     }
+    
+    
     
     //function to call controller to save new taskOrder to the DB
     function saveOrder() {

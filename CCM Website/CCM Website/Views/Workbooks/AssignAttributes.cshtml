@@ -6,27 +6,31 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Assign Attributes to Week</h2>
-
 <form asp-action="AssignAttributes" asp-controller="Workbooks" method="post">
     @Html.AntiForgeryToken()
 
     <input type="hidden" name="weekId" value="@ViewBag.WeekId" />
 
-    <label>Select Attributes:</label>
-    <select name="attributeIds" multiple class="form-control">
-        @if (ViewBag.GraduateAttributes != null && ViewBag.GraduateAttributes is SelectList)
+    <h2>Assign Attributes:</h2>
+    <div class="form-group">
+        @if (ViewBag.GraduateAttributes != null && ViewBag.GraduateAttributes is List<SelectListItem>)
         {
-            foreach (var attr in (SelectList)ViewBag.GraduateAttributes)
+            foreach (var attr in (List<SelectListItem>)ViewBag.GraduateAttributes)
             {
-                <option value="@attr.Value">@attr.Text</option>
+                <div class="form-check">
+                    <input type="checkbox" name="attributeIds" value="@attr.Value"
+                           class="form-check-input" id="attr-@attr.Value"
+                           @(attr.Selected ? "checked" : "")>
+                    <label class="form-check-label" for="attr-@attr.Value">@attr.Text</label>
+                </div>
             }
         }
         else
         {
-            <option disabled>No attributes available</option>
+            <p>No attributes available</p>
         }
-    </select>
+    </div>
 
-    <button type="submit" class="btn btn-primary mt-3">Assign Attributes</button>
+    <button type="submit" class="btn btn-success mt-3">Assign Attributes</button>
 </form>
+
