@@ -58,42 +58,42 @@
 }
 
 .btn-primary {
-    color: #fff;
-    background-color: #005398;
-    border-color: #005398;
+    color: #fff; !important;
+    background-color: #005398; !important;
+    border-color: #005398; !important;
 }
 
 .btn-primary:hover {
-    color: #fff;
-    background-color: #003865;
-    border-color: #005398;
+    color: #fff; !important;
+    background-color: #003865; !important;
+    border-color: #005398; !important;
 }
 
 .btn-primary:active,
 .btn-primary.active {
-    color: #fff;
-    background-color: #0066CC; 
-    border-color: #0066CC;
-    box-shadow: 0px 0px 10px rgba(0, 83, 152, 0.5)
+    color: #fff; !important;
+    background-color: #0066CC;  !important;
+    border-color: #0066CC; !important;
+    box-shadow: 0px 0px 10px rgba(0, 83, 152, 0.5) !important;
 }
 
 .btn-primary.active:hover {
-    color: #fff;
-    background-color: #003865;
-    border-color: #005398;
+    color: #fff; !important;
+    background-color: #003865; !important;
+    border-color: #005398; !important;
 }
 
 
 .btn-secondary:hover {
-    color: #fff;
-    background-color: #5c636a;
-    border-color: #565e64;
+    color: #fff; !important;
+    background-color: #5c636a; !important;
+    border-color: #565e64; !important;
 }
 
 .btn-check:focus + .btn-primary, .btn-primary:focus {
-    color: #fff;
-    background-color: #003865;
-    border-color: #005398;
+    color: #fff; !important;
+    background-color: #003865; !important;
+    border-color: #005398; !important;
 }
 
 .bg-red {
@@ -126,4 +126,48 @@
 
 .minh-50{
     min-height: 50px !important;
+}
+
+.pagination {
+    justify-content: center; !important;
+    align-items: center; !important;
+    margin: 0.5rem; !important;
+    padding: 0.5rem; !important;
+}
+
+.pagination li a {
+    display: inline-block; !important;
+    padding: 0.75rem !important;
+    margin: 0.25rem !important;
+    background-color: #ffffff;  !important;
+    border: 1px solid #dee2e6; !important;
+    text-decoration: none; !important;
+    color: var(--bs-secondary); !important;
+    border-radius: 0.25rem; !important;
+}
+
+.pagination li a:hover {
+    background-color: var(--bs-primary); !important;
+    color: #fff;!important;
+}
+
+.pagination .active .page-link {
+    display: inline-block; !important;
+    padding: 0.75rem !important;
+    margin: 0.25rem !important;
+    background-color: var(--bs-secondary);  !important;
+    border: 1px solid #dee2e6; !important;
+    text-decoration: none; !important;
+    color: #fff; !important;
+    border-radius: 0.25rem; !important;
+}
+
+.pagination .page-link:focus {
+    background-color: var(--bs-primary); !important;
+    color: #fff;!important;
+}
+
+.pagination .active .page-link:focus {
+    background-color: var(--bs-secondary);  !important;
+    color: #fff;!important;
 }

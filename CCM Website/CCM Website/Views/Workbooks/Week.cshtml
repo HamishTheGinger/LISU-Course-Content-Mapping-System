@@ -20,12 +20,12 @@
 
 <div class="container-fluid">
     <div class="row my-3 align-items-start">
-        <div class="col-md-10">
+        <div class="col-md-10 mb-3">
             <h1 class="text-wrap">@Model.Week.Workbook.CourseName</h1>
             <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4>
         </div>
-        <div class="col-md-2 d-flex justify-content-center ">
-            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" asp-route-weekId="@Model.Week.WeekId" class="btn btn-success ">
+        <div class="col-md-2 d-flex justify-content-center">
+            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" asp-route-weekId="@Model.Week.WeekId" class="btn btn-success">
                 Create Activity
             </a>
         </div>
@@ -33,7 +33,7 @@
     <div class="row">
         <div class="col-md-10">
             <div class="table-responsive mb-3">
-                <table id="weekTable"class="table table-bordered">
+                <table id="weekTable" class="table table-bordered">
                     <thead>
                     <tr>
                         <th class ="bg-week-table text-white text-center" id="weekTableHeading">Week @Model.Week.WeekNumber</th>
@@ -84,7 +84,7 @@
                     <button class="btn btn-primary m-3 rounded-pill " id="lt_table_hide"> <span id="arrow_stats">▼</span> Statistics</button>
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <table id="stats_table" class="table table-bordered text-center position-sticky">
+                        <table id="stats_table" class="table table-bordered text-center position-sticky d-block">
                             <thead>
                             <tr>
                                 <th colspan="4" class ="text-white bg-stats-table">Statistics</th>
@@ -151,7 +151,7 @@
 
                 </div>
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center">
-                    <button class="btn btn-primary m-3 rounded-pill" id="lt_chart_hide"> <span id="arrow_chart">▼</span> Chart</button>
+                    <button class="btn btn-primary m-3 rounded-pill d-block" id="lt_chart_hide"> <span id="arrow_chart">▼</span> Chart</button>
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
                         <div id="lt_chart"></div>
@@ -163,7 +163,7 @@
             </div>
 
             <div class="text-center d-flex justify-content-center">
-                <button class="btn btn-primary m-3 rounded-pill" id="legend_btn"> <span id="arrow_legend">▲</span> Legend</button>
+                <button class="btn btn-primary m-3 rounded-pill d-block" id="legend_btn"> <span id="arrow_legend">▲</span> Legend</button>
             </div>
 
         </div>
@@ -487,9 +487,9 @@
         legend.classList.toggle("d-block")
         chart.className = "d-none";
         key.className = "d-none";
-        table.className = "d-none";
-        buttonChart.className = "d-none";
-        buttonTable.className = "d-none";
+        table.className = "table table-bordered text-center position-sticky d-none";
+        buttonChart.className = "btn btn-primary m-3 rounded-pill d-none";
+        buttonTable.className = "btn btn-primary m-3 rounded-pill d-none";
 
         if (legend.classList.contains("d-block")) {
             arrow.innerHTML = "▼";
@@ -497,8 +497,8 @@
 
         } else {
             arrow.innerHTML = "▲";
-            buttonChart.className = "d-block";
-            buttonTable.className = "d-block";
+            buttonChart.className = "btn btn-primary m-3 rounded-pill d-block";
+            buttonTable.className = "btn btn-primary m-3 rounded-pill d-block";
         }
     }
 

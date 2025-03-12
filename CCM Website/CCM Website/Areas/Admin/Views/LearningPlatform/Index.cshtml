@@ -18,30 +18,32 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-start">
-    <div class="col-md-10">
+<div class="row my-3">
+    <div class="col d-flex justify-content-between align-items-center">
         <h2>Learning Platforms</h2>
-    </div>
-    <div class="col-md-2 d-flex justify-content-center">
         <a class="btn btn-success"
            asp-action="Create">Create New Learning Platform
         </a>
     </div>
 </div>
 
-@using (Html.BeginForm())
-{
-<div class="input-group">
-    @Html.TextBox("searchString")
-    <button type="submit" value="Search" class="btn btn-primary">Search</button>
+<div class="row my-3">
+    <div class="col d-flex justify-content-start align-items-center">
+        @using (Html.BeginForm("Index", "LearningPlatform", FormMethod.Get))
+        {
+            <div class="input-group">
+                @Html.TextBox("searchString", ViewData["SearchString"] as string, new { @class = "form-control", placeholder = "Search platform name..." })
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        }
+    </div>
 </div>
-}
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.FirstOrDefault()!.PlatformName)
+               Platform Name
             </th>
             <th></th>
         </tr>
@@ -66,6 +68,18 @@
 
 
 <br />
-Page @(Model.PageCount < Model.PageNumber ? 1 : Model.PageNumber) of @Model.PageCount
-
-@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }))
+@Html.PagedListPager(Model,
+    page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }),
+    new PagedListRenderOptions
+    {
+        MaximumPageNumbersToDisplay = 3,
+        DisplayLinkToFirstPage = (Model.PageNumber <= 2) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always, 
+        DisplayLinkToLastPage = (Model.PageNumber >= Model.PageCount - 1) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Never, 
+        DisplayLinkToNextPage = PagedListDisplayMode.Never,  
+        DisplayEllipsesWhenNotShowingAllPageNumbers = true,  
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" }, 
+        PageClasses = new[] { "page-link" } 
+    }
+)
