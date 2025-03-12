@@ -67,6 +67,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 "PlatformId",
                 "PlatformName"
             );
+            ViewBag.UniversityAreas = new SelectList(_context.UniversityArea, "AreaId", "AreaName");
             return View();
         }
 
@@ -77,7 +78,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             [Bind(
-                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators"
+                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,UniversityAreaId,Collaborators"
             )]
                 Workbook workbook
         )
@@ -86,6 +87,10 @@ namespace CCM_Website.Areas.Admin.Controllers
             {
                 var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp =>
                     lp.PlatformId == workbook.LearningPlatformId
+                );
+
+                var uniArea = await _context.UniversityArea.FirstOrDefaultAsync(ua =>
+                    ua.AreaId == workbook.UniversityAreaId
                 );
 
                 if (learningPlatform == null)
@@ -101,11 +106,33 @@ namespace CCM_Website.Areas.Admin.Controllers
                         "PlatformId",
                         "PlatformName"
                     );
+                    ViewBag.UniversityAreas = new SelectList(
+                        _context.UniversityArea,
+                        "AreaId",
+                        "AreaName"
+                    );
 
+                    return View(workbook);
+                }
+                if (uniArea == null)
+                {
+                    Console.WriteLine("ERROR: Failed to link Workbook to University Area");
+                    ModelState.AddModelError("", "Invalid University Area selected.");
+                    ViewBag.LearningPlatforms = new SelectList(
+                        _context.LearningPlatforms,
+                        "PlatformId",
+                        "PlatformName"
+                    );
+                    ViewBag.UniversityAreas = new SelectList(
+                        _context.UniversityArea,
+                        "AreaId",
+                        "AreaName"
+                    );
                     return View(workbook);
                 }
 
                 workbook.LearningPlatform = learningPlatform;
+                workbook.UniversityArea = uniArea;
             }
             catch (Exception e)
             {
@@ -120,11 +147,17 @@ namespace CCM_Website.Areas.Admin.Controllers
                     "PlatformId",
                     "PlatformName"
                 );
+                ViewBag.UniversityAreas = new SelectList(
+                    _context.UniversityArea,
+                    "AreaId",
+                    "AreaName"
+                );
 
                 return View(workbook);
             }
 
             ModelState.Remove(nameof(workbook.LearningPlatform));
+            ModelState.Remove(nameof(workbook.UniversityArea));
             ModelState.Remove(nameof(workbook.Weeks));
 
             if (ModelState.IsValid)
@@ -171,6 +204,11 @@ namespace CCM_Website.Areas.Admin.Controllers
                         "PlatformId",
                         "PlatformName"
                     );
+                    ViewBag.UniversityAreas = new SelectList(
+                        _context.UniversityArea,
+                        "AreaId",
+                        "AreaName"
+                    );
 
                     return View(workbook);
                 }
@@ -194,6 +232,7 @@ namespace CCM_Website.Areas.Admin.Controllers
                 "PlatformId",
                 "PlatformName"
             );
+            ViewBag.UniversityAreas = new SelectList(_context.UniversityArea, "AreaId", "AreaName");
 
             return View(workbook);
         }
@@ -208,6 +247,7 @@ namespace CCM_Website.Areas.Admin.Controllers
 
             var workbook = await _context
                 .Workbooks.Include(w => w.LearningPlatform)
+                .Include(w => w.UniversityArea)
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
@@ -220,6 +260,12 @@ namespace CCM_Website.Areas.Admin.Controllers
                 "PlatformName",
                 workbook.LearningPlatformId
             );
+            ViewBag.UniversityAreas = new SelectList(
+                _context.UniversityArea,
+                "AreaId",
+                "AreaName",
+                workbook.UniversityAreaId
+            );
             return View(workbook);
         }
 
@@ -231,7 +277,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(
             int id,
             [Bind(
-                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators"
+                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,UniversityAreaId,Collaborators"
             )]
                 Workbook workbook
         )
@@ -243,6 +289,7 @@ namespace CCM_Website.Areas.Admin.Controllers
 
             ModelState.Remove(nameof(workbook.LearningPlatform));
             ModelState.Remove(nameof(workbook.Weeks));
+            ModelState.Remove(nameof(workbook.UniversityArea));
 
             if (ModelState.IsValid)
             {
@@ -251,6 +298,10 @@ namespace CCM_Website.Areas.Admin.Controllers
                     var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(
                         lp => lp.PlatformId == workbook.LearningPlatformId
                     );
+                    var uniArea = await _context.UniversityArea.FirstOrDefaultAsync(ua =>
+                        ua.AreaId == workbook.UniversityAreaId
+                    );
+
                     if (learningPlatform == null)
                     {
                         ModelState.AddModelError(
@@ -263,10 +314,37 @@ namespace CCM_Website.Areas.Admin.Controllers
                             "PlatformName",
                             workbook.LearningPlatformId
                         );
+                        ViewBag.UniversityAreas = new SelectList(
+                            _context.UniversityArea,
+                            "AreaId",
+                            "AreaName",
+                            workbook.UniversityAreaId
+                        );
+                        return View(workbook);
+                    }
+                    if (uniArea == null)
+                    {
+                        ModelState.AddModelError(
+                            "UniversityAreaId",
+                            "Invalid University Area selected."
+                        );
+                        ViewBag.LearningPlatforms = new SelectList(
+                            _context.LearningPlatforms,
+                            "PlatformId",
+                            "PlatformName",
+                            workbook.LearningPlatformId
+                        );
+                        ViewBag.UniversityAreas = new SelectList(
+                            _context.UniversityArea,
+                            "AreaId",
+                            "AreaName",
+                            workbook.UniversityAreaId
+                        );
                         return View(workbook);
                     }
 
                     workbook.LearningPlatform = learningPlatform;
+                    workbook.UniversityArea = uniArea;
                     workbook.LastEdited = DateTime.Now;
                     _context.Update(workbook);
                     await _context.SaveChangesAsync();
@@ -290,6 +368,12 @@ namespace CCM_Website.Areas.Admin.Controllers
                 "PlatformId",
                 "PlatformName",
                 workbook.LearningPlatformId
+            );
+            ViewBag.UniversityAreas = new SelectList(
+                _context.UniversityArea,
+                "AreaId",
+                "AreaName",
+                workbook.UniversityAreaId
             );
 
             foreach (var state in ModelState)

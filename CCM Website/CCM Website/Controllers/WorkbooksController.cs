@@ -624,6 +624,16 @@ namespace CCM_Website.Controllers
                 {
                     _context.Update(weekActivities);
                     await _context.SaveChangesAsync();
+                    var week = await _context
+                        .Weeks.Include(w => w.Workbook)
+                        .FirstOrDefaultAsync(w => w.WeekId == weekActivities.WeekId);
+
+                    if (week != null && week.Workbook != null)
+                    {
+                        week.Workbook.LastEdited = DateTime.Now;
+                        _context.Update(week.Workbook);
+                        await _context.SaveChangesAsync();
+                    }
                     return RedirectToAction(nameof(Week), new { id = weekActivities.WeekId });
                 }
                 catch (DbUpdateConcurrencyException)
@@ -820,6 +830,16 @@ namespace CCM_Website.Controllers
                 {
                     _context.Add(weekActivities);
                     await _context.SaveChangesAsync();
+                    var week = await _context
+                        .Weeks.Include(w => w.Workbook)
+                        .FirstOrDefaultAsync(w => w.WeekId == weekActivities.WeekId);
+
+                    if (week != null && week.Workbook != null)
+                    {
+                        week.Workbook.LastEdited = DateTime.Now;
+                        _context.Update(week.Workbook);
+                        await _context.SaveChangesAsync();
+                    }
                     return RedirectToAction(nameof(Week), new { id = weekActivities.WeekId });
                 }
                 catch (Exception exp)
