@@ -23,7 +23,9 @@
     </div>
     <div class="col-md-2 d-flex justify-content-center">
         <a class="btn btn-success"
-           asp-action="Create">Create New Week Activity
+           asp-action="Create"
+           asp-route-weekId="@(ViewData["DefaultWeekId"] ?? Model.FirstOrDefault()?.WeekId)">
+           Create New Week Activity
         </a>
     </div>
 </div>

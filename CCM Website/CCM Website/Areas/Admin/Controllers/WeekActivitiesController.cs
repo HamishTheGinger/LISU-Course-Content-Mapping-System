@@ -88,12 +88,32 @@ namespace CCM_Website.Areas.Admin.Controllers
                 .Select(lpa => lpa.Activities)
                 .ToList();
 
-            ViewBag.WeekId = new SelectList(_context.Weeks, "WeekId", "WeekNumber", weekId);
+            ViewBag.WeekId = new SelectList(
+                _context.Weeks.ToList(),
+                "WeekId",
+                "WeekNumber",
+                weekId
+            );
             ViewBag.ActivitiesId = new SelectList(allowedActivities, "ActivityId", "ActivityName");
             ViewBag.LearningApproach = new SelectList(
-                _context.LearningType,
+                _context.LearningType.ToList(),
                 "LearningTypeId",
                 "LearningTypeName"
+            );
+            ViewBag.TaskApproach = new SelectList(
+                _context.TaskApproach.ToList(),
+                "ApproachId",
+                "ApproachName"
+            );
+            ViewBag.TaskLocation = new SelectList(
+                _context.TaskLocation.ToList(),
+                "LocationId",
+                "LocationName"
+            );
+            ViewBag.TaskStatus = new SelectList(
+                _context.TaskProgressStatus.ToList(),
+                "StatusId",
+                "StatusName"
             );
 
             return View();
@@ -104,7 +124,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             [Bind(
-                "TaskOrder,WeekId,ActivitiesId,TaskTitle,TaskStaff,ActivityTime,TasksStatus,LearningTypeId,TaskLocation,TaskApproach"
+                "TaskOrder,WeekId,ActivitiesId,TaskTitle,TaskStaff,ActivityTime,TasksStatusId,LearningTypeId,TaskLocationId,TaskApproachId"
             )]
                 WeekActivities weekActivities
         )
@@ -132,50 +152,14 @@ namespace CCM_Website.Areas.Admin.Controllers
                     "ActivitiesId",
                     "The selected activity is not allowed for this learning platform."
                 );
-
-                ViewBag.Activities = new SelectList(
-                    _context
-                        .LearningPlatformActivities.Where(lpa =>
-                            lpa.LearningPlatformId == learningPlatformId
-                        )
-                        .Select(lpa => lpa.Activities),
-                    "ActivityId",
-                    "ActivityName"
-                );
-
-                ViewBag.WeekId = new SelectList(
-                    _context.Weeks,
-                    "WeekId",
-                    "WeekNumber",
-                    weekActivities.WeekId
-                );
-                ViewBag.LearningType = new SelectList(
-                    _context.LearningType,
-                    "LearningTypeId",
-                    "LearningTypeName"
-                );
-                ViewBag.TaskApproach = new SelectList(
-                    _context.TaskApproach,
-                    "ApproachId",
-                    "ApproachName"
-                );
-                ViewBag.TaskLocation = new SelectList(
-                    _context.TaskLocation,
-                    "LocationId",
-                    "LocationName"
-                );
-                ViewBag.TaskStatus = new SelectList(
-                    _context.TaskProgressStatus,
-                    "StatusId",
-                    "StatusName"
-                );
-
-                return View(weekActivities);
             }
 
             ModelState.Remove(nameof(weekActivities.Week));
             ModelState.Remove(nameof(weekActivities.Activities));
             ModelState.Remove(nameof(weekActivities.LearningType));
+            ModelState.Remove(nameof(weekActivities.TaskLocation));
+            ModelState.Remove(nameof(weekActivities.TaskApproach));
+            ModelState.Remove(nameof(weekActivities.TasksStatus));
 
             if (ModelState.IsValid)
             {
@@ -188,77 +172,56 @@ namespace CCM_Website.Areas.Admin.Controllers
                 catch (Exception exp)
                 {
                     Console.WriteLine(exp.Message);
-                    ModelState.AddModelError("", $"Error creating WeekActivity: {exp.Message}");
+                    ModelState.AddModelError("", $"Error creating Week Activity: {exp.Message}");
                 }
             }
             else
             {
+                Console.WriteLine("Validation failed. Errors:");
                 foreach (var state in ModelState)
                 {
                     foreach (var error in state.Value.Errors)
                     {
-                        Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
+                        Console.WriteLine($"Field: {state.Key} - Error: {error.ErrorMessage}");
                     }
                 }
                 ModelState.AddModelError(
                     "",
-                    "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
+                    "An error occurred while creating the Weekly Activity. Please check all fields."
                 );
             }
 
-            try
-            {
-                var weekEntity = await _context.Weeks.FirstOrDefaultAsync(wk =>
-                    wk.WeekId == weekActivities.WeekId
-                );
-
-                var activity = await _context.Activities.FirstOrDefaultAsync(a =>
-                    a.ActivityId == weekActivities.ActivitiesId
-                );
-
-                var learningType = await _context.LearningType.FirstOrDefaultAsync(lt =>
-                    lt.LearningTypeId == weekActivities.LearningTypeId
-                );
-
-                if (weekEntity == null || activity == null || learningType == null)
-                {
-                    Console.WriteLine("ERROR: Link Fail");
-                    ModelState.AddModelError(
-                        "",
-                        "An error occurred while saving the weekly activity. Please try again later."
-                    );
-                    return View(weekActivities);
-                }
-                weekActivities.Week = weekEntity;
-                weekActivities.Activities = activity;
-                weekActivities.LearningType = learningType;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Model Creation Error: {e.Message}");
-                ModelState.AddModelError(
-                    "",
-                    "An error occurred while saving the weekly activity. Please try again later."
-                );
-                return View(weekActivities);
-            }
-
-            ViewData["WeekId"] = new SelectList(
-                _context.Weeks,
+            ViewBag.WeekId = new SelectList(
+                _context.Weeks.ToList(),
                 "WeekId",
                 "WeekNumber",
                 weekActivities.WeekId
             );
-            ViewData["ActivitiesId"] = new SelectList(
-                _context.Activities,
+            ViewBag.ActivitiesId = new SelectList(
+                _context.Activities.ToList(),
                 "ActivityId",
                 "ActivityName",
                 weekActivities.ActivitiesId
             );
-            ViewData["LearningApproach"] = new SelectList(
-                _context.LearningType,
+            ViewBag.LearningApproach = new SelectList(
+                _context.LearningType.ToList(),
                 "LearningTypeId",
                 "LearningTypeName"
+            );
+            ViewBag.TaskApproach = new SelectList(
+                _context.TaskApproach.ToList(),
+                "ApproachId",
+                "ApproachName"
+            );
+            ViewBag.TaskLocation = new SelectList(
+                _context.TaskLocation.ToList(),
+                "LocationId",
+                "LocationName"
+            );
+            ViewBag.TaskStatus = new SelectList(
+                _context.TaskProgressStatus.ToList(),
+                "StatusId",
+                "StatusName"
             );
 
             return View(weekActivities);
