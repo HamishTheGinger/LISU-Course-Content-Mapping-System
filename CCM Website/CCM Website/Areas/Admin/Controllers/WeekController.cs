@@ -36,6 +36,8 @@ namespace CCM_Website.Areas.Admin.Controllers
             int pageSize = 10;
             int pageNumber = page ?? 1;
 
+            ViewData["SearchString"] = searchString;
+
             var pagedWeeks = week.ToPagedList(pageNumber, pageSize);
 
             return Task.FromResult<IActionResult>(View(pagedWeeks));

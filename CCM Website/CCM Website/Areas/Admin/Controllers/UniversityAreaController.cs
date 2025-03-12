@@ -7,6 +7,7 @@ using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.Extensions;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -21,9 +22,24 @@ namespace CCM_Website.Areas.Admin.Controllers
         }
 
         // GET: Admin/UniversityArea
-        public async Task<IActionResult> Index()
+        public Task<IActionResult> Index(string searchString, int? page)
         {
-            return View(await _context.UniversityArea.ToListAsync());
+            var universityArea = _context.UniversityArea.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                universityArea = universityArea.Where(uA =>
+                    uA.AreaName.ToLower().Contains(searchString.ToLower())
+                );
+            }
+
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            ViewData["SearchString"] = searchString;
+
+            var pagedUniversityArea = universityArea.ToPagedList(pageNumber, pageSize);
+            return Task.FromResult<IActionResult>(View(pagedUniversityArea));
         }
 
         // GET: Admin/UniversityArea/Details/5

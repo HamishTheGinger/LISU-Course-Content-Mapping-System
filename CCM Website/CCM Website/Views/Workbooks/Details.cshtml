@@ -19,11 +19,11 @@
 <!-- Main part of workbook page with buttons-->
 <div class="container-fluid">
     <div class="row my-3 align-items-start">
-        <div class="col-md-10">
+        <div class="col-md-10 mb-3">
             <h1 class="text-wrap">@Html.DisplayFor(model => model.CourseName)</h1>
             <h4 class="text-wrap">Course Leads: @Html.DisplayFor(model => model.CourseLead)</h4>
         </div>
-        <div class="col-md-2 d-flex justify-content-center ">
+        <div class="col-md-2 d-flex justify-content-center">
             <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Overview</a>
         </div>
     </div>
@@ -178,7 +178,7 @@
 
         </div>
     </div>
-
+</div>
 
 
 <script>    
@@ -290,12 +290,12 @@
             var weekData = ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>;
 
             if (weekData != null) {
-            @: {
+                @: {
                 @:week: @week.WeekNumber,
                 @foreach (var type in ViewBag.LearningTypes ?? Enumerable.Empty<LearningType>()){
                     @:@type.LearningTypeName.Replace(" ", ""): @weekData[type.LearningTypeName].TotalHours.ToString("0.##"),
-                    }
-            @: },
+                }
+                @: },
             }
         }
     ];

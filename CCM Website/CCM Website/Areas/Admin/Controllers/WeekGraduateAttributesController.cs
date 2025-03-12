@@ -39,7 +39,9 @@ namespace CCM_Website.Areas.Admin.Controllers
             int pageSize = 10;
             int pageNumber = page ?? 1;
 
+            ViewData["SearchString"] = searchString;
             ViewData["DefaultWeekId"] = _context.Weeks.Select(w => w.WeekId).FirstOrDefault();
+
             var pagedWeekGraduateAttributes = weekGraduateAttributes.ToPagedList(
                 pageNumber,
                 pageSize

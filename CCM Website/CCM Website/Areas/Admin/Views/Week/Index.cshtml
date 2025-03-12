@@ -23,13 +23,17 @@
     </div>
 </div>
 
-@using (Html.BeginForm())
-{
-<div class="input-group">
-    @Html.TextBox("searchString")
-    <button type="submit" value="Search" class="btn btn-primary">Search</button>
+<div class="row my-3">
+    <div class="col d-flex justify-content-start align-items-center">
+        @using (Html.BeginForm("Index", "Week", FormMethod.Get))
+        {
+            <div class="input-group">
+                @Html.TextBox("searchString", ViewData["SearchString"] as string, new { @class = "form-control", placeholder = "Search course name..." })
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        }
+    </div>
 </div>
-}
 
 <table class="table">
     <thead>
@@ -62,6 +66,18 @@
 </table>
 
 <br />
-Page @(Model.PageCount < Model.PageNumber ? 1 : Model.PageNumber) of @Model.PageCount
-
-@Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }))
+@Html.PagedListPager(Model,
+    page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }),
+    new PagedListRenderOptions
+    {
+        MaximumPageNumbersToDisplay = 3,
+        DisplayLinkToFirstPage = (Model.PageNumber <= 2) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always, 
+        DisplayLinkToLastPage = (Model.PageNumber >= Model.PageCount - 1) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Never, 
+        DisplayLinkToNextPage = PagedListDisplayMode.Never,  
+        DisplayEllipsesWhenNotShowingAllPageNumbers = true,  
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" }, 
+        PageClasses = new[] { "page-link" } 
+    }
+)
