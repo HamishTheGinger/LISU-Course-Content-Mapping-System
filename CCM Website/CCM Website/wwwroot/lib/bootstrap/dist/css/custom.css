@@ -18,6 +18,7 @@
     --bs-remote: #FDEBAC;
     --bs-on-campus: #FBCED0;
     --bs-grad-attributes-table: #44546A;
+    --bs-thistle: #951272;
     --bs-font-pt-sans: "PT Sans", Tahoma, Verdana, sans-serif;
     --bs-body-font-family: var(--bs-font-pt-sans);
     --bs-body-font-size: 14px;
@@ -127,6 +128,9 @@
 .minh-50{
     min-height: 50px !important;
 }
+
+.bg-thistle {
+    background-color: var(--bs-thistle) !important;
 
 .pagination {
     justify-content: center; !important;

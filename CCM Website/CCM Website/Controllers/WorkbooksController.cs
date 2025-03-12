@@ -203,6 +203,7 @@ namespace CCM_Website.Controllers
                     );
                     return View(workbook);
                 }
+
                 if (uniArea == null)
                 {
                     Console.WriteLine("ERROR: Failed to link Workbook to University Area");
@@ -223,6 +224,7 @@ namespace CCM_Website.Controllers
                     );
                     return View(workbook);
                 }
+
                 workbook.LearningPlatform = learningPlatform;
                 workbook.UniversityArea = uniArea;
             }
@@ -448,6 +450,7 @@ namespace CCM_Website.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
 
@@ -466,6 +469,7 @@ namespace CCM_Website.Controllers
                     Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
                 }
             }
+
             ModelState.AddModelError(
                 "",
                 "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
@@ -487,7 +491,8 @@ namespace CCM_Website.Controllers
                 .Include(w => w.Workbook)
                 .ThenInclude(wb => wb.LearningPlatform)
                 .Include(w => w.WeekActivities)
-                .Include(w => w.WeekGraduateAttributes)
+                .Include(w => w.WeekGraduateAttributes)!
+                .ThenInclude(wga => wga.GraduateAttribute)
                 .FirstOrDefaultAsync(w => w.WeekId == id);
 
             if (week == null)
@@ -648,6 +653,7 @@ namespace CCM_Website.Controllers
                     }
                 }
             }
+
             foreach (var state in ModelState)
             {
                 foreach (var error in state.Value.Errors)
@@ -655,6 +661,7 @@ namespace CCM_Website.Controllers
                     // Log each error (you could also store or display them if needed)
                     Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
                 }
+
                 ModelState.AddModelError(
                     "",
                     "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
@@ -858,6 +865,7 @@ namespace CCM_Website.Controllers
                         Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
                     }
                 }
+
                 ModelState.AddModelError(
                     "",
                     "An error occurred while creating the Weekly Activity. Please contact an administrator if this problem persists."
@@ -1003,18 +1011,35 @@ namespace CCM_Website.Controllers
                 return BadRequest("Invalid weekId received.");
             }
 
-            var week = _context.Weeks.FirstOrDefault(w => w.WeekId == weekId);
+            var week = _context
+                .Weeks.Include(w => w.WeekGraduateAttributes)!
+                .ThenInclude(wga => wga.GraduateAttribute)
+                .FirstOrDefault(w => w.WeekId == weekId);
+
             if (week == null)
             {
                 return NotFound();
             }
 
-            ViewBag.WeekId = weekId;
-            ViewBag.GraduateAttributes = new SelectList(
-                (_context.GraduateAttributes?.ToList() ?? new List<GraduateAttribute>()),
-                "AttributeId",
-                "AttributeName"
-            );
+            var allAttributes =
+                _context.GraduateAttributes?.ToList() ?? new List<GraduateAttribute>();
+            if (week.WeekGraduateAttributes != null)
+            {
+                var assignedAttributeIds = week
+                    .WeekGraduateAttributes.Select(wga => wga.GraduateAttribute.AttributeId)
+                    .ToList();
+                var attributeSelectList = allAttributes
+                    .Select(attr => new SelectListItem
+                    {
+                        Value = attr.AttributeId.ToString(),
+                        Text = attr.AttributeName,
+                        Selected = assignedAttributeIds.Contains(attr.AttributeId),
+                    })
+                    .ToList();
+
+                ViewBag.WeekId = weekId;
+                ViewBag.GraduateAttributes = attributeSelectList;
+            }
 
             return View("~/Views/Workbooks/AssignAttributes.cshtml");
         }
@@ -1024,68 +1049,53 @@ namespace CCM_Website.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AssignAttributes(int weekId, List<int> attributeIds)
         {
-            Console.WriteLine(
-                $"DEBUG: Received POST request for AssignAttributes - weekId={weekId}"
-            );
-
             if (weekId == 0)
             {
-                Console.WriteLine("ERROR: weekId is 0! Check hidden input field.");
                 return BadRequest("Invalid weekId received.");
             }
 
             var week = await _context
                 .Weeks.Include(w => w.Workbook)
+                .Include(w => w.WeekGraduateAttributes)
                 .FirstOrDefaultAsync(w => w.WeekId == weekId);
 
             if (week == null)
             {
-                Console.WriteLine($"ERROR: Week with ID {weekId} not found.");
                 return NotFound();
             }
 
-            if (attributeIds == null || !attributeIds.Any())
+            if (week.WeekGraduateAttributes != null)
             {
-                ModelState.AddModelError("", "Please select at least one attribute.");
-                ViewBag.WeekId = weekId;
-                ViewBag.GraduateAttributes = new SelectList(
-                    _context.GraduateAttributes.ToList(),
-                    "AttributeId",
-                    "AttributeName"
-                );
-                return View("AssignAttributes");
-            }
+                var existingAttributes = week
+                    .WeekGraduateAttributes.Select(wga => wga.GraduateAttributeId)
+                    .ToList();
+                var attributesToAdd = attributeIds.Except(existingAttributes).ToList();
+                var attributesToRemove = existingAttributes.Except(attributeIds).ToList();
 
-            foreach (var attrId in attributeIds)
-            {
-                if (
-                    !_context.WeekGraduateAttributes.Any(wga =>
-                        wga.WeekId == weekId && wga.GraduateAttributeId == attrId
-                    )
-                )
+                foreach (var attrId in attributesToAdd)
                 {
                     var attribute = await _context.GraduateAttributes.FindAsync(attrId);
-                    if (attribute == null)
+                    if (attribute != null)
                     {
-                        Console.WriteLine($"DEBUG: Attribute with ID {attrId} not found.");
-                        continue;
+                        _context.WeekGraduateAttributes.Add(
+                            new WeekGraduateAttributes
+                            {
+                                WeekId = weekId,
+                                GraduateAttributeId = attrId,
+                                Week = week,
+                                GraduateAttribute = attribute,
+                            }
+                        );
                     }
-
-                    _context.WeekGraduateAttributes.Add(
-                        new WeekGraduateAttributes
-                        {
-                            WeekId = weekId,
-                            GraduateAttributeId = attrId,
-                            Week = week,
-                            GraduateAttribute = attribute,
-                        }
-                    );
                 }
+
+                var attributesToDelete = _context.WeekGraduateAttributes.Where(wga =>
+                    wga.WeekId == weekId && attributesToRemove.Contains(wga.GraduateAttributeId)
+                );
+                _context.WeekGraduateAttributes.RemoveRange(attributesToDelete);
             }
 
             await _context.SaveChangesAsync();
-            Console.WriteLine($"DEBUG: Successfully assigned attributes to weekId={weekId}");
-
             return RedirectToAction("Details", "Workbooks", new { id = week.Workbook.WorkbookId });
         }
     }
