@@ -653,7 +653,6 @@ namespace CCM_Website.Controllers
                     }
                 }
             }
-
             foreach (var state in ModelState)
             {
                 foreach (var error in state.Value.Errors)
