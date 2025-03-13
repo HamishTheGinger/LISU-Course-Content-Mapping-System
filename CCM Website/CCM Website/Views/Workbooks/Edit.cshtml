@@ -7,9 +7,12 @@
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
         <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
         <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </div>
     </ol>
     <hr/>
 </nav>
