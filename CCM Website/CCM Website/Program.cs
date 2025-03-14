@@ -1,5 +1,6 @@
 using CCM_Website.Data;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -12,6 +13,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder
     .Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+});
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.AccessDeniedPath = "/AccessDenied"; // Redirect to a custom page
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
@@ -69,10 +80,11 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapAreaControllerRoute(
-    name: "Admin",
-    areaName: "Admin",
-    pattern: "Admin/{controller=Admin}/{action=Index}/{id?}"
-);
+        name: "Admin",
+        areaName: "Admin",
+        pattern: "Admin/{controller=Admin}/{action=Index}/{id?}"
+    )
+    .RequireAuthorization("Admin");
 
 app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();

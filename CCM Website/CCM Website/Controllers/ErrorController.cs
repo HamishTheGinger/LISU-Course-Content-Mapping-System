@@ -25,4 +25,10 @@ public class ErrorController : Controller
     {
         return View("403");
     }
+
+    [Route("AccessDenied")]
+    public IActionResult AccessDenied()
+    {
+        return View("AccessDenied");
+    }
 }
