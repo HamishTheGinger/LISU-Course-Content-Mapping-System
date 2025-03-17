@@ -8,15 +8,18 @@
 }
 
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb d-flex justify-content-start">
-        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
-        <div class="d-flex m-2">
-        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Workbook Details</li>
-        </div>
-    </ol>
-    <hr />
+        <ol class="breadcrumb row">
+            <div class="col-md-10 d-flex align-items-center">
+                <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+                <li class="breadcrumb-item ms-2"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Workbook Details</li>
+            </div>
+            <div class="col-md-2 d-flex justify-content-center">
+                <button id="shareBtn" class="btn btn-success">Share Workbook</button>
+            </div>
+        </ol>
+        <hr />
 </nav>
 
 <div class="container-fluid">
@@ -403,5 +406,16 @@
         d3.select("#bar_chart_details").style("display", "none");
     }
 
-
+    document.getElementById("shareBtn").addEventListener("click", function () {
+        if (navigator.share) {
+            navigator.share({
+                title: document.title,
+                url: window.location.href
+            }).catch((error) => console.log('Sharing failed:', error));
+        } else {
+            alert("Your browser does not support the Web Share API.");
+        }
+    });
 </script>
+
+
