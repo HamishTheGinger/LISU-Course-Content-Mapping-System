@@ -17,26 +17,42 @@ ViewData["Title"] = "Search";
 <div class="row mb-4">
     <div class="col-12">
         <form asp-action="Search" method="post">
-            <div class="input-group">
+            <div class="input-group mb-2">
                 <input type="text" name="SearchPhrase" class="form-control" placeholder="Search Workbooks" value="@ViewData["SearchPhrase"]"/>
                 <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+
+            <div class="d-flex gap-2">
+                <!-- Course Code Dropdown -->
+                <select name="CourseCodePrefix" class="form-select">
+                    <option value="">All Course Codes</option>
+                    @if (ViewData["CourseCodePrefixes"] is List<string> prefixes && prefixes.Any()) 
+                    {
+                        foreach (var prefix in prefixes)
+                        {
+                            <option value="@prefix">@prefix</option>
+                        }
+                    }
+                </select>
+
+                <!-- Course Lead Dropdown -->
+                <select name="CourseLead" class="form-select">
+                    <option value="">All Course Leads</option>
+                    @if (ViewData["CourseLeads"] is List<string> leads && leads.Any())
+                    {
+                        @foreach (var lead in leads)
+                        {
+                            <option value="@lead">@lead</option>
+                        }
+                    }
+                </select>
+
+                <button type="submit" class="btn btn-primary">Filter</button>
             </div>
         </form>
     </div>
 </div>
 
-<div class="row mb-4">
-    <div class="col-12">
-        <form asp-action="Filter" method="get">
-            <input type="hidden" name="SearchPhrase" value="@ViewData["SearchPhrase"]" /> <!-- Preserve Search Term -->
-            <div class="input-group">
-                <input type="text" name="FilterPhrase" class="form-control" placeholder="Filter Results" value="@ViewData["FilterPhrase"]" />
-                <button type="submit" class="btn btn-primary">Filter</button>
-                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Search")'">Reset</button>
-            </div>
-        </form>
-    </div>
-</div>
 
 
 <h3>Search Results</h3>
