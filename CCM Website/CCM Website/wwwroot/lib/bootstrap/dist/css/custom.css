@@ -7,7 +7,7 @@
  */
 :root {
     --bs-primary: #003865; /*UOFG Primary*/
-    --bs-secondary: #005398; /*UOFG Secondary*/
+    --bs-secondary-new: #005398; /*UOFG Secondary*/
     --bs-main: #f7f7f7; /*Grey for main content*/
     --bs-week-table: #00B050;
     --bs-stats-table: #0070C0;
@@ -31,7 +31,7 @@
 }
 
 .bg-secondary {
-    background-color: var(--bs-secondary) !important;
+    background-color: var(--bs-secondary-new) !important;
 }
 
 .bg-main {
@@ -59,42 +59,42 @@
 }
 
 .btn-primary {
-    color: #fff; !important;
-    background-color: #005398; !important;
-    border-color: #005398; !important;
+    color: #fff !important;
+    background-color: #005398 !important;
+    border-color: #005398 !important;
 }
 
 .btn-primary:hover {
-    color: #fff; !important;
-    background-color: #003865; !important;
-    border-color: #005398; !important;
+    color: #fff !important;
+    background-color: #003865 !important;
+    border-color: #005398 !important;
 }
 
 .btn-primary:active,
 .btn-primary.active {
-    color: #fff; !important;
-    background-color: #0066CC;  !important;
-    border-color: #0066CC; !important;
+    color: #fff !important;
+    background-color: #0066CC !important;
+    border-color: #0066CC !important;
     box-shadow: 0px 0px 10px rgba(0, 83, 152, 0.5) !important;
 }
 
 .btn-primary.active:hover {
-    color: #fff; !important;
-    background-color: #003865; !important;
-    border-color: #005398; !important;
+    color: #fff !important;
+    background-color: #003865 !important;
+    border-color: #005398 !important;
 }
 
 
 .btn-secondary:hover {
-    color: #fff; !important;
-    background-color: #5c636a; !important;
-    border-color: #565e64; !important;
+    color: #fff !important;
+    background-color: #5c636a !important;
+    border-color: #565e64 !important;
 }
 
 .btn-check:focus + .btn-primary, .btn-primary:focus {
-    color: #fff; !important;
-    background-color: #003865; !important;
-    border-color: #005398; !important;
+    color: #fff !important;
+    background-color: #003865 !important;
+    border-color: #005398 !important;
 }
 
 .bg-red {
@@ -131,47 +131,318 @@
 
 .bg-thistle {
     background-color: var(--bs-thistle) !important;
+}
 
 .pagination {
-    justify-content: center; !important;
-    align-items: center; !important;
-    margin: 0.5rem; !important;
-    padding: 0.5rem; !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0.5rem !important;
+    padding: 0.5rem !important;
 }
 
 .pagination li a {
-    display: inline-block; !important;
+    display: inline-block !important;
     padding: 0.75rem !important;
     margin: 0.25rem !important;
-    background-color: #ffffff;  !important;
-    border: 1px solid #dee2e6; !important;
-    text-decoration: none; !important;
-    color: var(--bs-secondary); !important;
-    border-radius: 0.25rem; !important;
+    background-color: #ffffff !important;
+    border: 1px solid #dee2e6 !important;
+    text-decoration: none !important;
+    color: var(--bs-secondary-new) !important;
+    border-radius: 0.25rem !important;
 }
 
 .pagination li a:hover {
-    background-color: var(--bs-primary); !important;
-    color: #fff;!important;
+    background-color: var(--bs-primary) !important;
+    color: #fff !important;
 }
 
 .pagination .active .page-link {
-    display: inline-block; !important;
+    display: inline-block !important;
     padding: 0.75rem !important;
     margin: 0.25rem !important;
-    background-color: var(--bs-secondary);  !important;
-    border: 1px solid #dee2e6; !important;
-    text-decoration: none; !important;
-    color: #fff; !important;
-    border-radius: 0.25rem; !important;
+    background-color: var(--bs-secondary-new) !important;
+    border: 1px solid #dee2e6 !important;
+    text-decoration: none !important;
+    color: #fff !important;
+    border-radius: 0.25rem !important;
 }
 
 .pagination .page-link:focus {
-    background-color: var(--bs-primary); !important;
-    color: #fff;!important;
+    background-color: var(--bs-primary) !important;
+    color: #fff !important;
 }
 
 .pagination .active .page-link:focus {
-    background-color: var(--bs-secondary);  !important;
-    color: #fff;!important;
+    background-color: var(--bs-secondary-new) !important;
+    color: #fff !important;
 }
+
+
+
+.text-size-toggle, .font-toggle {
+    display: flex !important;
+    justify-content: space-between !important;
+    max-width: 500px !important;
+    border: 2px solid #ccc !important;
+    border-radius: 15px !important;
+    padding: 5px !important;
+    background: #f0f0f0 !important;
+    overflow: hidden !important;
+}
+
+.toggle-btn, .font-btn {
+    flex: 1 !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 10px !important;
+    cursor: pointer !important;
+    font-weight: bold !important;
+    text-align: center !important;
+    transition: 0.3s !important;
+    white-space: nowrap !important;
+}
+
+.font-btn:last-child {
+    flex-grow: 1 !important;
+    min-width: 85px !important;
+}
+
+.toggle-btn:hover, .font-btn:hover {
+    background: #ddd !important;
+    border-radius: 20px !important;
+}
+
+.toggle-btn.active, .font-btn.active {
+    background: #007bff !important;
+    color: white !important;
+    border-radius: 20px !important;
+}
+
+
+/*dark mode*/
+.dark-mode {
+    background-color: #0f172a !important;
+    color: #e0e0e0 !important;
+}
+
+.dark-mode main{
+    background-color: #1a2332 !important;
+    color: #e0e0e0 !important;
+}
+
+.dark-mode header {
+    background-color: #000000 !important;
+}
+
+.dark-mode body {
+    background-color: #0f172a !important;
+}
+
+.dark-mode .navbar {
+    background-color: #000000 !important;
+    min-height: 100vh;
+    height: 100%;
+}
+
+.dark-mode nav {
+    background-color: #0f172a !important;
+    color: white !important;
+}
+
+.dark-mode .nav-link {
+    color: white !important;
+}
+
+.dark-mode .main {
+    background-color: #0f172a !important;
+    color: white !important;
+}
+
+.dark-mode .card {
+    background-color: #1a2332 !important;
+    color: white !important;
+    border-color: #2a3b4c !important;
+}
+
+.dark-mode .btn-primary {
+    background-color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: white !important;
+}
+
+.dark-mode .btn-secondary {
+    background-color: #64748b !important;
+    border-color: #64748b !important;
+    color: white !important;
+}
+
+.dark-mode .breadcrumb-item a {
+    color: #93c5fd !important;
+}
+
+.dark-mode .breadcrumb-item.active {
+    color: white !important;
+}
+
+.dark-mode input {
+    background-color: #1a2332 !important;
+    color: white !important;
+    border-color: #4a5568 !important;
+}
+
+.dark-mode select {
+    background-color: #1a2332 !important;
+    color: white !important;
+    border-color: #4a5568 !important;
+}
+
+.dark-mode textarea {
+    background-color: #1a2332 !important;
+    color: white !important;
+    border-color: #4a5568 !important;
+}
+
+.dark-mode .text-muted {
+    color: #bbbbbb !important;
+}
+
+.dark-mode table {
+    background-color: #0f172a !important;
+    color: white !important;
+}
+
+.dark-mode th,
+.dark-mode td {
+    border-color: #4a5568 !important;
+}
+
+.dark-mode .btn-success {
+    color: white !important;
+}
+
+.btn-danger {
+    color: white !important;
+}
+
+.dark-mode .btn-danger:hover,
+.dark-mode .btn-success:focus,
+.dark-mode .btn-danger:focus,
+.dark-mode .btn-danger:active {
+    color: white !important;
+}
+
+.dark-mode .row-header{
+    background-color: #000 !important;
+}
+
+.dark-mode .bg-main {
+    background-color: #0f172a !important;
+}
+
+.dark-mode .btn-success {
+    color: #fff !important;
+    background-color: #198754 !important;
+    border-color: #198754 !important;
+}
+
+.dark-mode  .btn-danger {
+    color: #fff !important;
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+}
+
+.dark-mode .pagination li a {
+    display: inline-block !important;
+    padding: 0.75rem !important;
+    margin: 0.25rem !important;
+    background-color: var(--bs-primary) !important;
+    border: 1px solid #fff !important;
+    text-decoration: none !important;
+    color: #fff !important;
+    border-radius: 0.25rem !important;
+}
+
+.dark-mode .pagination li a:hover {
+    background-color: var(--bs-secondary-new) !important;
+    border-color: #fff !important;
+    color: #fff !important;
+}
+
+.dark-mode .pagination .active .page-link {
+    display: inline-block !important;
+    padding: 0.75rem !important;
+    margin: 0.25rem !important;
+    background-color: #64748b  !important;
+    border: 1px solid #fff !important;
+    text-decoration: none !important;
+    color: #fff !important;
+    border-radius: 0.25rem !important;
+}
+
+.dark-mode .pagination .page-link:focus {
+    background-color: var(--bs-primary) !important;
+    color: #fff !important;
+}
+
+.dark-mode .pagination .active .page-link:focus {
+    background-color: #64748b !important;
+    border-color: #64748b !important;
+    color: #fff !important;
+}
+
+.dark-mode .pagination li a:hover {
+    background-color: var(--bs-secondary-new) !important;
+    border-color: #fff !important;
+    color: #fff !important;
+}
+
+.dark-mode select:disabled {
+    background-color: #000000 !important;
+    color: #fff !important;
+}
+
+.dark-mode .form-control {
+    background-color: #1a2332 !important;
+    color: white !important;
+}
+
+.dark-mode input:-webkit-autofill,
+.dark-mode input:-webkit-autofill:hover,
+.dark-mode input:-webkit-autofill:focus,
+.dark-mode input:-webkit-autofill:active {
+    background-color: #1a2332 !important;
+    color: white !important;
+    border-color: #4a5568 !important;
+    -webkit-box-shadow: 0 0 0px 1000px #1a2332 inset !important;
+}
+
+.dark-mode .text-size-toggle,
+.dark-mode .font-toggle {
+    display: flex !important;
+    justify-content: space-between !important;
+    border-radius: 15px !important;
+    padding: 5px !important;
+    max-width: 500px !important;
+    background-color: #000 !important;
+    overflow: hidden !important;
+    color: white !important;
+}
+
+.dark-mode .font-btn,
+.dark-mode .toggle-btn {
+    background-color: #000 !important;
+    color: white !important;
+}
+
+.dark-mode .font-btn:hover,
+.dark-mode .toggle-btn:hover {
+    background-color: var(--bs-primary) !important;
+    color: #fff !important;
+}
+
+.dark-mode .toggle-btn.active,
+.dark-mode .font-btn.active {
+    background: var(--bs-secondary-new) !important;
+    color: white !important;
+}
+
