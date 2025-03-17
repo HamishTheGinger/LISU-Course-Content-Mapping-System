@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions; //need regex for filtering
 using System.Threading.Tasks;
 using CCM_Website.Data;
 using CCM_Website.Models;
@@ -28,26 +29,61 @@ namespace CCM_Website.Controllers
             return View(await dbContext.ToListAsync());
         }
 
-        // POST: Courses/Search
-        public async Task<IActionResult> Search(string SearchPhrase)
+        // POST: Coursess/Search
+        public async Task<IActionResult> Search(
+            string searchPhrase,
+            string courseCodePrefix,
+            string courseLead
+        )
         {
-            // Check if the SearchPhrase is not null or empty
-            if (string.IsNullOrEmpty(SearchPhrase))
+            var query = _context.Workbooks.AsQueryable();
+
+            // Apply search phrase filter
+            if (!string.IsNullOrEmpty(searchPhrase))
             {
-                // If no search phrase, return an empty list or all courses
-                return View("Search", await _context.Workbooks.ToListAsync());
+                query = query.Where(c =>
+                    c.CourseName.ToLower().Contains(searchPhrase.ToLower())
+                    || c.CourseLead.ToLower().Contains(searchPhrase.ToLower())
+                );
             }
 
-            // Perform search filtering across multiple fields
-            var searchResults = await _context
-                .Workbooks.Where(c =>
-                    c.CourseName.ToLower().Contains(SearchPhrase.ToLower())
-                    || c.CourseLead.ToLower().Contains(SearchPhrase.ToLower())
-                )
+            // Apply Course Code Prefix filter
+            if (!string.IsNullOrEmpty(courseCodePrefix))
+            {
+                query = query.Where(c =>
+                    c.CourseCode != null && c.CourseCode.StartsWith(courseCodePrefix)
+                );
+            }
+
+            // Apply Course Lead filter
+            if (!string.IsNullOrEmpty(courseLead))
+            {
+                query = query.Where(c => c.CourseLead == courseLead);
+            }
+
+            // Fetch search results
+            var searchResults = await query.ToListAsync();
+
+            // Use regex to extract the text prefix from course codes
+            ViewData["CourseCodePrefixes"] = _context
+                .Workbooks.AsEnumerable() // Fetch data first, then apply regex in memory
+                .Select(c =>
+                    c.CourseCode != null
+                        ? Regex.Match(c.CourseCode, @"^[A-Za-z]+").Value
+                        : string.Empty
+                ) // Extract text prefix
+                .Where(prefix => !string.IsNullOrEmpty(prefix)) // Ensure no empty values
+                .Distinct()
+                .OrderBy(prefix => prefix) // Sort alphabetically
+                .ToList();
+
+            // Get distinct course leads
+            ViewData["CourseLeads"] = await _context
+                .Workbooks.Select(c => c.CourseLead)
+                .Distinct()
                 .ToListAsync();
 
-            // Return the search form view with search results and the search phrase
-            ViewData["SearchPhrase"] = SearchPhrase;
+            ViewData["SearchPhrase"] = searchPhrase;
             return View("Search", searchResults);
         }
 
