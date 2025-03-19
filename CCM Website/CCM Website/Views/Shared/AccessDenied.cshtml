@@ -12,6 +12,8 @@
     <br/>
     <div>
         <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Home</a>
-        <a authorization policy="Admin" asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-primary">Admin</a>
+        @if (User.IsInRole("Admin")) {
+            <a authorization policy="Admin" asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-primary">Admin</a>
+        }    
     </div>
 </div>
