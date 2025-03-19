@@ -446,3 +446,14 @@
     color: white !important;
 }
 
+.dark-mode input:-webkit-autofill,
+.dark-mode input:-webkit-autofill:hover,
+.dark-mode input:-webkit-autofill:focus,
+.dark-mode input:-webkit-autofill:active {
+    background-color: #1a2332 !important;
+    color: white !important;
+    -webkit-text-fill-color: white !important;
+    border-color: #4a5568 !important;
+}
+
+

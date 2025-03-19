@@ -218,7 +218,7 @@ namespace CCM_Website.Test
                 as RedirectToActionResult;
 
             Assert.NotNull(result);
-            Assert.Equal("Index", result.ActionName);
+            Assert.Equal("Details", result.ActionName);
 
             var savedWorkbook = await _context
                 .Workbooks.Include(wb => wb.LearningPlatform)

@@ -23,9 +23,12 @@ namespace CCM_Website.Controllers
 
         public IActionResult Index()
         {
-            var myWorkbooks = _context.Workbooks.OrderByDescending(w => w.LastEdited).ToList();
+            var myWorkbooks = _context
+                .Workbooks.OrderByDescending(w => w.LastEdited)
+                .Take(12)
+                .ToList();
 
-            var uofgWorkbooks = _context.Workbooks.ToList();
+            var uofgWorkbooks = _context.Workbooks.Take(12).ToList();
 
             ViewData["MyWorkbooks"] = myWorkbooks;
             ViewData["UofGWorkbooks"] = uofgWorkbooks;
