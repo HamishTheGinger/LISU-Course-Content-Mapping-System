@@ -72,7 +72,9 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LocationName")] TaskLocation taskLocation)
+        public async Task<IActionResult> Create(
+            [Bind("LocationName,LocationColour,LocationTextColour")] TaskLocation taskLocation
+        )
         {
             if (ModelState.IsValid)
             {
@@ -106,7 +108,8 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("LocationId,LocationName")] TaskLocation taskLocation
+            [Bind("LocationId,LocationName,LocationColour,LocationTextColour")]
+                TaskLocation taskLocation
         )
         {
             if (id != taskLocation.LocationId)

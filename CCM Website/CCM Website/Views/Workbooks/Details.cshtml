@@ -160,18 +160,12 @@
 
 
                     <div id="legend" class="d-none">
-                        <table class="table table-bordered table-responsive">
+                        <table class="table table-bordered table-responsive" id="legendTable">
                             <thead>
                             <tr><th>Legend</th></tr>
                             </thead>
                             <tbody>
-                            <tr><td id="Acquisition_legend">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q & A Walls, Readings, Videos</td></tr>
-                            <tr><td id="Collaboration_legend">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
-                            <tr><td id="Discussion_legend">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
-                            <tr><td id="Investigation_legend">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
-                            <tr><td id="Practice_legend">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
-                            <tr><td id="Production_legend">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
-                            <tr><td id="Assessment_legend" class="text-white">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+
                             </tbody>
                         </table>
 
@@ -202,6 +196,40 @@
     //get list of learning types for graph
     var colourData = [];
     var activities=[];
+    
+    //populate legend
+
+    legendData = []
+    @{
+    foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
+    {
+    <text>
+    legendData.push({
+        label: "@Html.Raw(type.LearningTypeName)",
+        color: "@Html.Raw(type.LearningTypeColour)",
+        textColor: "@Html.Raw(type.LearningTypeTextColour)",
+        description: "@Html.Raw(type.LearningTypeDescription)"
+    });
+    </text>
+    }
+    }
+    
+    var legendTable = document.getElementById("legendTable");
+    legendTable.innerHTML = "";
+
+    legendData.forEach(item => {
+        var row = document.createElement("tr");
+
+        row.innerHTML = `
+                <td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">
+                    ${item.label}
+                    
+                </td>
+                <td class="p-2">${item.description}<td>
+            `;
+
+        legendTable.appendChild(row);
+    });
 
     @foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
     {

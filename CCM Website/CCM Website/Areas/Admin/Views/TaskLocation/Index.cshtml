@@ -44,6 +44,12 @@
             <th>
                 Location Name
             </th>
+            <th>
+                Location Colour
+            </th>
+            <th>
+                Location Text Colour
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -52,6 +58,12 @@
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.LocationName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LocationColour)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LocationTextColour)
         </td>
         <td>
             <div class="d-flex flex-wrap justify-content-end gap-2">

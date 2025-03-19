@@ -73,7 +73,8 @@ namespace CCM_Website.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("ApproachId,ApproachName")] TaskApproach taskApproach
+            [Bind("ApproachId,ApproachName,ApproachColour,ApproachTextColour")]
+                TaskApproach taskApproach
         )
         {
             if (ModelState.IsValid)
@@ -108,7 +109,8 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("ApproachId,ApproachName")] TaskApproach taskApproach
+            [Bind("ApproachId,ApproachName,ApproachColour,ApproachTextColour")]
+                TaskApproach taskApproach
         )
         {
             if (id != taskApproach.ApproachId)

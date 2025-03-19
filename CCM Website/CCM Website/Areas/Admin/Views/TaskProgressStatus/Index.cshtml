@@ -44,6 +44,12 @@
         <th>
             Progress Status
         </th>
+        <th>
+            Progress Status Colour
+        </th>
+        <th>
+            Progress Status Text Colour
+        </th>
         <th></th>
     </tr>
     </thead>
@@ -52,6 +58,12 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.StatusName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusColour)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StatusTextColour)
             </td>
             <td>
                 <div class="d-flex flex-wrap justify-content-end gap-2">

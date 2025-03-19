@@ -34,6 +34,17 @@
                 <span asp-validation-for="StatusName" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="StatusColour" class="control-label">Status Colour</label>
+                <input asp-for="StatusColour" class="form-control" />
+                <span asp-validation-for="StatusColour" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StatusTextColour" class="control-label">Status Text Colour</label>
+                <input asp-for="StatusTextColour" class="form-control" />
+                <span asp-validation-for="StatusTextColour" class="text-danger"></span>
+            </div>
+            <br/>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-success" />
                 <a class="btn btn-secondary" asp-action="Index">Cancel</a>
             </div>

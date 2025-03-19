@@ -73,7 +73,9 @@ namespace CCM_Website.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("LearningTypeId,LearningTypeName,LearningTypeColour,LearningTypeTextColour")]
+            [Bind(
+                "LearningTypeId,LearningTypeName,LearningTypeColour,LearningTypeTextColour,LearningTypeDescription"
+            )]
                 LearningType learningType
         )
         {
@@ -109,7 +111,9 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("LearningTypeId,LearningTypeName,LearningTypeColour,LearningTypeTextColour")]
+            [Bind(
+                "LearningTypeId,LearningTypeName,LearningTypeColour,LearningTypeTextColour,LearningTypeDescription"
+            )]
                 LearningType learningType
         )
         {

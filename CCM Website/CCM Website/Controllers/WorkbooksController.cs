@@ -615,12 +615,23 @@ namespace CCM_Website.Controllers
                 .GroupBy(a => a.TasksStatus.StatusName)
                 .ToDictionary(g => g.Key, g => g.Count());
 
+            var taskStatus = await _context.TaskProgressStatus.ToListAsync();
+            var taskApproach = await _context.TaskApproach.ToListAsync();
+            var taskLocation = await _context.TaskLocation.ToListAsync();
+
             ViewBag.learningTypeCounts = learningTypeCounts;
             ViewBag.locationCount = locationCount;
             ViewBag.progressCount = progressCount;
             ViewData["LearningTypes"] = await _context.LearningType.ToListAsync();
 
-            var viewModel = new WeekDetailsViewModel { Week = week, ActivitiesList = activities };
+            var viewModel = new WeekDetailsViewModel
+            {
+                Week = week,
+                ActivitiesList = activities,
+                StatusList = taskStatus,
+                ApproachList = taskApproach,
+                LocationList = taskLocation,
+            };
             return View(viewModel);
         }
 
@@ -957,6 +968,14 @@ namespace CCM_Website.Controllers
                 "StatusId",
                 "StatusName"
             );
+
+            int maxTaskOrder =
+                await _context
+                    .WeekActivities.Where(w => w.WeekId == weekId)
+                    .Select(w => (int?)w.TaskOrder)
+                    .MaxAsync() ?? 0;
+
+            ViewBag.NextTaskOrder = maxTaskOrder + 1;
 
             return View();
         }

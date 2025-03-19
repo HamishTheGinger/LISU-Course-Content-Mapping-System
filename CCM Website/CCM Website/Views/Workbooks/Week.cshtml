@@ -85,7 +85,7 @@
                         <table id="attributes_table" class="table table-bordered text-center position-sticky w-auto">
                             <thead>
                                 <tr class="bg-week-table text-white">
-                                    <th colspan = "2" >Weekly Graduate Attribute
+                                    <th colspan = "2" >Week Graduate Attribute(s)
                                         @if ((await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded)
                                         {
                                             <a asp-action="AssignAttributes" asp-controller="Workbooks" asp-route-weekId="@Model.Week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1 text-white">
@@ -104,14 +104,26 @@
                                 @{
                                     System.Diagnostics.Debug.Assert(Model.Week.WeekGraduateAttributes != null, "Model.Week.WeekGraduateAttributes != null");
                                 }
-                                @foreach (var graduateAttribute in Model.Week.WeekGraduateAttributes)
-                                {
-                                    <tr>
-                                        <td class="bg-thistle text-white">Graduate Attribute @counter</td>
-                                        <td>@graduateAttribute.GraduateAttribute.AttributeName</td>
-                                    </tr>
+                                @{
+                                    if (Model.Week.WeekGraduateAttributes.Count > 0)
+                                    {
+                                        foreach (var graduateAttribute in Model.Week.WeekGraduateAttributes)
+                                        {
+                                            <tr>
+                                                <td class="bg-thistle text-white">Graduate Attribute @counter</td>
+                                                <td>@graduateAttribute.GraduateAttribute.AttributeName</td>
+                                            </tr>
 
-                                    counter++;
+                                            counter++;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>No Graduate Attributes</td>
+                                        </tr>
+                                    }
                                 }
 
                             </tbody>
@@ -119,18 +131,12 @@
                 </div>
                 
                 <div id="legend" class="d-none">
-                    <table class="table table-bordered table-responsive">
+                    <table class="table table-bordered table-responsive" id="legendTable">
                         <thead>
-                        <tr><th>Legend</th></tr>
+                            <tr><th>Legend</th></tr>
                         </thead>
                         <tbody>
-                        <tr><td id="Acquisition_legend">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
-                        <tr><td id="Collaboration_legend">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
-                        <tr><td id="Discussion_legend">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
-                        <tr><td id="Investigation_legend">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
-                        <tr><td id="Practice_legend">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
-                        <tr><td id="Production_legend">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
-                        <tr><td id="Assessment_legend" class="text-white">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+                    
                         </tbody>
                     </table>
 
@@ -138,75 +144,34 @@
 
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center table-responsive">
                     <button class="btn btn-primary m-3 rounded-pill " id="lt_table_hide"> <span id="arrow_stats">▼</span> Statistics</button>
+                    
 
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                        <table id="stats_table" class="table table-bordered text-center position-sticky d-block">
+                    <div class="d-flex flex-column justify-content-between align-items-center">
+                        <table id="statsTable" class="table table-bordered text-center position-sticky d-block">
                             <thead>
-                            <tr>
-                                <th colspan="4" class="text-white bg-stats-table">Statistics</th>
-                            </tr>
-                            <tr class="text-white bg-stats-table">
-                                <th>Learning Type</th>
-                                <th>Allocation</th>
-                                <th>Status</th>
-                                <th>Tasks</th>
-                            </tr>
+                            <th colspan="4" class="text-white bg-stats-table">Statistics</th>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td id="Acquisition"></td>
-                                <td id="Acquisition_data"></td>
-                                <td class="bg-red">Unassigned</td>
-                                <td id="Unassigned"></td>
-                            </tr>
-                            <tr>
-                                <td id="Collaboration"></td>
-                                <td id="Collaboration_data"></td>
-                                <td class="bg-amber">In Progress</td>
-                                <td id="InProgress"></td>
-                            </tr>
-                            <tr>
-                                <td id="Discussion"></td>
-                                <td id="Discussion_data"></td>
-                                <td class="bg-green">Completed</td>
-                                <td id="Completed"></td>
-                            </tr>
-                            <tr>
-                                <td id="Investigation"></td>
-                                <td id="Investigation_data"></td>
-                                <td>Total Tasks</td>
-                                <td id="Total" class="bg-stats-total"></td>
-                            </tr>
-                            <tr>
-                                <td id="Practice"></td>
-                                <td id="Practice_data"></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td id="Production"></td>
-                                <td id="Production_data"></td>
-                                <th class="bg-stats-table text-white">Activity Location</th>
-                                <th class="bg-stats-table text-white">Total</th>
-                            </tr>
-                            <tr>
-                                <td id="Assessment"></td>
-                                <td id="Assessment_data"></td>
-                                <td class="bg-on-campus">On Campus</td>
-                                <td id="OnCampus"></td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold">Total Time</td>
-                                <td id="TotalTime" class="fw-bold bg-stats-total"></td>
-                                <td class="bg-remote">Remote (Home)</td>
-                                <td id="Remote"></td>
-                            </tr>
+                            <td>
+                                <table id="statsLearningActivityTable" class="table table-bordered text-center position-sticky d-block">
+                                    <thead class="text-white bg-stats-table">
+                                        <th>Learning Type</th>
+                                        <th>Allocation</th>
+                                    </thead>
+                                </table>
+                            </td>
+                            <td>
+                                <table id="statsTasksTable" class="table table-bordered text-center position-sticky d-block">
+                                </table>
+                            </td>
                             </tbody>
                         </table>
                     </div>
+                    
 
 
                 </div>
+                
 
 
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center">
@@ -386,7 +351,7 @@
                 }else{
                     editCell.textContent = "N/A";
                     var changeOrderButton = document.getElementById("changeOrder");
-                    changeOrderButton.className = "btn btn-primary d-block bg-gray-600 border border-gray-600";
+                    changeOrderButton.className = "btn btn-secondary d-block";
                     changeOrderDisabled = true;
             }
             row.appendChild(editCell);
@@ -448,38 +413,17 @@
     }
 
 
-
     //Stats table data 
     var statsData = [];
-    var unassigned = @Html.Raw(Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Unassigned"));
-    var inProgress = @Html.Raw(Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "In-Progress"));
-    var completed = @Html.Raw(Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Completed"));
-    var onCampus = @Html.Raw(Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "On Campus"));
-    var remote = @Html.Raw(Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "Remote (Home)"));
-    var total = unassigned + inProgress + completed;
     @{
         double totalTime = Model.ActivitiesList?
             .Select(a => (double?)a.TaskTime.TotalMinutes)
             .Sum() ?? 0;
     }
-    
-    const unassignedCell = document.getElementById("Unassigned")
-    unassignedCell.textContent = unassigned;
-    const inProgressCell = document.getElementById("InProgress")
-    inProgressCell.textContent = inProgress;
-    const completedCell = document.getElementById("Completed")
-    completedCell.textContent = completed;
-    const totalCell = document.getElementById("Total")
-    totalCell.textContent = total;
-    const onCampusCell = document.getElementById("OnCampus")
-    onCampusCell.textContent = onCampus;
-    const remoteCell = document.getElementById("Remote")
-    remoteCell.textContent = remote;
-    const totalTimeCell = document.getElementById("TotalTime")
+
     let hoursTotal = Math.floor(@totalTime/60);
     let minutesTotal = @totalTime%60;
-    totalTimeCell.textContent = `${hoursTotal.toString().padStart(2, '0')}:${minutesTotal.toString().padStart(2, '0')}`;
-
+   
     @{
         foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
         {
@@ -499,21 +443,225 @@
         }
     }
 
-    //populating table
+    legendData = []
+    @{
+        foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
+        {
+            <text>
+                    legendData.push({
+                    label: "@Html.Raw(type.LearningTypeName)",
+                    color: "@Html.Raw(type.LearningTypeColour)",
+                    textColor: "@Html.Raw(type.LearningTypeTextColour)",
+                    description: "@Html.Raw(type.LearningTypeDescription)"
+                });
+            </text>
+        }
+    }
+
+    var statsLearningActivityTable = document.getElementById("statsLearningActivityTable");
+    var statsTasksTable = document.getElementById("statsTasksTable");
+    statsLearningActivityTable.innerHTML = "";
+    statsTasksTable.innerHTML = "";
+
+    var rowLAHeading = document.createElement("tr");
+    rowLAHeading.innerHTML = `
+                <td class="text-white bg-stats-table p-2">
+                    Learning Activity
+                </td>
+                <td class=" text-white bg-stats-table p-2">
+                    Allocation
+                </td>
+            `;
+    statsLearningActivityTable.appendChild(rowLAHeading);
+    
     statsData.forEach(item => {
-        const labelId = item.label;
-        const cell = document.getElementById(labelId);
-        const cellData = document.getElementById(labelId + "_data");
-        if (cell) {
-            cell.textContent = item.label;
-            cell.style.backgroundColor = item.color;
-            cell.style.color = item.textColor;
+        var row = document.createElement("tr");
+        let hours = Math.floor(item.time/60);
+        let minutes = item.time%60;
+        row.innerHTML = `
+                <td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">
+                    ${item.label}
+                    
+                </td>
+                <td class="p-2">${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}</td>
+            `;
+        statsLearningActivityTable.appendChild(row);
+    });
+    var rowLATotal = document.createElement("tr");
+    rowLATotal.innerHTML = `<td class="p-2"> Total Time </td> 
+                    <td class="p-2 table-total">${hoursTotal.toString().padStart(2, '0')}:${minutesTotal.toString().padStart(2, '0')}</td>`;
+    statsLearningActivityTable.appendChild(rowLATotal);
+
+
+
+    var locationData = [];
+    @{
+        var locationCounts = new Dictionary<string, int>();
+
+        foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
+        {
+        var location = item?.TaskLocation.LocationName ?? "Unknown";
+        locationCounts[location] = locationCounts.ContainsKey(location) ? locationCounts[location] + 1 : 1;
         }
-        if (cellData) {
-            let hours = Math.floor(item.time/60);
-            let minutes = item.time%60;
-            cellData.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+  
+        foreach (var item in Model.LocationList ?? new List<TaskLocation>())
+        {
+        var location = item?.LocationName ?? "Unknown";
+        var locationColour = item?.LocationColour ?? "#FFFFFF";
+        var locationTextColour = item?.LocationTextColour ?? "#000000";
+        var count = locationCounts.ContainsKey(location) ? locationCounts[location] : 0;
+
+        <text>
+        locationData.push({
+            location: "@Html.Raw(location)",
+            color: "@Html.Raw(locationColour)",
+            textColor: "@Html.Raw(locationTextColour)",
+            count: @count
+        });
+        </text>
         }
+    }
+
+    var statusData = [];
+    @{
+    var statusCounts = new Dictionary<string, int>();
+
+    foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
+    {
+    var status = item?.TasksStatus.StatusName ?? "Unknown";
+    statusCounts[status] = statusCounts.ContainsKey(status) ? statusCounts[status] + 1 : 1;
+    }
+
+
+    foreach (var item in Model.StatusList ?? new List<TaskProgressStatus>())
+    {
+    var status = item?.StatusName ?? "Unknown";
+    var statusColour = item?.StatusColour ?? "#FFFFFF";
+    var statusTextColour = item?.StatusTextColour ?? "#000000";
+    var count = statusCounts.ContainsKey(status) ? statusCounts[status] : 0;
+
+    <text>
+    statusData.push({
+        status: "@Html.Raw(status)",
+        color: "@Html.Raw(statusColour)",
+        textColor: "@Html.Raw(statusTextColour)",
+        count: @count
+    });
+    </text>
+    }
+    }
+
+    var approachData = [];
+    @{
+    var approachCounts = new Dictionary<string, int>();
+
+    foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
+    {
+    var approach = item?.TaskApproach.ApproachName ?? "Unknown";
+    approachCounts[approach] = approachCounts.ContainsKey(approach) ? approachCounts[approach] + 1 : 1;
+    }
+
+
+    foreach (var item in Model.ApproachList ?? new List<TaskApproach>())
+    {
+    var approach = item?.ApproachName ?? "Unknown";
+    var approachColour = item?.ApproachColour ?? "#FFFFFF";
+    var approachTextColour = item?.ApproachTextColour ?? "#000000";
+    var count = approachCounts.ContainsKey(approach) ? approachCounts[approach] : 0;
+
+    <text>
+    approachData.push({
+        approach: "@Html.Raw(approach)",
+        color: "@Html.Raw(approachColour)",
+        textColor: "@Html.Raw(approachTextColour)",
+        count: @count
+    });
+    </text>
+    }
+    }
+
+    var totalTasks = 0;
+
+    var rowTaskStatusHeading = document.createElement("tr");
+    rowTaskStatusHeading.innerHTML = `
+                <td class="text-white bg-stats-table p-2">
+                    Status
+                </td>
+                <td class=" text-white bg-stats-table p-2">
+                    Tasks
+                </td>
+            `;
+            
+    statsTasksTable.appendChild(rowTaskStatusHeading);
+
+    statusData.forEach(item => {
+
+        var row = document.createElement("tr");
+        row.innerHTML = `<td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">${item.status}</td> 
+                     <td class="p-2">${item.count}</td>`;
+        statsTasksTable.appendChild(row);
+        totalTasks += item.count;
+    });
+
+
+    var rowTaskLocationHeading = document.createElement("tr");
+    rowTaskLocationHeading.innerHTML = `
+    <td class="text-white bg-stats-table p-2">
+        Activity Location
+    </td>
+    <td class="text-white bg-stats-table p-2">
+        Total
+    </td>
+`;
+    statsTasksTable.appendChild(rowTaskLocationHeading);
+
+    locationData.forEach(item => {
+
+        var row = document.createElement("tr");
+        row.innerHTML = `<td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">${item.location}</td> 
+                     <td class="p-2">${item.count}</td>`;
+        statsTasksTable.appendChild(row);
+    });
+
+    var rowTaskApproachHeading = document.createElement("tr");
+    rowTaskApproachHeading.innerHTML = `
+                <td class="text-white bg-stats-table p-2">
+                    Activity Approach
+                </td>
+                <td class=" text-white bg-stats-table p-2">
+                    Total
+                </td>
+            `;
+    statsTasksTable.appendChild(rowTaskApproachHeading);
+
+    approachData.forEach(item => {
+        var row = document.createElement("tr");
+        row.innerHTML = `<td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">${item.approach}</td> 
+                    <td class="p-2">${item.count}</td>`;
+        statsTasksTable.appendChild(row);
+    });
+
+    var rowTaskTotal = document.createElement("tr");
+    rowTaskTotal.innerHTML = `<td class="p-2">Total Tasks</td> 
+                     <td class="p-2 table-total">${totalTasks}</td>`;
+    statsTasksTable.appendChild(rowTaskTotal);
+
+    var legendTable = document.getElementById("legendTable");
+    legendTable.innerHTML = "";
+
+    legendData.forEach(item => {
+        var row = document.createElement("tr");
+
+        row.innerHTML = `
+                <td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">
+                    ${item.label}
+                    
+                </td>
+                <td class="p-2">${item.description}<td>
+            `;
+
+        legendTable.appendChild(row);
     });
 
     //button toggle functions
@@ -529,7 +677,7 @@
         chart.classList.toggle("d-block")
         key.classList.toggle("d-none")
         key.classList.toggle("d-block")
-        
+
         if (chart.classList.contains("d-none")) {
             arrow.innerHTML = "▲";
             refocusButton("lt_chart");
@@ -537,20 +685,15 @@
             arrow.innerHTML = "▼";
         }
     }
-
+    
     function toggleLegend() {
         const chart = document.getElementById("lt_chart");
-        const table = document.getElementById("stats_table");
+        const table = document.getElementById("statsTable");
         const key = document.getElementById("lt_chart_key");
         const legend = document.getElementById("legend");
         const arrow = document.getElementById("arrow_legend");
         const buttonChart = document.getElementById("lt_chart_hide");
         const buttonTable = document.getElementById("lt_table_hide");
-
-        statsData.forEach(item => {
-            const legend_colour = document.getElementById(item.label + "_legend");
-            legend_colour.style.backgroundColor = item.color;
-        });
 
         legend.classList.toggle("d-none")
         legend.classList.toggle("d-block")
@@ -572,14 +715,14 @@
     }
 
     function toggleStatsTable() {
-        const table = document.getElementById("stats_table");
+        const table = document.getElementById("statsTable");
         const arrow = document.getElementById("arrow_stats");
         table.classList.toggle("d-none")
         table.classList.toggle("d-block")
 
         if (table.classList.contains("d-none")) {
             arrow.innerHTML = "▲";
-            refocusButton("stats_table");
+            refocusButton("statsTablestatsTable");
         } else {
             arrow.innerHTML = "▼";
         }
