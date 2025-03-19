@@ -6,7 +6,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
 :root {
-    --bs-primary: #003865; /*UOFG Primary*/
+    --bs-primary-new: #003865; /*UOFG Primary*/
     --bs-secondary-new: #005398; /*UOFG Secondary*/
     --bs-main: #f7f7f7; /*Grey for main content*/
     --bs-week-table: #00B050;
@@ -27,7 +27,7 @@
     
 }
 .bg-primary {
-    background-color: var(--bs-primary) !important;
+    background-color: var(--bs-primary-new) !important;
 }
 
 .bg-secondary {
@@ -152,7 +152,7 @@
 }
 
 .pagination li a:hover {
-    background-color: var(--bs-primary) !important;
+    background-color: var(--bs-primary-new) !important;
     color: #fff !important;
 }
 
@@ -168,7 +168,7 @@
 }
 
 .pagination .page-link:focus {
-    background-color: var(--bs-primary) !important;
+    background-color: var(--bs-primary-new) !important;
     color: #fff !important;
 }
 
@@ -217,7 +217,40 @@
     color: white !important;
     border-radius: 20px !important;
 }
+.burger-line {
+    width: 35px;
+    height: 5px;
+    background-color: black;
+    margin: 6px 0;
+    transition: 0.3s ease-in-out;
+}
 
+
+.btn-burger {
+    color: #000000 !important;
+    background-color: var(--bs-primary-new) !important;
+    border-color: #000 !important;
+}
+
+.btn-burger:hover {
+    color: #000000 !important;
+    background-color: var(--bs-secondary-new) !important;
+    border-color: #000 !important;
+}
+
+.btn-burger:active,
+.btn-burger.active {
+    color: #000000 !important;
+    background-color: var(--bs-secondary-new) !important;
+    border-color: #000 !important;
+    box-shadow: 0px 0px 10px rgba(0, 83, 152, 0.5) !important;
+}
+
+.btn-burger.active:hover {
+    color: #000000 !important;
+    background-color: var(--bs-primary-new) !important;
+    border-color: #000 !important;
+}
 
 /*dark mode*/
 .dark-mode {
@@ -240,8 +273,6 @@
 
 .dark-mode .navbar {
     background-color: #000000 !important;
-    min-height: 100vh;
-    height: 100%;
 }
 
 .dark-mode nav {
@@ -355,7 +386,7 @@
     display: inline-block !important;
     padding: 0.75rem !important;
     margin: 0.25rem !important;
-    background-color: var(--bs-primary) !important;
+    background-color: var(--bs-primary-new) !important;
     border: 1px solid #fff !important;
     text-decoration: none !important;
     color: #fff !important;
@@ -380,7 +411,7 @@
 }
 
 .dark-mode .pagination .page-link:focus {
-    background-color: var(--bs-primary) !important;
+    background-color: var(--bs-primary-new) !important;
     color: #fff !important;
 }
 
@@ -436,7 +467,7 @@
 
 .dark-mode .font-btn:hover,
 .dark-mode .toggle-btn:hover {
-    background-color: var(--bs-primary) !important;
+    background-color: var(--bs-primary-new) !important;
     color: #fff !important;
 }
 
@@ -446,6 +477,49 @@
     color: white !important;
 }
 
+.dark-mode .bg-primary{
+    background-color: #000 !important;
+}
+
+.body {
+    margin-bottom: 0 !important;
+}
+
+.footer{
+    border: 0px solid #000 !important;
+}
+
+.dark-mode .btn-burger {
+    background-color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: white !important;
+}
+
+.dark-mode .btn-burger:hover {
+    color: #000000 !important;
+    background-color: var(--bs-secondary-new) !important;
+    border-color: #000 !important;
+}
+
+.dark-mode .btn-burger:active,
+.dark-mode .btn-burger.active {
+    color: #000000 !important;
+    background-color: var(--bs-secondary-new) !important;
+    border-color: #000 !important;
+    box-shadow: 0px 0px 10px rgba(0, 83, 152, 0.5) !important;
+}
+
+.dark-mode .btn-burger.active:hover {
+    background-color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: white !important;
+}
+
+.dark-mode .btn-primary:hover {
+    color:  #fff !important;
+    background-color: var(--bs-secondary-new) !important;
+    border-color: #000 !important;
+}
 .dark-mode input:-webkit-autofill,
 .dark-mode input:-webkit-autofill:hover,
 .dark-mode input:-webkit-autofill:focus,
@@ -457,3 +531,17 @@
 }
 
 
+
+.dark-mode .btn-primary:active,
+.dark-mode .btn-primary.active {
+    color: #fff !important;
+    background-color: var(--bs-secondary-new) !important;
+    border-color: #000 !important;
+    box-shadow: 0px 0px 10px rgba(0, 83, 152, 0.5) !important;
+}
+
+.dark-mode .btn-primary.active:hover {
+    background-color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+    color: #fff !important;
+}
