@@ -487,7 +487,7 @@ namespace CCM_Website.Controllers
                     }
                 }
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = workbook.WorkbookId });
             }
 
             ViewBag.LearningPlatforms = new SelectList(
