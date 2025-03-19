@@ -1246,6 +1246,7 @@ namespace CCM_Website.Controllers
                     })
                     .ToList();
 
+                ViewBag.WorkbookId = entity.WorkbookId;
                 ViewBag.WeekId = weekId;
                 ViewBag.GraduateAttributes = attributeSelectList;
             }
