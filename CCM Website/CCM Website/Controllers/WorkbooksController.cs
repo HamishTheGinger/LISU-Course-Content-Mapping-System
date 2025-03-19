@@ -1,11 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.RegularExpressions; //need regex for filtering
+using System.Threading.Tasks;
 using System.Threading.Tasks;
 using CCM_Website.Data;
 using CCM_Website.Models;
 using CCM_Website.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -16,16 +20,24 @@ namespace CCM_Website.Controllers
     public class WorkbooksController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuthorizationService _authorizationService;
 
-        public WorkbooksController(ApplicationDbContext context)
+        public WorkbooksController(
+            ApplicationDbContext context,
+            IAuthorizationService authorizationService
+        )
         {
             _context = context;
+            _authorizationService = authorizationService;
         }
 
         // GET: Courses
         public async Task<IActionResult> Index()
         {
-            var dbContext = _context.Workbooks.Include(w => w.UniversityArea);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var dbContext = _context
+                .Workbooks.Where(w => w.OwnerId == userId)
+                .Include(w => w.UniversityArea);
             return View(await dbContext.ToListAsync());
         }
 
@@ -293,6 +305,11 @@ namespace CCM_Website.Controllers
             {
                 try
                 {
+                    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    if (userId == null)
+                        return Unauthorized();
+                    workbook.OwnerId = userId;
+
                     workbook.LastEdited = DateTime.Now;
                     _context.Add(workbook);
                     await _context.SaveChangesAsync();
@@ -373,6 +390,22 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
+            var entity = await _context.Workbooks.FindAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             var workbook = await _context
                 .Workbooks.Include(w => w.LearningPlatform)
                 .Include(w => w.UniversityArea)
@@ -413,6 +446,24 @@ namespace CCM_Website.Controllers
             if (id != workbook.WorkbookId)
             {
                 return NotFound();
+            }
+
+            var entity = await _context
+                .Workbooks.AsNoTracking()
+                .FirstOrDefaultAsync(w => w.WorkbookId == id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
             }
 
             ModelState.Remove(nameof(workbook.LearningPlatform));
@@ -469,6 +520,10 @@ namespace CCM_Website.Controllers
                         return View(workbook);
                     }
 
+                    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    if (userId == null)
+                        return Unauthorized();
+                    workbook.OwnerId = userId;
                     workbook.LearningPlatform = learningPlatform;
                     workbook.UniversityArea = uniArea;
                     workbook.LastEdited = DateTime.Now;
@@ -577,6 +632,25 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
+            var entity = await _context
+                .WeekActivities.Where(w => w.WeekActivityId == id)
+                .Select(w => w.Week.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             var weekActivity = await _context
                 .WeekActivities.Include(w => w.Week)
                 .ThenInclude(week => week.Workbook)
@@ -650,6 +724,25 @@ namespace CCM_Website.Controllers
             if (id != weekActivities.WeekActivityId)
             {
                 return NotFound();
+            }
+
+            var entity = await _context
+                .WeekActivities.Where(w => w.WeekActivityId == id)
+                .Select(w => w.Week.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
             }
 
             ModelState.Remove(nameof(weekActivities.Week));
@@ -796,8 +889,27 @@ namespace CCM_Website.Controllers
         }
 
         // GET: WeekActivities/Create
-        public IActionResult CreateActivity(int id, int weekId)
+        public async Task<IActionResult> CreateActivity(int id, int weekId)
         {
+            var entity = await _context
+                .Weeks.Where(w => w.WeekId == weekId)
+                .Select(w => w.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             var filteredWeeks = _context.Weeks.Where(w => w.WorkbookId == id).ToList();
 
             Console.WriteLine($"Filtered Weeks: {filteredWeeks.Count}: {id}");
@@ -859,6 +971,25 @@ namespace CCM_Website.Controllers
                 WeekActivities weekActivities
         )
         {
+            var entity = await _context
+                .Weeks.Where(w => w.WeekId == weekActivities.WeekId)
+                .Select(w => w.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             ModelState.Remove(nameof(weekActivities.Week));
             ModelState.Remove(nameof(weekActivities.Activities));
             ModelState.Remove(nameof(weekActivities.LearningType));
@@ -1010,7 +1141,7 @@ namespace CCM_Website.Controllers
 
         [HttpPost]
         public async Task<IActionResult> ChangeActivityOrder(
-            [FromBody] Dictionary<int, int> activityUpdates
+            [FromBody] Dictionary<string, int> activityUpdates
         )
         {
             if (activityUpdates == null || !activityUpdates.Any())
@@ -1018,7 +1149,31 @@ namespace CCM_Website.Controllers
                 return BadRequest("No activity data provided.");
             }
 
-            var activityIds = activityUpdates.Keys.ToList();
+            if (!activityUpdates.TryGetValue("workbookId", out int workbookId))
+            {
+                return BadRequest("workbookId is missing");
+            }
+
+            var entity = await _context.Workbooks.FirstOrDefaultAsync(w =>
+                w.WorkbookId == workbookId
+            );
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
+            activityUpdates.Remove("workbookId");
+            var activityIds = activityUpdates.Keys.Select(int.Parse).ToList();
             var existingActivities = await _context
                 .WeekActivities.Where(a => activityIds.Contains(a.WeekActivityId))
                 .ToListAsync();
@@ -1030,7 +1185,7 @@ namespace CCM_Website.Controllers
 
             foreach (var activity in existingActivities)
             {
-                activity.TaskOrder = activityUpdates[activity.WeekActivityId];
+                activity.TaskOrder = activityUpdates[activity.WeekActivityId.ToString()];
             }
 
             await _context.SaveChangesAsync();
@@ -1039,11 +1194,30 @@ namespace CCM_Website.Controllers
         }
 
         // GET: Workbook/AssignAttributes
-        public IActionResult AssignAttributes(int weekId)
+        public async Task<IActionResult> AssignAttributes(int weekId)
         {
             if (weekId == 0)
             {
                 return BadRequest("Invalid weekId received.");
+            }
+
+            var entity = await _context
+                .Weeks.Where(w => w.WeekId == weekId)
+                .Select(w => w.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
             }
 
             var week = _context
@@ -1087,6 +1261,25 @@ namespace CCM_Website.Controllers
             if (weekId == 0)
             {
                 return BadRequest("Invalid weekId received.");
+            }
+
+            var entity = await _context
+                .Weeks.Where(w => w.WeekId == weekId)
+                .Select(w => w.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
             }
 
             var week = await _context

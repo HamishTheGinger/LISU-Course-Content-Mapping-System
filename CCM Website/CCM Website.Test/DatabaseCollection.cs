@@ -59,6 +59,7 @@ public class DatabaseFixture : IDisposable
                 LearningPlatform = learningPlatform,
                 LastEdited = new DateTime(2024, 11, 12),
                 UniversityArea = cose,
+                OwnerId = "test-user-123",
             },
             new Workbook
             {
@@ -69,6 +70,7 @@ public class DatabaseFixture : IDisposable
                 LearningPlatform = learningPlatform,
                 LastEdited = DateTime.Now,
                 UniversityArea = cose,
+                OwnerId = "test-user-123",
             },
         };
 

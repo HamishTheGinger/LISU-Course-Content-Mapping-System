@@ -1,4 +1,7 @@
-﻿@model CCM_Website.Models.Workbook
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CCM_Website.Models.Workbook
+@inject IAuthorizationService AuthorizationService
 
 @{
     ViewData["Title"] = $"{@Model?.CourseCode ?? @Model?.CourseName ?? "N/A"} - Overview";
@@ -28,9 +31,12 @@
             <h1 class="text-wrap">@Html.DisplayFor(model => model.CourseName)</h1>
             <h4 class="text-wrap">Course Leads: @Html.DisplayFor(model => model.CourseLead)</h4>
         </div>
-        <div class="col-md-2 d-flex justify-content-center">
-            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Overview</a>
-        </div>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Model, "CanAccessResource")).Succeeded)
+        {            
+            <div class="col-md-2 d-flex justify-content-center">
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Overview</a>
+            </div>
+        }
     </div>
 
 
@@ -103,10 +109,13 @@
                                     <th>
                                         W @week.WeekNumber
                                         <br />
-                                        <a asp-action="AssignAttributes" asp-controller="Workbooks"
-                                           asp-route-weekId="@week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1 text-white bg-grad-attributes-table">
-                                            Assign
-                                        </a>
+                                        @if ((await AuthorizationService.AuthorizeAsync(User, Model, "CanAccessResource")).Succeeded)
+                                        {
+                                            <a asp-action="AssignAttributes" asp-controller="Workbooks"
+                                               asp-route-weekId="@week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1 text-white bg-grad-attributes-table">
+                                                Assign
+                                            </a>
+                                        }
                                     </th>
                                 }
                             </tr>

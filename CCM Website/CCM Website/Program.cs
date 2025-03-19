@@ -1,4 +1,6 @@
+using CCM_Website.Controllers;
 using CCM_Website.Data;
+using CCM_Website.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -16,12 +18,18 @@ builder
 
 builder.Services.AddAuthorization(options =>
 {
+    options.AddPolicy(
+        "CanAccessResource",
+        policy => policy.Requirements.Add(new OwnershipRequirement())
+    );
     options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
 });
 
+builder.Services.AddScoped<IAuthorizationHandler, OwnershipAuthorizationHandler>();
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.AccessDeniedPath = "/AccessDenied"; // Redirect to a custom page
+    options.AccessDeniedPath = "/AccessDenied";
 });
 
 // Add services to the container.
