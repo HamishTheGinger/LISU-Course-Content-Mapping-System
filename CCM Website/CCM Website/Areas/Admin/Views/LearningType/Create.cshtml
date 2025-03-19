@@ -41,6 +41,11 @@
                 <input asp-for="LearningTypeTextColour" class="form-control" />
                 <span asp-validation-for="LearningTypeTextColour" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="LearningTypeDescription" class="control-label">Learning Type Description</label>
+                <textarea asp-for="LearningTypeDescription" class="form-control" rows="5"></textarea>
+                <span asp-validation-for="LearningTypeDescription" class="text-danger"></span>
+            </div>
             <br/>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-success" />

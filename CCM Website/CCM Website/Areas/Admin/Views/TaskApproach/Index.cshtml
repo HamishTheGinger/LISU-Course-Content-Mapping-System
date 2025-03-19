@@ -46,6 +46,12 @@
         <th>
             Approach Name
         </th>
+        <th>
+            Approach Colour
+        </th>
+        <th>
+            Approach Text Colour
+        </th>
         <th></th>
     </tr>
     </thead>
@@ -54,6 +60,12 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ApproachName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ApproachColour)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ApproachTextColour)
             </td>
             <td>
                 <div class="d-flex flex-wrap justify-content-end gap-2">

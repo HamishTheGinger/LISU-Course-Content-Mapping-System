@@ -225,6 +225,10 @@
     transition: 0.3s ease-in-out;
 }
 
+.table-total{
+    color: #000 !important;
+    background-color: #FFFFCC !important;
+}
 
 .btn-burger {
     color: #000000 !important;
@@ -343,7 +347,8 @@
 }
 
 .dark-mode th,
-.dark-mode td {
+.dark-mode td,
+.dark-mode table{
     border-color: #4a5568 !important;
 }
 
@@ -427,7 +432,9 @@
     color: #fff !important;
 }
 
-.dark-mode select:disabled {
+.dark-mode select:disabled,
+.dark-mode .form-control[readonly]
+{
     background-color: #000000 !important;
     color: #fff !important;
 }

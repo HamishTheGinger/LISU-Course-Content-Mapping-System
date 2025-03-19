@@ -73,7 +73,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("StatusName")] TaskProgressStatus taskProgressStatus
+            [Bind("StatusName,StatusColour,StatusTextColour")] TaskProgressStatus taskProgressStatus
         )
         {
             if (ModelState.IsValid)
@@ -108,7 +108,8 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("StatusId,StatusName")] TaskProgressStatus taskProgressStatus
+            [Bind("StatusId,StatusName,StatusColour,StatusTextColour")]
+                TaskProgressStatus taskProgressStatus
         )
         {
             if (id != taskProgressStatus.StatusId)

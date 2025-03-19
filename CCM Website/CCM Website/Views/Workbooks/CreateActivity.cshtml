@@ -26,8 +26,7 @@
         <form asp-action="CreateActivity">
             <div class="form-group">
                 <label asp-for="TaskOrder" class="control-label">Task Order</label>
-                <input asp-for="TaskOrder" class="form-control" />
-                <span asp-validation-for="TaskOrder" class="text-danger"></span>
+                <input asp-for="TaskOrder" class="form-control" value="@ViewBag.NextTaskOrder" readonly />
             </div>
             <div class="form-group">
                 <label asp-for="WeekId" class="control-label">Week</label>
