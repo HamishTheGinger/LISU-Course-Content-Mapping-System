@@ -17,6 +17,8 @@ namespace CCM_Website.Models
 
         public string? PipReference { get; set; }
 
+        public string? OwnerId { get; set; }
+
         // Navigation Properties
         public ICollection<Week>? Weeks { get; set; }
 

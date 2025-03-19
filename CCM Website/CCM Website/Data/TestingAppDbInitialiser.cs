@@ -52,6 +52,7 @@ namespace CCM_Website.Data
                             Collaborators = "Caitlin Diver, Scott Ramsay, Andrew Struan",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -63,6 +64,7 @@ namespace CCM_Website.Data
                             Collaborators = "John Smith, Jack Smith",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "P32IxjfQbecvIyKZ6yY_-buRniOMRLQMwhF_QQfDtV4",
                         },
                         new Workbook
                         {
@@ -74,6 +76,7 @@ namespace CCM_Website.Data
                             Collaborators = "Nikela Papadopoulou",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -84,6 +87,7 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI4073",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -95,6 +99,7 @@ namespace CCM_Website.Data
                             Collaborators = "Xianghua (Sharon) Ding",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "P32IxjfQbecvIyKZ6yY_-buRniOMRLQMwhF_QQfDtV4",
                         },
                         new Workbook
                         {
@@ -105,6 +110,7 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI9001",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -116,6 +122,7 @@ namespace CCM_Website.Data
                             Collaborators = "Peggy Gregory",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -127,6 +134,7 @@ namespace CCM_Website.Data
                             Collaborators = "Qiyuan Wang",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "P32IxjfQbecvIyKZ6yY_-buRniOMRLQMwhF_QQfDtV4",
                         },
                         new Workbook
                         {
@@ -138,6 +146,7 @@ namespace CCM_Website.Data
                             Collaborators = "Ghadeer Alsharif, Kai Feng",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "P32IxjfQbecvIyKZ6yY_-buRniOMRLQMwhF_QQfDtV4",
                         },
                         new Workbook
                         {
@@ -149,6 +158,7 @@ namespace CCM_Website.Data
                             Collaborators = "Dr J. Paul Siebert",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -159,6 +169,7 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI4074",
                             LearningPlatform = moodle,
                             UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                     };
 

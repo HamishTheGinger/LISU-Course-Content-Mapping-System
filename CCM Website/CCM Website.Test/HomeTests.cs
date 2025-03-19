@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CCM_Website.Controllers;
 using CCM_Website.Data;
 using CCM_Website.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +38,22 @@ namespace CCM_Website.Test
             var mockLogger = new Mock<ILogger<HomeController>>();
 
             var controller = new HomeController(mockLogger.Object, localContext);
+
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.NameIdentifier, "test-user-123"),
+                        new Claim(ClaimTypes.Name, "Test User"),
+                    ],
+                    "mock"
+                )
+            );
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user },
+            };
+
             var result = controller.Index() as ViewResult;
 
             Assert.NotNull(result);
@@ -50,6 +68,22 @@ namespace CCM_Website.Test
         {
             var mockLogger = new Mock<ILogger<HomeController>>();
             var controller = new HomeController(mockLogger.Object, _context);
+
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.NameIdentifier, "test-user-123"),
+                        new Claim(ClaimTypes.Name, "Test User"),
+                    ],
+                    "mock"
+                )
+            );
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user },
+            };
+
             var result = controller.Index() as ViewResult;
 
             Assert.NotNull(result);
@@ -66,6 +100,22 @@ namespace CCM_Website.Test
         {
             var mockLogger = new Mock<ILogger<HomeController>>();
             var controller = new HomeController(mockLogger.Object, _context);
+
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.NameIdentifier, "test-user-123"),
+                        new Claim(ClaimTypes.Name, "Test User"),
+                    ],
+                    "mock"
+                )
+            );
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user },
+            };
+
             var result = controller.Index() as ViewResult;
 
             Assert.NotNull(result);

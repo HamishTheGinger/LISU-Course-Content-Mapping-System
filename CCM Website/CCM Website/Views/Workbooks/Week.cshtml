@@ -1,4 +1,6 @@
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IAuthorizationService AuthorizationService
 @model CCM_Website.ViewModels.WeekDetailsViewModel
 @{
     ViewData["Title"] = $"{@Model.Week!.Workbook.CourseCode ?? Model.Week.Workbook.CourseName} - Week {@Model.Week.WeekNumber}";
@@ -28,9 +30,12 @@
             <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4>
         </div>
         <div class="col-md-2 d-flex justify-content-center">
-            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" asp-route-weekId="@Model.Week.WeekId" class="btn btn-success">
-                Create Activity
-            </a>
+            @if ((await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded)
+            {
+                <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" asp-route-weekId="@Model.Week.WeekId" class="btn btn-success">
+                    Create Activity
+                </a>
+            }
         </div>
     </div>
     <div class="row">
@@ -69,10 +74,13 @@
                         <table id="attributes_table" class="table table-bordered text-center position-sticky w-auto">
                             <thead>
                                 <tr class="bg-week-table text-white">
-                                    <th colspan = "2" >Weekly Graduate Attribute 
-                                        <a asp-action="AssignAttributes" asp-controller="Workbooks" asp-route-weekId="@Model.Week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1 text-white">
-                                            Assign
-                                        </a>
+                                    <th colspan = "2" >Weekly Graduate Attribute
+                                        @if ((await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded)
+                                        {
+                                            <a asp-action="AssignAttributes" asp-controller="Workbooks" asp-route-weekId="@Model.Week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1 text-white">
+                                                Assign
+                                            </a>
+                                        }
                                     </th>
                                 </tr>
                             </thead>
@@ -566,14 +574,16 @@
             activities[weekTableData[i].id] = i+1;
         }
 
+        var workbookId = @Model.Week!.Workbook.WorkbookId;
+        activities["workbookId"] = workbookId;
 
         fetch('/Workbooks/ChangeActivityOrder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(activities),  
-        })
+            body: JSON.stringify(activities),
+            })
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -694,15 +704,3 @@
     }
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-

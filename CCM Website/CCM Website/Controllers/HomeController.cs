@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using CCM_Website.Data;
 using CCM_Website.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -23,8 +24,11 @@ namespace CCM_Website.Controllers
 
         public IActionResult Index()
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             var myWorkbooks = _context
-                .Workbooks.OrderByDescending(w => w.LastEdited)
+                .Workbooks.Where(w => w.OwnerId == userId)
+                .OrderByDescending(w => w.LastEdited)
                 .Take(12)
                 .ToList();
 

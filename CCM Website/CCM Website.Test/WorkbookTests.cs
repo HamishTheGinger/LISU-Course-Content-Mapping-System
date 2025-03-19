@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using CCM_Website.Controllers;
 using CCM_Website.Data;
 using CCM_Website.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,16 +22,43 @@ namespace CCM_Website.Test
     public class WorkbookTests
     {
         private readonly ApplicationDbContext _context;
+        private readonly Mock<IAuthorizationService> _mockAuthorizationService;
 
         public WorkbookTests(DatabaseFixture fixture)
         {
             _context = fixture.Context;
+            _mockAuthorizationService = new Mock<IAuthorizationService>();
+            _mockAuthorizationService
+                .Setup(a =>
+                    a.AuthorizeAsync(
+                        It.IsAny<ClaimsPrincipal>(),
+                        It.IsAny<object>(),
+                        It.IsAny<string>()
+                    )
+                )
+                .ReturnsAsync(AuthorizationResult.Success);
         }
 
         [Fact]
         public async Task Workbook_Index_TestingWBData()
         {
-            var controller = new WorkbooksController(_context);
+            var controller = new WorkbooksController(_context, _mockAuthorizationService.Object);
+
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.NameIdentifier, "test-user-123"),
+                        new Claim(ClaimTypes.Name, "Test User"),
+                    ],
+                    "mock"
+                )
+            );
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user },
+            };
+
             var result = await controller.Index() as ViewResult;
 
             Assert.NotNull(result);
@@ -46,7 +76,7 @@ namespace CCM_Website.Test
         [Fact]
         public async Task Workbook_Create_TestCreationAllFieldsPass()
         {
-            var controller = new WorkbooksController(_context);
+            var controller = new WorkbooksController(_context, _mockAuthorizationService.Object);
 
             var lp = _context.LearningPlatforms.FirstOrDefault(lp => lp.PlatformId == 1);
             Assert.NotNull(lp);
@@ -68,6 +98,22 @@ namespace CCM_Website.Test
                 Collaborators = "Dave Smith",
                 UniversityArea = cose,
                 UniversityAreaId = 1,
+                OwnerId = "test-user-123",
+            };
+
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.NameIdentifier, "test-user-123"),
+                        new Claim(ClaimTypes.Name, "Test User"),
+                    ],
+                    "mock"
+                )
+            );
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user },
             };
 
             var result = await controller.Create(newWorkbook) as RedirectToActionResult;
@@ -92,7 +138,7 @@ namespace CCM_Website.Test
         [Fact]
         public async Task Workbook_Create_TestCreationRequiredFieldsPass()
         {
-            var controller = new WorkbooksController(_context);
+            var controller = new WorkbooksController(_context, _mockAuthorizationService.Object);
 
             var lp = _context.LearningPlatforms.FirstOrDefault(lp => lp.PlatformId == 1);
             Assert.NotNull(lp);
@@ -112,6 +158,21 @@ namespace CCM_Website.Test
                 LearningPlatform = lp,
                 UniversityArea = cose,
                 UniversityAreaId = 1,
+            };
+
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.NameIdentifier, "test-user-123"),
+                        new Claim(ClaimTypes.Name, "Test User"),
+                    ],
+                    "mock"
+                )
+            );
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user },
             };
 
             var result = await controller.Create(newWorkbook) as RedirectToActionResult;
@@ -139,7 +200,7 @@ namespace CCM_Website.Test
         [Fact]
         public async Task Workbook_Create_TestCreationFail()
         {
-            var controller = new WorkbooksController(_context);
+            var controller = new WorkbooksController(_context, _mockAuthorizationService.Object);
 
             var lp = _context.LearningPlatforms.FirstOrDefault(lp => lp.PlatformId == 1);
             Assert.NotNull(lp);
@@ -163,6 +224,21 @@ namespace CCM_Website.Test
                 UniversityAreaId = 1,
             };
 
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.NameIdentifier, "test-user-123"),
+                        new Claim(ClaimTypes.Name, "Test User"),
+                    ],
+                    "mock"
+                )
+            );
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user },
+            };
+
             // Manually add the error, as to not break the initialisation above
             controller.ModelState.AddModelError("CourseLead", "The CourseLead field is required.");
 
@@ -179,7 +255,7 @@ namespace CCM_Website.Test
         [Fact]
         public async Task Workbook_Edit_TestEdit()
         {
-            var controller = new WorkbooksController(_context);
+            var controller = new WorkbooksController(_context, _mockAuthorizationService.Object);
 
             var lp = _context.LearningPlatforms.FirstOrDefault(lp => lp.PlatformId == 1);
             Assert.NotNull(lp);
@@ -213,6 +289,21 @@ namespace CCM_Website.Test
             editedWorkbook.CourseName = "Operating Systems 101";
             editedWorkbook.CourseCode = "COMPSCI4903";
 
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.NameIdentifier, "test-user-123"),
+                        new Claim(ClaimTypes.Name, "Test User"),
+                    ],
+                    "mock"
+                )
+            );
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user },
+            };
+
             var result =
                 await controller.Edit(newWorkbook.WorkbookId, editedWorkbook)
                 as RedirectToActionResult;
@@ -238,7 +329,7 @@ namespace CCM_Website.Test
         [Fact]
         public async Task Workbook_Edit_TestEditFail()
         {
-            var controller = new WorkbooksController(_context);
+            var controller = new WorkbooksController(_context, _mockAuthorizationService.Object);
 
             var lp = _context.LearningPlatforms.FirstOrDefault(lp => lp.PlatformId == 1);
             Assert.NotNull(lp);
@@ -258,6 +349,21 @@ namespace CCM_Website.Test
                 LearningPlatform = lp,
                 UniversityArea = cose,
                 UniversityAreaId = 1,
+            };
+
+            var user = new ClaimsPrincipal(
+                new ClaimsIdentity(
+                    [
+                        new Claim(ClaimTypes.NameIdentifier, "test-user-123"),
+                        new Claim(ClaimTypes.Name, "Test User"),
+                    ],
+                    "mock"
+                )
+            );
+
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = user },
             };
 
             var result = await controller.Edit(1100, newWorkbook);
