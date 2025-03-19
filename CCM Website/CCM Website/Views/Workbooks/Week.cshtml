@@ -10,6 +10,14 @@
     var learningTypes = ViewData["LearningTypes"] as List<LearningType>;
 }
 
+@{
+    var isAuthorized = (await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded;
+}
+
+<script>
+    var isUserAuthorized = @Json.Serialize(isAuthorized);
+</script>
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
@@ -56,10 +64,13 @@
                         <th>@Html.DisplayName("Task Status")</th>
                         <th>@Html.DisplayName("Activity Location")</th>
                         <th>@Html.DisplayName("Learning Approach")</th>
-                        <th><btn class="btn btn-primary d-block" id="changeOrder">Change Order</btn>
-                            <btn class="btn btn-success d-none" id="saveOrder">Save Changes</btn>
-                        </th>
-                        <th>Edit Activity</th>
+                        @if ((await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded)
+                            {
+                                <th><btn class="btn btn-primary d-block" id="changeOrder">Change Order</btn>
+                                    <btn class="btn btn-success d-none" id="saveOrder">Save Changes</btn>
+                                </th>
+                                <th>Edit Activity</th>
+                            }
 
                     </tr>
                     </thead>
@@ -285,7 +296,7 @@
     
     //Populating the heading for the table
     var tableHeading = document.getElementById('weekTableHeading')
-    tableHeading.colSpan = Object.keys(weekTableData[0]).length + 1;
+    
     
     //Populating the table from the data
     function renderTable() {
@@ -301,81 +312,89 @@
                 }
             }
 
-            var actionCell = document.createElement('td');
-            var upButton = document.createElement('button');
-            upButton.textContent = "▲";
-            upButton.disabled = index === 0;
-            upButton.style.background = "none";
-            upButton.style.border = "none";
-            upButton.id = `upButton-${index}`;
+            if (isUserAuthorized) {
 
-            upButton.addEventListener("mouseover", function() {
-                if (!upButton.disabled) {
-                    upButton.style.color = "#0d6efd";
+                tableHeading.colSpan = Object.keys(weekTableData[0]).length + 1;
+                var actionCell = document.createElement('td');
+                var upButton = document.createElement('button');
+                upButton.textContent = "▲";
+                upButton.disabled = index === 0;
+                upButton.style.background = "none";
+                upButton.style.border = "none";
+                upButton.id = `upButton-${index}`;
+
+                upButton.addEventListener("mouseover", function() {
+                    if (!upButton.disabled) {
+                        upButton.style.color = "#0d6efd";
+                    }
+                });
+                upButton.addEventListener("mouseout", function() {
+                    upButton.style.color = "";
+                });
+
+                var downButton = document.createElement('button');
+                downButton.textContent = "▼";
+                downButton.style.background = "none";
+                downButton.style.border = "none";
+                downButton.disabled = index === weekTableData.length - 1;
+                downButton.id = `downButton-${index}`;
+
+                if (isOrderingActive) {
+                    upButton.style.display = "block";
+                    downButton.style.display = "block";
+                } else {
+                    upButton.style.display = "none";
+                    downButton.style.display = "none";
                 }
-            });
-            upButton.addEventListener("mouseout", function() {
-                upButton.style.color = "";
-            });
-
-            var downButton = document.createElement('button');
-            downButton.textContent = "▼";
-            downButton.style.background = "none";
-            downButton.style.border = "none";
-            downButton.disabled = index === weekTableData.length - 1;
-            downButton.id = `downButton-${index}`;
-
-            if (isOrderingActive) {
-                upButton.style.display = "block";
-                downButton.style.display = "block";
-            } else {
-                upButton.style.display = "none";
-                downButton.style.display = "none";
-            }
             
-            downButton.addEventListener("mouseover", function() {
-                if (!downButton.disabled) {
-                    downButton.style.color = "#0d6efd";
-                }
-            });
-            downButton.addEventListener("mouseout", function() {
-                downButton.style.color = "";
-            });
+                downButton.addEventListener("mouseover", function() {
+                    if (!downButton.disabled) {
+                        downButton.style.color = "#0d6efd";
+                    }
+                });
+                downButton.addEventListener("mouseout", function() {
+                    downButton.style.color = "";
+                });
 
-            upButton.onclick = function() {
-                moveRow(index, -1);
-                setTimeout(() => {
-                    refocusArrows(index - 1, "up");
-                }, 0);
-            };
+                upButton.onclick = function() {
+                    moveRow(index, -1);
+                    setTimeout(() => {
+                        refocusArrows(index - 1, "up");
+                    }, 0);
+                };
 
-            downButton.onclick = function() {
-                moveRow(index, 1);
-                setTimeout(() => {
-                    refocusArrows(index + 1, "down");
-                }, 0);
-            };
+                downButton.onclick = function() {
+                    moveRow(index, 1);
+                    setTimeout(() => {
+                        refocusArrows(index + 1, "down");
+                    }, 0);
+                };
 
-            actionCell.appendChild(upButton);
-            actionCell.appendChild(downButton);
-            actionCell.classList.add("d-flex", "flex-column","gap-4");
-            actionCell.style.border = "none";
-            row.appendChild(actionCell);
+                actionCell.appendChild(upButton);
+                actionCell.appendChild(downButton);
+                actionCell.classList.add("d-flex", "flex-column","gap-4");
+                actionCell.style.border = "none";
+                row.appendChild(actionCell);
 
-            var editCell = document.createElement('td');
-            if(rowData.id !== "N/A"){
-                var editLink = document.createElement('a');
-                editLink.textContent = "Edit Activity";
-                editLink.href = `/Workbooks/EditActivity/${rowData.id}`;
-                editLink.className = "d-flex justify-content-center btn btn-primary";
-                editCell.appendChild(editLink);
-            }else{
-                editCell.textContent = "N/A";
-                var changeOrderButton = document.getElementById("changeOrder");
-                changeOrderButton.className = "btn btn-primary d-block bg-gray-600 border border-gray-600";
-                changeOrderDisabled = true;
+                var editCell = document.createElement('td');
+                if(rowData.id !== "N/A"){
+                    var editLink = document.createElement('a');
+                    editLink.textContent = "Edit Activity";
+                    editLink.href = `/Workbooks/EditActivity/${rowData.id}`;
+                    editLink.className = "d-flex justify-content-center btn btn-primary";
+                    editCell.appendChild(editLink);
+                }else{
+                    editCell.textContent = "N/A";
+                    var changeOrderButton = document.getElementById("changeOrder");
+                    changeOrderButton.className = "btn btn-primary d-block bg-gray-600 border border-gray-600";
+                    changeOrderDisabled = true;
             }
             row.appendChild(editCell);
+            
+        }
+        else {
+                tableHeading.colSpan = Object.keys(weekTableData[0]).length - 1;
+        }
             weekTableBody.appendChild(row);
         });
     }
@@ -467,14 +486,14 @@
                 .Select(a => (double?)a.TaskTime.TotalMinutes)
                 .Sum() ?? 0; 
             
-            <text>
-                statsData.push({
-                    label: "@Html.Raw(type.LearningTypeName)", 
-                    time: @Html.Raw(time),
-                    color: "@Html.Raw(type.LearningTypeColour)",
-                    textColor: "@Html.Raw(type.LearningTypeTextColour)"
-                });
-            </text>
+                <text>
+                    statsData.push({
+                        label: "@Html.Raw(type.LearningTypeName)", 
+                        time: @Html.Raw(time),
+                        color: "@Html.Raw(type.LearningTypeColour)",
+                        textColor: "@Html.Raw(type.LearningTypeTextColour)"
+                    });
+                </text>
         }
     }
 
