@@ -11,11 +11,11 @@
 }
 
 @{
-    var isAuthorized = (await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded;
+    var isAuthorised = (await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded;
 }
 
 <script>
-    var isUserAuthorized = @Json.Serialize(isAuthorized);
+    var isUserAuthorised = @Json.Serialize(isAuthorised);
 </script>
 
 <nav aria-label="breadcrumb">
@@ -312,7 +312,7 @@
                 }
             }
 
-            if (isUserAuthorized) {
+            if (isUserAuthorised) {
 
                 tableHeading.colSpan = Object.keys(weekTableData[0]).length + 1;
                 var actionCell = document.createElement('td');
@@ -409,40 +409,42 @@
     }
 
     renderTable();
-    var changeOrderButton = document.getElementById("changeOrder");
-    var saveOrderButton = document.getElementById("saveOrder");
-    
-    if (!changeOrderDisabled){
-        changeOrderButton.onclick = function() {
-            isOrderingActive = true;
-            saveOrderButton.className = "btn btn-success d-block";
-            changeOrderButton.className = "btn btn-primary d-none";
+    if (isUserAuthorised) {
+        var changeOrderButton = document.getElementById("changeOrder");
+        var saveOrderButton = document.getElementById("saveOrder");
+        
+        if (!changeOrderDisabled){
+            changeOrderButton.onclick = function() {
+                isOrderingActive = true;
+                saveOrderButton.className = "btn btn-success d-block";
+                changeOrderButton.className = "btn btn-primary d-none";
 
-            for (let i = 0; i < weekTableData.length; i++) {
-                let buttonD = document.getElementById(`downButton-` + i);
-                let buttonU = document.getElementById(`upButton-` + i);
-                if (buttonD && buttonU) {
-                    buttonD.style.display = "block";
-                    buttonU.style.display = "block";
+                for (let i = 0; i < weekTableData.length; i++) {
+                    let buttonD = document.getElementById(`downButton-` + i);
+                    let buttonU = document.getElementById(`upButton-` + i);
+                    if (buttonD && buttonU) {
+                        buttonD.style.display = "block";
+                        buttonU.style.display = "block";
+                    }
                 }
-            }
-        };
+            };
 
-        saveOrderButton.onclick = function() {
-            isOrderingActive = false;
-            changeOrderButton.className = "btn btn-primary d-block";
-            saveOrderButton.className = "btn btn-success d-none";
+            saveOrderButton.onclick = function() {
+                isOrderingActive = false;
+                changeOrderButton.className = "btn btn-primary d-block";
+                saveOrderButton.className = "btn btn-success d-none";
 
-            for (let i = 0; i < weekTableData.length; i++) {
-                let buttonD = document.getElementById(`downButton-` + i);
-                let buttonU = document.getElementById(`upButton-` + i);
-                if (buttonD && buttonU) {
-                    buttonD.style.display = "none";
-                    buttonU.style.display = "none";
+                for (let i = 0; i < weekTableData.length; i++) {
+                    let buttonD = document.getElementById(`downButton-` + i);
+                    let buttonU = document.getElementById(`upButton-` + i);
+                    if (buttonD && buttonU) {
+                        buttonD.style.display = "none";
+                        buttonU.style.display = "none";
+                    }
                 }
-            }
-        saveOrder();
-        };
+            saveOrder();
+            };
+        }
     }
 
 

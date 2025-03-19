@@ -24,13 +24,13 @@
                 Course Name
             </th>
             <th>
-                Course Code
-            </th>
-            <th>
                Course Lead
             </th>
             <th>
                 University Area
+            </th>
+            <th>
+                Course Code
             </th>
             <th>
                 Pip Reference
@@ -45,13 +45,13 @@
                 @Html.DisplayFor(modelItem => item.CourseName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.CourseCode)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.CourseLead)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.UniversityArea.AreaName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CourseCode)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PipReference)

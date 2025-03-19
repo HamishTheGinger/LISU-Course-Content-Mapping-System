@@ -64,9 +64,9 @@
                         </li>
                         @if (User.IsInRole("Admin"))
                         {
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="Admin" asp-controller="Admin" asp-action="Index">→ Admin</a>
-                        </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="Admin" asp-controller="Admin" asp-action="Index">→ Admin</a>
+                            </li>
                         }
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignOut">→ Log out</a>
