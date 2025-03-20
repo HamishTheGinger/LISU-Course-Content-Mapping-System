@@ -256,6 +256,10 @@
     border-color: #000 !important;
 }
 
+.navbar {
+    background-color: var(--bs-primary-new) !important;
+}
+
 /*dark mode*/
 .dark-mode {
     background-color: #0f172a !important;
