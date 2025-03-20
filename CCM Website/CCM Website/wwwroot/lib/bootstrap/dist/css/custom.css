@@ -437,7 +437,8 @@
 }
 
 .dark-mode select:disabled,
-.dark-mode .form-control[readonly]
+.dark-mode .form-control[readonly],
+.dark-mode .form-control:disabled
 {
     background-color: #000000 !important;
     color: #fff !important;
