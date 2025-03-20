@@ -19,27 +19,28 @@
 
 <table class="table table-responsive">
     <thead>
-        <tr>
-            <th>
-                Course Name
-            </th>
-            <th>
-               Course Lead
-            </th>
-            <th>
-                University Area
-            </th>
-            <th>
-                Course Code
-            </th>
-            <th>
-                Pip Reference
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            Course Name
+        </th>
+        <th>
+            Course Lead
+        </th>
+        <th>
+            University Area
+        </th>
+        <th>
+            Course Code
+        </th>
+        <th>
+            Pip Reference
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.CourseName)
@@ -63,6 +64,13 @@
                 </div>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
+@if (!Model.Any())
+{
+    <div>
+        <p>No workbooks found</p>
+    </div>  
+}
+

@@ -191,14 +191,10 @@
 
 
 <script>    
-
-    //get learning type colours from database for graphs and tables
-    //get list of learning types for graph
     var colourData = [];
     var activities=[];
     
-    //populate legend
-
+    // ---LEGEND---
     legendData = []
     @{
     foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
@@ -231,6 +227,7 @@
         legendTable.appendChild(row);
     });
 
+    // ---LEARNING TYPE TABLE---
     @foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
     {
         
@@ -245,9 +242,9 @@
         
         </text>
     }
-    
 
-    
+
+    // ---SELECTION BUTTONS---
     function refocusButton(id) {
 
         let content = document.getElementById(`${id}`);
@@ -325,7 +322,7 @@
 
 
 
-    // Time breakdown graph
+    // ---TIME BREAKDOWN GRAPH---
     const data = [
         @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>()){
             var weekData = ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>;
@@ -443,6 +440,7 @@
         d3.select("#bar_chart_details").style("display", "none");
     }
 
+    // ---SHARE BUTTON---
     document.getElementById("shareBtn").addEventListener("click", function () {
         if (navigator.share) {
             navigator.share({

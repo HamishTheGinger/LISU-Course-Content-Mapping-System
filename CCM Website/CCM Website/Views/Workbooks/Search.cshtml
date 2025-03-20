@@ -63,21 +63,21 @@ ViewData["Title"] = "Search";
 <h3>Search Results</h3>
 <table class="table table responsive">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CourseName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CourseCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CourseLead)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CourseName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CourseCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CourseLead)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.CourseName)
@@ -100,6 +100,12 @@ ViewData["Title"] = "Search";
             </td>
 
         </tr>
-}
+    }
     </tbody>
 </table>
+@if (!Model.Any())
+{
+    <div>
+        <p>No workbooks found from your search</p>
+    </div>  
+}
