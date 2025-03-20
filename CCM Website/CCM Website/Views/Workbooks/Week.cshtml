@@ -13,8 +13,8 @@
 @{
     var isAuthorised = (await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded;
 }
-
 <script>
+    // This is needed to convert from Azure/Razor to Javascript. Hence the duplicated variable
     var isUserAuthorised = @Json.Serialize(isAuthorised);
 </script>
 

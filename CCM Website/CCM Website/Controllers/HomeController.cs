@@ -32,7 +32,10 @@ namespace CCM_Website.Controllers
                 .Take(12)
                 .ToList();
 
-            var uofgWorkbooks = _context.Workbooks.Take(12).ToList();
+            var uofgWorkbooks = _context
+                .Workbooks.Take(12)
+                .OrderByDescending(w => w.LastEdited)
+                .ToList();
 
             ViewData["MyWorkbooks"] = myWorkbooks;
             ViewData["UofGWorkbooks"] = uofgWorkbooks;
