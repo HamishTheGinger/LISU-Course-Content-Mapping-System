@@ -30,7 +30,6 @@ ViewData["Title"] = "Search";
             </div>
 
             <div class="d-flex gap-2">
-                <!-- Course Code Dropdown -->
                 <select name="CourseCodePrefix" class="form-select">
                     <option value="">All Course Codes</option>
                     @if (ViewData["CourseCodePrefixes"] is List<string> prefixes && prefixes.Any()) 
@@ -42,7 +41,6 @@ ViewData["Title"] = "Search";
                     }
                 </select>
 
-                <!-- Course Lead Dropdown -->
                 <select name="CourseLead" class="form-select">
                     <option value="">All Course Leads</option>
                     @if (ViewData["CourseLeads"] is List<string> leads && leads.Any())
