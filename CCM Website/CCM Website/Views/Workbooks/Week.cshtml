@@ -55,15 +55,44 @@
                         <th class ="bg-week-table text-white text-center" id="weekTableHeading">Week @Model.Week.WeekNumber</th>
                     </tr>
                     <tr class="bg-week-table text-white text-center">
-                        <th>@Html.DisplayName("Task Order")</th>
-                        <th>@Html.DisplayName("Staff Responsible")</th>
-                        <th>@Html.DisplayName("Title")</th>
-                        <th>@Html.DisplayName("Learning Activity")</th>
-                        <th>@Html.DisplayName("Learning Type")</th>
-                        <th>@Html.DisplayName("Time (Hrs:Mins)")</th>
-                        <th>@Html.DisplayName("Task Status")</th>
-                        <th>@Html.DisplayName("Activity Location")</th>
-                        <th>@Html.DisplayName("Learning Approach")</th>
+                        <th>
+                            @Html.DisplayName("Task Order")
+                            <a id="changeOrderTask" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Staff Responsible")
+                            <a id="changeOrderStaff" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Title")
+                            <a id="changeOrderTitle" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Learning Activity")
+                            <a id="changeOrderActivity" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Learning Type")
+                            <a id="changeOrderType" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Time (Hrs:Mins)")
+                            <a id="changeOrderTime" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Task Status")
+                            <a id="changeOrderStatus" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Activity Location")
+                            <a id="changeOrderLocation" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Learning Approach")
+                            <a id="changeOrderApproach" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+
+
                         @if ((await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded)
                             {
                                 <th><btn class="btn btn-primary d-block" id="changeOrder">Change Order</btn>
@@ -261,12 +290,65 @@
     
     //Populating the heading for the table
     var tableHeading = document.getElementById('weekTableHeading')
+
+    const columnIds = [
+        "changeOrderTask", "changeOrderStaff", "changeOrderTitle",
+        "changeOrderActivity", "changeOrderType", "changeOrderTime",
+        "changeOrderStatus", "changeOrderLocation", "changeOrderApproach"
+    ];
+
+    const columnMappings = {
+        "changeOrderTask": "taskOrder",
+        "changeOrderStaff": "staffResponsible",
+        "changeOrderTitle": "title",
+        "changeOrderActivity": "learningActivity",
+        "changeOrderType": "learningType",
+        "changeOrderTime": "time",
+        "changeOrderStatus": "status",
+        "changeOrderLocation": "activityLocation",
+        "changeOrderApproach": "approach"
+    };
+
+    const columns = {}; 
+
+    columnIds.forEach(id => {
+        const column = document.getElementById(id);
+        if (column) {
+            columns[id] = { element: column, ascending: true };
+            column.addEventListener("click", () => sortColumn(id));
+            column.style.cursor = "pointer";
+        }
+    });
+
+    function sortColumn(columnId) {
+        const key = columnMappings[columnId]; 
+        const column = columns[columnId];
+
+        Object.keys(columns).forEach(id => {
+            if (id !== columnId) {
+                columns[id].element.textContent = columns[id].element.textContent.replace(" ▼", " ▲");
+                columns[id].ascending = true;
+            }
+        });
+
+        if (column.ascending) {
+            weekTableData.sort((a, b) => a[key].toString().localeCompare(b[key].toString(), undefined, { numeric: true }));
+            column.element.textContent = column.element.textContent.replace(" ▲", " ▼");
+        } else {
+            weekTableData.sort((a, b) => b[key].toString().localeCompare(a[key].toString(), undefined, { numeric: true }));
+            column.element.textContent = column.element.textContent.replace(" ▼", " ▲");
+        }
+
+        column.ascending = !column.ascending;
+        renderTable(); 
+    }
     
     
     //Populating the table from the data
     function renderTable() {
     
         weekTableBody.innerHTML = '';
+        weekTableData.order
         weekTableData.forEach(function(rowData, index) {
             var row = document.createElement('tr');
             for (var key in rowData) {
@@ -286,15 +368,25 @@
                 upButton.disabled = index === 0;
                 upButton.style.background = "none";
                 upButton.style.border = "none";
+                if (!upButton.disabled) {
+                    upButton.style.color = "#3b82f6";
+                }else{
+                    upButton.style.color = "#003865";
+                }
+                
                 upButton.id = `upButton-${index}`;
 
                 upButton.addEventListener("mouseover", function() {
                     if (!upButton.disabled) {
-                        upButton.style.color = "#0d6efd";
+                        upButton.style.color = "#003865";
                     }
                 });
                 upButton.addEventListener("mouseout", function() {
-                    upButton.style.color = "";
+                    if (!upButton.disabled) {
+                        upButton.style.color = "#3b82f6";
+                    }else{
+                        upButton.style.color = "#003865";
+                    }
                 });
 
                 var downButton = document.createElement('button');
@@ -303,6 +395,12 @@
                 downButton.style.border = "none";
                 downButton.disabled = index === weekTableData.length - 1;
                 downButton.id = `downButton-${index}`;
+                if (!downButton.disabled) {
+                    downButton.style.color = "#3b82f6";
+                }else{
+                    downButton.style.color = "#003865";
+                }
+                
 
                 if (isOrderingActive) {
                     upButton.style.display = "block";
@@ -314,11 +412,15 @@
             
                 downButton.addEventListener("mouseover", function() {
                     if (!downButton.disabled) {
-                        downButton.style.color = "#0d6efd";
+                        downButton.style.color = "#003865";
                     }
                 });
                 downButton.addEventListener("mouseout", function() {
-                    downButton.style.color = "";
+                    if (!downButton.disabled) {
+                        downButton.style.color = "#3b82f6";
+                    }else{
+                        downButton.style.color = "#003865";
+                    }
                 });
 
                 upButton.onclick = function() {
@@ -380,6 +482,17 @@
         
         if (!changeOrderDisabled){
             changeOrderButton.onclick = function() {
+                weekTableData.sort((a, b) => a.taskOrder - b.taskOrder);
+                renderTable();
+
+                columnIds.forEach(id => {
+                    const column = document.getElementById(id);
+                    if (column) {
+                        column.classList.add("d-none");
+                        column.classList.remove("d-block");
+                    }
+                });
+                
                 isOrderingActive = true;
                 saveOrderButton.className = "btn btn-success d-block";
                 changeOrderButton.className = "btn btn-primary d-none";
@@ -399,6 +512,14 @@
                 changeOrderButton.className = "btn btn-primary d-block";
                 saveOrderButton.className = "btn btn-success d-none";
 
+                columnIds.forEach(id => {
+                    const column = document.getElementById(id);
+                    if (column) {
+                        column.classList.add("d-block");
+                        column.classList.remove("d-none");
+                    }
+                });
+
                 for (let i = 0; i < weekTableData.length; i++) {
                     let buttonD = document.getElementById(`downButton-` + i);
                     let buttonU = document.getElementById(`upButton-` + i);
@@ -408,6 +529,7 @@
                     }
                 }
             saveOrder();
+        
             };
         }
     }
@@ -680,9 +802,10 @@
 
         if (chart.classList.contains("d-none")) {
             arrow.innerHTML = "▲";
-            refocusButton("lt_chart");
+            
         } else {
             arrow.innerHTML = "▼";
+            refocusButton("lt_chart");
         }
     }
     
@@ -722,9 +845,10 @@
 
         if (table.classList.contains("d-none")) {
             arrow.innerHTML = "▲";
-            refocusButton("statsTablestatsTable");
+            
         } else {
             arrow.innerHTML = "▼";
+            refocusButton("statsTable");
         }
     }
     
@@ -734,11 +858,12 @@
     function saveOrder() {
         var activities = {};
 
+
         for (let i = 0; i < weekTableData.length; i++) {
             activities[weekTableData[i].id] = i+1;
         }
 
-        var workbookId = @Model.Week!.Workbook.WorkbookId;
+        var workbookId = @Model.Week!.Workbook!.WorkbookId;
         activities["workbookId"] = workbookId;
 
         fetch('/Workbooks/ChangeActivityOrder', {
@@ -754,6 +879,9 @@
                 }
                 return response.text();
             })
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
     }
     
     //functions to focus the screen on the related elements
