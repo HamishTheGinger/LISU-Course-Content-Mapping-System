@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Moq;
 using NuGet.ContentModel;
+using X.PagedList;
 using Xunit;
 
 namespace CCM_Website.Test
@@ -59,10 +60,10 @@ namespace CCM_Website.Test
                 HttpContext = new DefaultHttpContext { User = user },
             };
 
-            var result = await controller.Index() as ViewResult;
+            var result = await controller.Index("", 1) as ViewResult;
 
             Assert.NotNull(result);
-            var model = Assert.IsType<List<Workbook>>(result.Model);
+            var model = Assert.IsAssignableFrom<IPagedList<Workbook>>(result.Model);
 
             Assert.Equal(2, model.Count);
 

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.Extensions;
 
 namespace CCM_Website.Controllers
 {
@@ -32,23 +33,39 @@ namespace CCM_Website.Controllers
         }
 
         // GET: Courses
-        public async Task<IActionResult> Index()
+        public Task<IActionResult> Index(string searchString, int? page)
         {
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var dbContext = _context
                 .Workbooks.Where(w => w.OwnerId == userId)
-                .Include(w => w.UniversityArea);
-            return View(await dbContext.ToListAsync());
+                .Include(w => w.UniversityArea)
+                .AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                dbContext = dbContext.Where(w =>
+                    w.CourseName.ToLower().Contains(searchString.ToLower())
+                );
+            }
+
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            ViewData["SearchString"] = searchString;
+
+            var pagedWorkbooks = dbContext.ToPagedList(pageNumber, pageSize);
+            return Task.FromResult<IActionResult>(View(pagedWorkbooks));
         }
 
         // POST: Coursess/Search
-        public async Task<IActionResult> Search(
+        public Task<IActionResult> Search(
             string searchPhrase,
             string courseCodePrefix,
-            string courseLead
+            string courseLead,
+            int? page
         )
         {
-            var query = _context.Workbooks.AsQueryable();
+            var query = _context.Workbooks.Include(w => w.UniversityArea).AsQueryable();
 
             // Apply search phrase filter
             if (!string.IsNullOrEmpty(searchPhrase))
@@ -74,7 +91,10 @@ namespace CCM_Website.Controllers
             }
 
             // Fetch search results
-            var searchResults = await query.ToListAsync();
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            var pagedResults = query.ToPagedList(pageNumber, pageSize);
 
             // Use regex to extract the text prefix from course codes
             ViewData["CourseCodePrefixes"] = _context
@@ -90,18 +110,19 @@ namespace CCM_Website.Controllers
                 .ToList();
 
             // Get distinct course leads
-            ViewData["CourseLeads"] = await _context
+            ViewData["CourseLeads"] = _context
                 .Workbooks.Select(c => c.CourseLead)
                 .Distinct()
-                .ToListAsync();
+                .ToList();
 
             ViewData["SearchPhrase"] = searchPhrase;
-            return View("Search", searchResults);
+
+            return Task.FromResult<IActionResult>(View("Search", pagedResults));
         }
 
         //GET: Courses/Filter
         [HttpGet]
-        public async Task<IActionResult> Filter(string searchPhrase, string filterPhrase)
+        public Task<IActionResult> Filter(string searchPhrase, string filterPhrase, int? page)
         {
             var workbooks = _context.Workbooks.AsQueryable();
 
@@ -127,7 +148,12 @@ namespace CCM_Website.Controllers
             ViewData["SearchPhrase"] = searchPhrase;
             ViewData["FilterPhrase"] = filterPhrase;
 
-            return View("Search", await workbooks.ToListAsync()); // Return filtered results to Search.cshtml
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            var pagedResults = workbooks.ToPagedList(pageNumber, pageSize);
+
+            return Task.FromResult<IActionResult>(View("Search", pagedResults)); // Return filtered results to Search.cshtml
         }
 
         // GET: Courses/Details/5
@@ -144,10 +170,10 @@ namespace CCM_Website.Controllers
                 .ThenInclude(wga => wga.GraduateAttribute!)
                 .Include(w => w.Weeks!)
                 .ThenInclude(week => week.WeekActivities!)
-                .ThenInclude(wa => wa.LearningType!) // Include LearningType
+                .ThenInclude(wa => wa.LearningType!)
                 .Include(w => w.Weeks!)
                 .ThenInclude(week => week.WeekActivities!)
-                .ThenInclude(wa => wa.Activities!) // Include Activities
+                .ThenInclude(wa => wa.Activities!)
                 .Include(w => w.LearningPlatform)
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
 
@@ -160,18 +186,15 @@ namespace CCM_Website.Controllers
             // Fetch all learning types from the database
             var allLearningTypes = _context.LearningType.ToList();
 
-            // Create a dictionary to store total time spent per learning type per week
             var timeBreakdown = new Dictionary<int, Dictionary<string, TimeSpan>>();
 
             foreach (var week in workbook.Weeks ?? Enumerable.Empty<Week>())
             {
-                // Initialize weekData dynamically with all learning types
                 var weekData = allLearningTypes.ToDictionary(
                     type => type.LearningTypeName,
                     type => TimeSpan.Zero
                 );
 
-                // Aggregate activity times based on learning type
                 foreach (var activity in week.WeekActivities ?? Enumerable.Empty<WeekActivities>())
                 {
                     if (
@@ -186,7 +209,6 @@ namespace CCM_Website.Controllers
                 timeBreakdown[week.WeekNumber] = weekData;
             }
 
-            // Pass to ViewBag or Model
             ViewBag.TimeBreakdown = timeBreakdown;
             ViewBag.LearningTypes = allLearningTypes;
 
