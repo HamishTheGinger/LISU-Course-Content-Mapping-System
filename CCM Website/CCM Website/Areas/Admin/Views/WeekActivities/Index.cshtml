@@ -70,7 +70,7 @@
     @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Week.WeekId)
+                @Html.DisplayFor(modelItem => item.WeekId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Activities.ActivityId)
@@ -85,7 +85,7 @@
                 @Html.DisplayFor(modelItem => item.TaskTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TasksStatus)
+                @Html.DisplayFor(modelItem => item.TasksStatus.StatusName)
             </td>
             <td>
                 <div class="d-flex flex-wrap justify-content-end gap-2">

@@ -5,8 +5,7 @@
 @{
     ViewData["Title"] = $"{@Model.Week!.Workbook.CourseCode ?? Model.Week.Workbook.CourseName} - Week {@Model.Week.WeekNumber}";
     ViewData["LearningPlatform"] = $"{@Model.Week.Workbook.LearningPlatform.PlatformName}";
-    var learningLocationCounts = ViewBag.locationCount as Dictionary<string, int>;
-    var taskProgressCounts = ViewBag.progressCount as Dictionary<string, int>;
+
     var learningTypes = ViewData["LearningTypes"] as List<LearningType>;
 }
 
