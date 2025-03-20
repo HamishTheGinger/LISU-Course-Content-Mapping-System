@@ -67,7 +67,6 @@ namespace CCM_Website.Controllers
         {
             var query = _context.Workbooks.Include(w => w.UniversityArea).AsQueryable();
 
-            // Apply search phrase filter
             if (!string.IsNullOrEmpty(searchPhrase))
             {
                 query = query.Where(c =>
@@ -76,7 +75,6 @@ namespace CCM_Website.Controllers
                 );
             }
 
-            // Apply Course Code Prefix filter
             if (!string.IsNullOrEmpty(courseCodePrefix))
             {
                 query = query.Where(c =>
@@ -84,32 +82,28 @@ namespace CCM_Website.Controllers
                 );
             }
 
-            // Apply Course Lead filter
             if (!string.IsNullOrEmpty(courseLead))
             {
                 query = query.Where(c => c.CourseLead == courseLead);
             }
 
-            // Fetch search results
             int pageSize = 10;
             int pageNumber = page ?? 1;
 
             var pagedResults = query.ToPagedList(pageNumber, pageSize);
 
-            // Use regex to extract the text prefix from course codes
             ViewData["CourseCodePrefixes"] = _context
-                .Workbooks.AsEnumerable() // Fetch data first, then apply regex in memory
+                .Workbooks.AsEnumerable()
                 .Select(c =>
                     c.CourseCode != null
                         ? Regex.Match(c.CourseCode, @"^[A-Za-z]+").Value
                         : string.Empty
-                ) // Extract text prefix
-                .Where(prefix => !string.IsNullOrEmpty(prefix)) // Ensure no empty values
+                )
+                .Where(prefix => !string.IsNullOrEmpty(prefix))
                 .Distinct()
-                .OrderBy(prefix => prefix) // Sort alphabetically
+                .OrderBy(prefix => prefix)
                 .ToList();
 
-            // Get distinct course leads
             ViewData["CourseLeads"] = _context
                 .Workbooks.Select(c => c.CourseLead)
                 .Distinct()
@@ -126,7 +120,6 @@ namespace CCM_Website.Controllers
         {
             var workbooks = _context.Workbooks.AsQueryable();
 
-            // First, apply the search term (if provided)
             if (!string.IsNullOrEmpty(searchPhrase))
             {
                 workbooks = workbooks.Where(w =>
@@ -135,7 +128,6 @@ namespace CCM_Website.Controllers
                 );
             }
 
-            // Then, apply the filter to the search results (if provided)
             if (!string.IsNullOrEmpty(filterPhrase))
             {
                 workbooks = workbooks.Where(w =>
@@ -144,7 +136,6 @@ namespace CCM_Website.Controllers
                 );
             }
 
-            // Preserve search and filter values in ViewData
             ViewData["SearchPhrase"] = searchPhrase;
             ViewData["FilterPhrase"] = filterPhrase;
 
@@ -153,7 +144,7 @@ namespace CCM_Website.Controllers
 
             var pagedResults = workbooks.ToPagedList(pageNumber, pageSize);
 
-            return Task.FromResult<IActionResult>(View("Search", pagedResults)); // Return filtered results to Search.cshtml
+            return Task.FromResult<IActionResult>(View("Search", pagedResults));
         }
 
         // GET: Courses/Details/5
@@ -182,8 +173,6 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
-            // Create a dictionary to store total time spent per learning type per week
-            // Fetch all learning types from the database
             var allLearningTypes = _context.LearningType.ToList();
 
             var timeBreakdown = new Dictionary<int, Dictionary<string, TimeSpan>>();
