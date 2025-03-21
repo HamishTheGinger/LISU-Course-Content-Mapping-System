@@ -31,6 +31,8 @@ public class DatabaseFixture : IDisposable
             Activities = activity,
         };
 
+        var cose = new UniversityArea { AreaName = "College of Science & Engineering" };
+
         var learningTypes = new[]
         {
             new LearningType
@@ -56,6 +58,8 @@ public class DatabaseFixture : IDisposable
                 CourseLead = "Awais Aziz Shah",
                 LearningPlatform = learningPlatform,
                 LastEdited = new DateTime(2024, 11, 12),
+                UniversityArea = cose,
+                OwnerId = "test-user-123",
             },
             new Workbook
             {
@@ -65,14 +69,23 @@ public class DatabaseFixture : IDisposable
                 CourseLead = "John Williamson",
                 LearningPlatform = learningPlatform,
                 LastEdited = DateTime.Now,
+                UniversityArea = cose,
+                OwnerId = "test-user-123",
             },
         };
+
+        var taskStatus = new TaskProgressStatus { StatusName = "Completed" };
+        var taskLocation = new TaskLocation { LocationName = "On-Campus" };
+        var learningApproach = new TaskApproach { ApproachName = "Async" };
 
         Context.Workbooks.AddRange(workbooks);
         Context.LearningPlatforms.Add(learningPlatform);
         Context.Activities.Add(activity);
         Context.LearningPlatformActivities.Add(lpActivity);
         Context.LearningType.AddRange(learningTypes);
+        Context.TaskProgressStatus.Add(taskStatus);
+        Context.TaskLocation.Add(taskLocation);
+        Context.TaskApproach.Add(learningApproach);
 
         Context.Weeks.AddRange(
             new List<Week>

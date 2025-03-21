@@ -1,83 +1,119 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
+using System.Text.RegularExpressions; //need regex for filtering
+using System.Threading.Tasks;
 using System.Threading.Tasks;
 using CCM_Website.Data;
 using CCM_Website.Models;
 using CCM_Website.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.Extensions;
 
 namespace CCM_Website.Controllers
 {
     public class WorkbooksController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAuthorizationService _authorizationService;
 
-        public WorkbooksController(ApplicationDbContext context)
+        public WorkbooksController(
+            ApplicationDbContext context,
+            IAuthorizationService authorizationService
+        )
         {
             _context = context;
+            _authorizationService = authorizationService;
         }
 
         // GET: Courses
-        public async Task<IActionResult> Index()
+        public Task<IActionResult> Index(string searchString, int? page)
         {
-            return View(await _context.Workbooks.ToListAsync());
-        }
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var dbContext = _context
+                .Workbooks.Where(w => w.OwnerId == userId)
+                .Include(w => w.UniversityArea)
+                .AsQueryable();
 
-        // POST: Courses/Search
-        public async Task<IActionResult> Search(string SearchPhrase)
-        {
-            // Check if the SearchPhrase is not null or empty
-            if (string.IsNullOrEmpty(SearchPhrase))
+            if (!string.IsNullOrEmpty(searchString))
             {
-                // If no search phrase, return an empty list or all courses
-                return View("Search", await _context.Workbooks.ToListAsync());
+                dbContext = dbContext.Where(w =>
+                    w.CourseName.ToLower().Contains(searchString.ToLower())
+                );
             }
 
-            // Perform search filtering across multiple fields
-            var searchResults = await _context
-                .Workbooks.Where(c =>
-                    c.CourseName.Contains(SearchPhrase) || c.CourseLead.Contains(SearchPhrase)
-                )
-                .ToListAsync();
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
 
-            // Return the search form view with search results and the search phrase
-            ViewData["SearchPhrase"] = SearchPhrase;
-            return View("Search", searchResults);
+            ViewData["SearchString"] = searchString;
+
+            var pagedWorkbooks = dbContext.ToPagedList(pageNumber, pageSize);
+            return Task.FromResult<IActionResult>(View(pagedWorkbooks));
         }
 
-        //GET: Courses/Filter
-        [HttpGet]
-        public async Task<IActionResult> Filter(string searchPhrase, string filterPhrase)
+        // POST: Coursess/Search
+        public Task<IActionResult> Search(
+            string searchPhrase,
+            string courseCodePrefix,
+            string courseLead,
+            int? page
+        )
         {
-            var workbooks = _context.Workbooks.AsQueryable();
+            var query = _context.Workbooks.Include(w => w.UniversityArea).AsQueryable();
 
-            // First, apply the search term (if provided)
             if (!string.IsNullOrEmpty(searchPhrase))
             {
-                workbooks = workbooks.Where(w =>
-                    EF.Functions.Like(w.CourseName, $"%{searchPhrase}%")
-                    || EF.Functions.Like(w.CourseLead, $"%{searchPhrase}%")
+                query = query.Where(c =>
+                    c.CourseName.ToLower().Contains(searchPhrase.ToLower())
+                    || c.CourseLead.ToLower().Contains(searchPhrase.ToLower())
                 );
             }
 
-            // Then, apply the filter to the search results (if provided)
-            if (!string.IsNullOrEmpty(filterPhrase))
+            if (!string.IsNullOrEmpty(courseCodePrefix))
             {
-                workbooks = workbooks.Where(w =>
-                    EF.Functions.Like(w.CourseName, $"%{filterPhrase}%")
-                    || EF.Functions.Like(w.CourseLead, $"%{filterPhrase}%")
+                query = query.Where(c =>
+                    c.CourseCode != null && c.CourseCode.StartsWith(courseCodePrefix)
                 );
             }
 
-            // Preserve search and filter values in ViewData
-            ViewData["SearchPhrase"] = searchPhrase;
-            ViewData["FilterPhrase"] = filterPhrase;
+            if (!string.IsNullOrEmpty(courseLead))
+            {
+                query = query.Where(c => c.CourseLead == courseLead);
+            }
 
-            return View("Search", await workbooks.ToListAsync()); // Return filtered results to Search.cshtml
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            var pagedResults = query.ToPagedList(pageNumber, pageSize);
+
+            ViewData["CourseCodePrefixes"] = _context
+                .Workbooks.AsEnumerable()
+                .Select(c =>
+                    c.CourseCode != null
+                        ? Regex.Match(c.CourseCode, @"^[A-Za-z]+").Value
+                        : string.Empty
+                )
+                .Where(prefix => !string.IsNullOrEmpty(prefix))
+                .Distinct()
+                .OrderBy(prefix => prefix)
+                .ToList();
+
+            ViewData["CourseLeads"] = _context
+                .Workbooks.Select(c => c.CourseLead)
+                .Distinct()
+                .ToList();
+
+            ViewData["SearchPhrase"] = searchPhrase;
+            ViewData["CourseCodePrefix"] = courseCodePrefix;
+            ViewData["CourseLead"] = courseLead;
+
+            return Task.FromResult<IActionResult>(View("Search", pagedResults));
         }
 
         // GET: Courses/Details/5
@@ -94,10 +130,10 @@ namespace CCM_Website.Controllers
                 .ThenInclude(wga => wga.GraduateAttribute!)
                 .Include(w => w.Weeks!)
                 .ThenInclude(week => week.WeekActivities!)
-                .ThenInclude(wa => wa.LearningType!) // Include LearningType
+                .ThenInclude(wa => wa.LearningType!)
                 .Include(w => w.Weeks!)
                 .ThenInclude(week => week.WeekActivities!)
-                .ThenInclude(wa => wa.Activities!) // Include Activities
+                .ThenInclude(wa => wa.Activities!)
                 .Include(w => w.LearningPlatform)
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
 
@@ -106,25 +142,23 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
-            // Create a dictionary to store total time spent per learning type per week
+            var allLearningTypes = _context.LearningType.ToList();
+
             var timeBreakdown = new Dictionary<int, Dictionary<string, TimeSpan>>();
 
             foreach (var week in workbook.Weeks ?? Enumerable.Empty<Week>())
             {
-                var weekData = new Dictionary<string, TimeSpan>
-                {
-                    { "Acquisition", TimeSpan.Zero },
-                    { "Collaboration", TimeSpan.Zero },
-                    { "Discussion", TimeSpan.Zero },
-                    { "Investigation", TimeSpan.Zero },
-                    { "Practice", TimeSpan.Zero },
-                    { "Production", TimeSpan.Zero },
-                    { "Assessment", TimeSpan.Zero },
-                };
+                var weekData = allLearningTypes.ToDictionary(
+                    type => type.LearningTypeName,
+                    type => TimeSpan.Zero
+                );
 
                 foreach (var activity in week.WeekActivities ?? Enumerable.Empty<WeekActivities>())
                 {
-                    if (weekData.ContainsKey(activity.LearningType.LearningTypeName))
+                    if (
+                        activity.LearningType != null
+                        && weekData.ContainsKey(activity.LearningType.LearningTypeName)
+                    )
                     {
                         weekData[activity.LearningType.LearningTypeName] += activity.TaskTime;
                     }
@@ -134,6 +168,11 @@ namespace CCM_Website.Controllers
             }
 
             ViewBag.TimeBreakdown = timeBreakdown;
+            ViewBag.LearningTypes = allLearningTypes;
+
+            ViewBag.TimeBreakdown = timeBreakdown;
+            ViewData["GraduateAttributes"] = await _context.GraduateAttributes.ToListAsync();
+            ViewData["LearningTypes"] = await _context.LearningType.ToListAsync();
 
             return View(workbook);
         }
@@ -146,6 +185,7 @@ namespace CCM_Website.Controllers
                 "PlatformId",
                 "PlatformName"
             );
+            ViewBag.UniversityAreas = new SelectList(_context.UniversityArea, "AreaId", "AreaName");
             return View();
         }
 
@@ -156,7 +196,7 @@ namespace CCM_Website.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
             [Bind(
-                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators"
+                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,UniversityAreaId,Collaborators"
             )]
                 Workbook workbook
         )
@@ -166,6 +206,11 @@ namespace CCM_Website.Controllers
                 var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(lp =>
                     lp.PlatformId == workbook.LearningPlatformId
                 );
+
+                var uniArea = await _context.UniversityArea.FirstOrDefaultAsync(ua =>
+                    ua.AreaId == workbook.UniversityAreaId
+                );
+
                 if (learningPlatform == null)
                 {
                     Console.WriteLine("ERROR: Failed to link Workbook to Learning Platform");
@@ -179,10 +224,37 @@ namespace CCM_Website.Controllers
                         "PlatformId",
                         "PlatformName"
                     );
-
+                    ViewBag.UniversityAreas = new SelectList(
+                        _context.UniversityArea,
+                        "AreaId",
+                        "AreaName"
+                    );
                     return View(workbook);
                 }
+
+                if (uniArea == null)
+                {
+                    Console.WriteLine("ERROR: Failed to link Workbook to University Area");
+                    ModelState.AddModelError(
+                        "",
+                        "An error occurred while saving the workbook. Please try again later."
+                    );
+
+                    ViewBag.LearningPlatforms = new SelectList(
+                        _context.LearningPlatforms,
+                        "PlatformId",
+                        "PlatformName"
+                    );
+                    ViewBag.UniversityAreas = new SelectList(
+                        _context.UniversityArea,
+                        "AreaId",
+                        "AreaName"
+                    );
+                    return View(workbook);
+                }
+
                 workbook.LearningPlatform = learningPlatform;
+                workbook.UniversityArea = uniArea;
             }
             catch (Exception e)
             {
@@ -197,17 +269,27 @@ namespace CCM_Website.Controllers
                     "PlatformId",
                     "PlatformName"
                 );
-
+                ViewBag.UniversityAreas = new SelectList(
+                    _context.UniversityArea,
+                    "AreaId",
+                    "AreaName"
+                );
                 return View(workbook);
             }
 
             ModelState.Remove(nameof(workbook.LearningPlatform));
+            ModelState.Remove(nameof(workbook.UniversityArea));
             ModelState.Remove(nameof(workbook.Weeks));
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    if (userId == null)
+                        return Unauthorized();
+                    workbook.OwnerId = userId;
+
                     workbook.LastEdited = DateTime.Now;
                     _context.Add(workbook);
                     await _context.SaveChangesAsync();
@@ -248,6 +330,11 @@ namespace CCM_Website.Controllers
                         "PlatformId",
                         "PlatformName"
                     );
+                    ViewBag.UniversityAreas = new SelectList(
+                        _context.UniversityArea,
+                        "AreaId",
+                        "AreaName"
+                    );
 
                     return View(workbook);
                 }
@@ -283,8 +370,25 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
+            var entity = await _context.Workbooks.FindAsync(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             var workbook = await _context
                 .Workbooks.Include(w => w.LearningPlatform)
+                .Include(w => w.UniversityArea)
                 .FirstOrDefaultAsync(m => m.WorkbookId == id);
             if (workbook == null)
             {
@@ -297,6 +401,12 @@ namespace CCM_Website.Controllers
                 "PlatformName",
                 workbook.LearningPlatformId
             );
+            ViewBag.UniversityAreas = new SelectList(
+                _context.UniversityArea,
+                "AreaId",
+                "AreaName",
+                workbook.UniversityAreaId
+            );
             return View(workbook);
         }
 
@@ -308,7 +418,7 @@ namespace CCM_Website.Controllers
         public async Task<IActionResult> Edit(
             int id,
             [Bind(
-                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,Collaborators"
+                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,UniversityAreaId,Collaborators"
             )]
                 Workbook workbook
         )
@@ -318,8 +428,27 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
+            var entity = await _context
+                .Workbooks.AsNoTracking()
+                .FirstOrDefaultAsync(w => w.WorkbookId == id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             ModelState.Remove(nameof(workbook.LearningPlatform));
             ModelState.Remove(nameof(workbook.Weeks));
+            ModelState.Remove(nameof(workbook.UniversityArea));
 
             if (ModelState.IsValid)
             {
@@ -328,6 +457,11 @@ namespace CCM_Website.Controllers
                     var learningPlatform = await _context.LearningPlatforms.FirstOrDefaultAsync(
                         lp => lp.PlatformId == workbook.LearningPlatformId
                     );
+
+                    var uniArea = await _context.UniversityArea.FirstOrDefaultAsync(ua =>
+                        ua.AreaId == workbook.UniversityAreaId
+                    );
+
                     if (learningPlatform == null)
                     {
                         ModelState.AddModelError(
@@ -340,10 +474,38 @@ namespace CCM_Website.Controllers
                             "PlatformName",
                             workbook.LearningPlatformId
                         );
+                        ViewBag.UniversityAreas = new SelectList(
+                            _context.UniversityArea,
+                            "AreaId",
+                            "AreaName",
+                            workbook.UniversityAreaId
+                        );
+                        return View(workbook);
+                    }
+                    else if (uniArea == null)
+                    {
+                        ModelState.AddModelError("UniversityAreaId", "Invalid Area selected.");
+                        ViewBag.LearningPlatforms = new SelectList(
+                            _context.LearningPlatforms,
+                            "PlatformId",
+                            "PlatformName",
+                            workbook.LearningPlatformId
+                        );
+                        ViewBag.UniversityAreas = new SelectList(
+                            _context.UniversityArea,
+                            "AreaId",
+                            "AreaName",
+                            workbook.UniversityAreaId
+                        );
                         return View(workbook);
                     }
 
+                    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    if (userId == null)
+                        return Unauthorized();
+                    workbook.OwnerId = userId;
                     workbook.LearningPlatform = learningPlatform;
+                    workbook.UniversityArea = uniArea;
                     workbook.LastEdited = DateTime.Now;
                     _context.Update(workbook);
                     await _context.SaveChangesAsync();
@@ -359,7 +521,8 @@ namespace CCM_Website.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction(nameof(Details), new { id = workbook.WorkbookId });
             }
 
             ViewBag.LearningPlatforms = new SelectList(
@@ -377,6 +540,7 @@ namespace CCM_Website.Controllers
                     Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
                 }
             }
+
             ModelState.AddModelError(
                 "",
                 "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
@@ -398,7 +562,8 @@ namespace CCM_Website.Controllers
                 .Include(w => w.Workbook)
                 .ThenInclude(wb => wb.LearningPlatform)
                 .Include(w => w.WeekActivities)
-                .Include(w => w.WeekGraduateAttributes)
+                .Include(w => w.WeekGraduateAttributes)!
+                .ThenInclude(wga => wga.GraduateAttribute)
                 .FirstOrDefaultAsync(w => w.WeekId == id);
 
             if (week == null)
@@ -430,12 +595,23 @@ namespace CCM_Website.Controllers
                 .GroupBy(a => a.TasksStatus.StatusName)
                 .ToDictionary(g => g.Key, g => g.Count());
 
+            var taskStatus = await _context.TaskProgressStatus.ToListAsync();
+            var taskApproach = await _context.TaskApproach.ToListAsync();
+            var taskLocation = await _context.TaskLocation.ToListAsync();
+
             ViewBag.learningTypeCounts = learningTypeCounts;
             ViewBag.locationCount = locationCount;
             ViewBag.progressCount = progressCount;
             ViewData["LearningTypes"] = await _context.LearningType.ToListAsync();
 
-            var viewModel = new WeekDetailsViewModel { Week = week, ActivitiesList = activities };
+            var viewModel = new WeekDetailsViewModel
+            {
+                Week = week,
+                ActivitiesList = activities,
+                StatusList = taskStatus,
+                ApproachList = taskApproach,
+                LocationList = taskLocation,
+            };
             return View(viewModel);
         }
 
@@ -447,14 +623,43 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
+            var entity = await _context
+                .WeekActivities.Where(w => w.WeekActivityId == id)
+                .Select(w => w.Week.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             var weekActivity = await _context
                 .WeekActivities.Include(w => w.Week)
+                .ThenInclude(week => week.Workbook)
                 .FirstOrDefaultAsync(w => w.WeekActivityId == id);
 
             if (weekActivity == null)
             {
                 return NotFound();
             }
+
+            var learningPlatformId = weekActivity.Week.Workbook.LearningPlatformId;
+
+            var allowedActivities = _context
+                .LearningPlatformActivities.Where(lpa =>
+                    lpa.LearningPlatformId == learningPlatformId
+                )
+                .Select(lpa => lpa.Activities)
+                .ToList();
 
             ViewBag.WorkbookId = weekActivity.Week.WorkbookId;
             ViewBag.CrumbWeekId = weekActivity.Week.WeekId;
@@ -466,7 +671,7 @@ namespace CCM_Website.Controllers
                 weekActivity.WeekId
             );
             ViewData["ActivitiesId"] = new SelectList(
-                _context.Activities,
+                allowedActivities,
                 "ActivityId",
                 "ActivityName",
                 weekActivity.ActivitiesId
@@ -512,6 +717,25 @@ namespace CCM_Website.Controllers
                 return NotFound();
             }
 
+            var entity = await _context
+                .WeekActivities.Where(w => w.WeekActivityId == id)
+                .Select(w => w.Week.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             ModelState.Remove(nameof(weekActivities.Week));
             ModelState.Remove(nameof(weekActivities.Activities));
             ModelState.Remove(nameof(weekActivities.LearningType));
@@ -525,6 +749,16 @@ namespace CCM_Website.Controllers
                 {
                     _context.Update(weekActivities);
                     await _context.SaveChangesAsync();
+                    var week = await _context
+                        .Weeks.Include(w => w.Workbook)
+                        .FirstOrDefaultAsync(w => w.WeekId == weekActivities.WeekId);
+
+                    if (week != null && week.Workbook != null)
+                    {
+                        week.Workbook.LastEdited = DateTime.Now;
+                        _context.Update(week.Workbook);
+                        await _context.SaveChangesAsync();
+                    }
                     return RedirectToAction(nameof(Week), new { id = weekActivities.WeekId });
                 }
                 catch (DbUpdateConcurrencyException)
@@ -546,6 +780,7 @@ namespace CCM_Website.Controllers
                     // Log each error (you could also store or display them if needed)
                     Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
                 }
+
                 ModelState.AddModelError(
                     "",
                     "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
@@ -645,13 +880,34 @@ namespace CCM_Website.Controllers
         }
 
         // GET: WeekActivities/Create
-        public IActionResult CreateActivity(int id, int weekId)
+        public async Task<IActionResult> CreateActivity(int id, int weekId)
         {
+            var entity = await _context
+                .Weeks.Where(w => w.WeekId == weekId)
+                .Select(w => w.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             var filteredWeeks = _context.Weeks.Where(w => w.WorkbookId == id).ToList();
 
             Console.WriteLine($"Filtered Weeks: {filteredWeeks.Count}: {id}");
 
-            var crumbWeek = _context.Weeks.FirstOrDefault(w => w.WeekId == weekId);
+            var crumbWeek = _context
+                .Weeks.Include(week => week.Workbook)
+                .FirstOrDefault(w => w.WeekId == weekId);
 
             if (crumbWeek == null)
             {
@@ -661,12 +917,17 @@ namespace CCM_Website.Controllers
             ViewBag.CrumbWorkbookId = id;
             ViewBag.CrumbWeekId = crumbWeek.WeekId;
 
+            var learningPlatformId = crumbWeek.Workbook.LearningPlatformId;
+
+            var allowedActivities = _context
+                .LearningPlatformActivities.Where(lpa =>
+                    lpa.LearningPlatformId == learningPlatformId
+                )
+                .Select(lpa => lpa.Activities)
+                .ToList();
+
             ViewBag.WeekId = new SelectList(filteredWeeks, "WeekId", "WeekNumber");
-            ViewBag.ActivitiesId = new SelectList(
-                _context.Activities,
-                "ActivityId",
-                "ActivityName"
-            );
+            ViewBag.ActivitiesId = new SelectList(allowedActivities, "ActivityId", "ActivityName");
             ViewBag.LearningApproach = new SelectList(
                 _context.LearningType,
                 "LearningTypeId",
@@ -688,6 +949,14 @@ namespace CCM_Website.Controllers
                 "StatusName"
             );
 
+            int maxTaskOrder =
+                await _context
+                    .WeekActivities.Where(w => w.WeekId == weekId)
+                    .Select(w => (int?)w.TaskOrder)
+                    .MaxAsync() ?? 0;
+
+            ViewBag.NextTaskOrder = maxTaskOrder + 1;
+
             return View();
         }
 
@@ -701,6 +970,25 @@ namespace CCM_Website.Controllers
                 WeekActivities weekActivities
         )
         {
+            var entity = await _context
+                .Weeks.Where(w => w.WeekId == weekActivities.WeekId)
+                .Select(w => w.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
             ModelState.Remove(nameof(weekActivities.Week));
             ModelState.Remove(nameof(weekActivities.Activities));
             ModelState.Remove(nameof(weekActivities.LearningType));
@@ -714,12 +1002,22 @@ namespace CCM_Website.Controllers
                 {
                     _context.Add(weekActivities);
                     await _context.SaveChangesAsync();
+                    var week = await _context
+                        .Weeks.Include(w => w.Workbook)
+                        .FirstOrDefaultAsync(w => w.WeekId == weekActivities.WeekId);
+
+                    if (week != null && week.Workbook != null)
+                    {
+                        week.Workbook.LastEdited = DateTime.Now;
+                        _context.Update(week.Workbook);
+                        await _context.SaveChangesAsync();
+                    }
                     return RedirectToAction(nameof(Week), new { id = weekActivities.WeekId });
                 }
                 catch (Exception exp)
                 {
                     Console.WriteLine(exp.Message);
-                    ModelState.AddModelError("", $"Error creating WeekActivity: {exp.Message}");
+                    ModelState.AddModelError("", $"Error creating Weekly Activity: {exp.Message}");
                 }
             }
             else
@@ -732,9 +1030,10 @@ namespace CCM_Website.Controllers
                         Console.WriteLine($"Error for field {state.Key}: {error.ErrorMessage}");
                     }
                 }
+
                 ModelState.AddModelError(
                     "",
-                    "An error occurred while creating the workbook. Please contact an administrator if this problem persists."
+                    "An error occurred while creating the Weekly Activity. Please contact an administrator if this problem persists."
                 );
             }
 
@@ -840,67 +1139,192 @@ namespace CCM_Website.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ActivityUp([FromBody] int id)
+        public async Task<IActionResult> ChangeActivityOrder(
+            [FromBody] Dictionary<string, int> activityUpdates
+        )
         {
-            var activity = await _context.WeekActivities.FirstOrDefaultAsync(a =>
-                a.WeekActivityId == id
-            );
+            if (activityUpdates == null || !activityUpdates.Any())
+            {
+                return BadRequest("No activity data provided.");
+            }
 
-            if (activity == null)
+            if (!activityUpdates.TryGetValue("workbookId", out int workbookId))
+            {
+                return BadRequest("workbookId is missing");
+            }
+
+            var entity = await _context.Workbooks.FirstOrDefaultAsync(w =>
+                w.WorkbookId == workbookId
+            );
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            var taskToSwap = await _context.WeekActivities.FirstOrDefaultAsync(a =>
-                a.TaskOrder == activity.TaskOrder - 1
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
             );
-
-            if (taskToSwap == null)
+            if (!authResult.Succeeded)
             {
-                return NoContent();
+                return Forbid();
             }
 
-            int tempOrder = activity.TaskOrder;
-            activity.TaskOrder = taskToSwap.TaskOrder;
-            taskToSwap.TaskOrder = tempOrder;
+            activityUpdates.Remove("workbookId");
+            var activityIds = activityUpdates.Keys.Select(int.Parse).ToList();
+            var existingActivities = await _context
+                .WeekActivities.Where(a => activityIds.Contains(a.WeekActivityId))
+                .ToListAsync();
 
-            _context.Update(activity);
-            _context.Update(taskToSwap);
+            if (existingActivities.Count != activityUpdates.Count)
+            {
+                return NotFound("One or more activities not found.");
+            }
+
+            foreach (var activity in existingActivities)
+            {
+                activity.TaskOrder = activityUpdates[activity.WeekActivityId.ToString()];
+            }
+
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ActivityDown([FromBody] int id)
+        // GET: Workbook/AssignAttributes
+        public async Task<IActionResult> AssignAttributes(int weekId)
         {
-            var activity = await _context.WeekActivities.FirstOrDefaultAsync(a =>
-                a.WeekActivityId == id
-            );
+            if (weekId == 0)
+            {
+                return BadRequest("Invalid weekId received.");
+            }
 
-            if (activity == null)
+            var entity = await _context
+                .Weeks.Where(w => w.WeekId == weekId)
+                .Select(w => w.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
             {
                 return NotFound();
             }
 
-            var taskToSwap = await _context.WeekActivities.FirstOrDefaultAsync(a =>
-                a.TaskOrder == activity.TaskOrder + 1
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
             );
-
-            if (taskToSwap == null)
+            if (!authResult.Succeeded)
             {
-                return NoContent();
+                return Forbid();
             }
 
-            int tempOrder = activity.TaskOrder;
-            activity.TaskOrder = taskToSwap.TaskOrder;
-            taskToSwap.TaskOrder = tempOrder;
+            var week = _context
+                .Weeks.Include(w => w.WeekGraduateAttributes)!
+                .ThenInclude(wga => wga.GraduateAttribute)
+                .FirstOrDefault(w => w.WeekId == weekId);
 
-            _context.Update(activity);
-            _context.Update(taskToSwap);
+            if (week == null)
+            {
+                return NotFound();
+            }
+
+            var allAttributes =
+                _context.GraduateAttributes?.ToList() ?? new List<GraduateAttribute>();
+            if (week.WeekGraduateAttributes != null)
+            {
+                var assignedAttributeIds = week
+                    .WeekGraduateAttributes.Select(wga => wga.GraduateAttribute.AttributeId)
+                    .ToList();
+                var attributeSelectList = allAttributes
+                    .Select(attr => new SelectListItem
+                    {
+                        Value = attr.AttributeId.ToString(),
+                        Text = attr.AttributeName,
+                        Selected = assignedAttributeIds.Contains(attr.AttributeId),
+                    })
+                    .ToList();
+
+                ViewBag.WorkbookId = entity.WorkbookId;
+                ViewBag.WeekId = weekId;
+                ViewBag.GraduateAttributes = attributeSelectList;
+            }
+
+            return View("~/Views/Workbooks/AssignAttributes.cshtml");
+        }
+
+        // POST: Workbook/AssignAttributes
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignAttributes(int weekId, List<int> attributeIds)
+        {
+            if (weekId == 0)
+            {
+                return BadRequest("Invalid weekId received.");
+            }
+
+            var entity = await _context
+                .Weeks.Where(w => w.WeekId == weekId)
+                .Select(w => w.Workbook)
+                .FirstOrDefaultAsync();
+            if (entity == null)
+            {
+                return NotFound();
+            }
+
+            var authResult = await _authorizationService.AuthorizeAsync(
+                User,
+                entity,
+                "CanAccessResource"
+            );
+            if (!authResult.Succeeded)
+            {
+                return Forbid();
+            }
+
+            var week = await _context
+                .Weeks.Include(w => w.Workbook)
+                .Include(w => w.WeekGraduateAttributes)
+                .FirstOrDefaultAsync(w => w.WeekId == weekId);
+
+            if (week == null)
+            {
+                return NotFound();
+            }
+
+            if (week.WeekGraduateAttributes != null)
+            {
+                var existingAttributes = week
+                    .WeekGraduateAttributes.Select(wga => wga.GraduateAttributeId)
+                    .ToList();
+                var attributesToAdd = attributeIds.Except(existingAttributes).ToList();
+                var attributesToRemove = existingAttributes.Except(attributeIds).ToList();
+
+                foreach (var attrId in attributesToAdd)
+                {
+                    var attribute = await _context.GraduateAttributes.FindAsync(attrId);
+                    if (attribute != null)
+                    {
+                        _context.WeekGraduateAttributes.Add(
+                            new WeekGraduateAttributes
+                            {
+                                WeekId = weekId,
+                                GraduateAttributeId = attrId,
+                                Week = week,
+                                GraduateAttribute = attribute,
+                            }
+                        );
+                    }
+                }
+
+                var attributesToDelete = _context.WeekGraduateAttributes.Where(wga =>
+                    wga.WeekId == weekId && attributesToRemove.Contains(wga.GraduateAttributeId)
+                );
+                _context.WeekGraduateAttributes.RemoveRange(attributesToDelete);
+            }
+
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            return RedirectToAction("Details", "Workbooks", new { id = week.Workbook.WorkbookId });
         }
     }
 }

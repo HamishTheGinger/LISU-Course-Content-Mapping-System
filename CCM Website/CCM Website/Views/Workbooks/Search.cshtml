@@ -1,5 +1,9 @@
-﻿@model IEnumerable<CCM_Website.Models.Workbook>
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<CCM_Website.Models.Workbook>
 
+@inject IAuthorizationService AuthorizationService
 @{
 ViewData["Title"] = "Search";
 }
@@ -7,74 +11,129 @@ ViewData["Title"] = "Search";
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
         <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
         <li class="breadcrumb-item active" aria-current="page">Search</li>
+        </div>
     </ol>
     <hr/>
 </nav>
 
 <div class="row mb-4">
     <div class="col-12">
-        <form asp-action="Search" method="post">
-            <div class="input-group">
+        <form asp-action="Search" method="get">
+            <div class="input-group mb-2">
                 <input type="text" name="SearchPhrase" class="form-control" placeholder="Search Workbooks" value="@ViewData["SearchPhrase"]"/>
                 <button type="submit" class="btn btn-primary">Search</button>
             </div>
-        </form>
-    </div>
-</div>
 
-<div class="row mb-4">
-    <div class="col-12">
-        <form asp-action="Filter" method="get">
-            <input type="hidden" name="SearchPhrase" value="@ViewData["SearchPhrase"]" /> <!-- Preserve Search Term -->
-            <div class="input-group">
-                <input type="text" name="FilterPhrase" class="form-control" placeholder="Filter Results" value="@ViewData["FilterPhrase"]" />
+            <div class="d-flex gap-2">
+                <select name="CourseCodePrefix" class="form-select">
+                    <option value="">All Course Codes</option>
+                    @if (ViewData["CourseCodePrefixes"] is List<string> prefixes && prefixes.Any())
+                    {
+                        foreach (var prefix in prefixes)
+                        {
+                            <option value="@prefix" selected="@(prefix == ViewData["CourseCodePrefix"]?.ToString())">@prefix</option>
+                        }
+                    }
+                </select>
+
+                <select name="CourseLead" class="form-select">
+                    <option value="">All Course Leads</option>
+                    @if (ViewData["CourseLeads"] is List<string> leads && leads.Any())
+                    {
+                        foreach (var lead in leads)
+                        { 
+                            <option value="@lead" selected="@(lead == ViewData["CourseLead"]?.ToString())">@lead</option>
+                        }
+                    }
+                </select>
+
                 <button type="submit" class="btn btn-primary">Filter</button>
-                <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Search")'">Reset</button>
             </div>
         </form>
     </div>
 </div>
 
 
+
 <h3>Search Results</h3>
-<table class="table table responsive">
+<table class="table table-responsive">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CourseName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CourseCode)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CourseLead)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            Course Name
+        </th>
+        <th>
+            Course Code
+        </th>
+        <th>
+            Course Lead
+        </th>
+        <th>
+            University Area
+        </th>
+        <th>
+            Pip Reference
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CourseName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CourseCode)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CourseLead)
-            </td>
-            <td>
-                <div class="d-flex gap-2">
-                    <a class="btn btn-secondary flex-fill" asp-action="Details" asp-route-id="@item.WorkbookId">View Workbook</a>
-                    <a class="btn btn-primary flex-fill" asp-action="Edit" asp-route-id="@item.WorkbookId">Edit Workbook</a>
-                </div>
-            </td>
-
-        </tr>
-}
+    @foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.CourseName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CourseCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CourseLead)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.UniversityArea.AreaName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.PipReference)
+        </td>
+        <td>
+            <div class="d-flex gap-2">
+                <a class="btn btn-secondary flex-fill" asp-action="Details" asp-route-id="@item.WorkbookId">View Workbook</a>
+                @if ((await AuthorizationService.AuthorizeAsync(User, item, "CanAccessResource")).Succeeded)
+                {
+                <a class="btn btn-primary flex-fill" asp-action="Edit" asp-route-id="@item.WorkbookId">Edit Workbook</a>
+                }
+            </div>
+        </td>
+    </tr>
+    }
     </tbody>
 </table>
+@if (!Model.Any())
+{
+    <div>
+        <p>No workbooks found from your search</p>
+    </div>  
+}
+
+@Html.PagedListPager(Model, 
+    page => Url.Action("Search", new { page, searchPhrase = ViewData["SearchPhrase"], 
+        courseCodePrefix = ViewData["CourseCodePrefix"], 
+        courseLead = ViewData["CourseLead"] }), 
+    new PagedListRenderOptions
+    {
+        MaximumPageNumbersToDisplay = 3,
+        DisplayLinkToFirstPage = (Model.PageNumber <= 2) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always,
+        DisplayLinkToLastPage = (Model.PageNumber >= Model.PageCount - 1) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+        DisplayLinkToNextPage = PagedListDisplayMode.Always,
+        DisplayEllipsesWhenNotShowingAllPageNumbers = true,
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link" }
+    }
+)

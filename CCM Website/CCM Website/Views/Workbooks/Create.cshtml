@@ -6,9 +6,12 @@
 }
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
         <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
         <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </div>
     </ol>
     <hr/>
 </nav>
@@ -28,7 +31,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CourseCode" class="control-label"></label>
-                <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code" />
+                <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code (Optional)" />
                 <span asp-validation-for="CourseCode" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -54,13 +57,20 @@
                 <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="UniversityAreaId" class="control-label">Workbook Area</label>
+                <select asp-for="UniversityAreaId" asp-items="ViewBag.UniversityAreas" class="form-control" required>
+                    <option value="">-- Select an Area --</option>
+                </select>
+                <span asp-validation-for="UniversityAreaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Collaborators" class="control-label"></label>
                 <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
                 <span asp-validation-for="Collaborators" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-success">Create</button>
                 <a asp-action="Index" class="btn btn-secondary">Cancel</a>
             </div>
         </form>

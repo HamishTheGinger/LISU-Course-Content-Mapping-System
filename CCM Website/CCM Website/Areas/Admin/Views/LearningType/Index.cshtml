@@ -1,4 +1,7 @@
-@model IEnumerable<CCM_Website.Models.LearningType>
+@model X.PagedList.IPagedList<CCM_Website.Models.LearningType>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using X.PagedList.Mvc;
+@using X.PagedList.Mvc.Core
 
 @{
     ViewData["Title"] = "Learning Type";
@@ -16,34 +19,44 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-start">
-    <div class="col-md-10">
+<div class="row my-3">
+    <div class="col d-flex justify-content-between align-items-center">
         <h2>Learning Types</h2>
-    </div>
-    <div class="col-md-2 d-flex justify-content-center">
         <a class="btn btn-success"
            asp-action="Create">Create New Learning Type
         </a>
     </div>
 </div>
 
+<div class="row my-3">
+    <div class="col d-flex justify-content-start align-items-center">
+        @using (Html.BeginForm("Index", "LearningType", FormMethod.Get))
+        {
+            <div class="input-group">
+                @Html.TextBox("searchString", ViewData["SearchString"] as string, new { @class = "form-control", placeholder = "Search learning type name ..." })
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        }
+    </div>
+</div>
+
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                Learning Type Name
-            </th>
-            <th>
-                Learning Type Colour
-            </th>
-            <th>
-                Learning Type Text Colour
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            Learning Type Name
+        </th>
+        <th>
+            Learning Type Colour
+        </th>
+        <th>
+            Learning Type Text Colour
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.LearningTypeName)
@@ -62,6 +75,24 @@
                 </div>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
+
+
+<br />
+@Html.PagedListPager(Model,
+    page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }),
+    new PagedListRenderOptions
+    {
+        MaximumPageNumbersToDisplay = 3,
+        DisplayLinkToFirstPage = (Model.PageNumber <= 2) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always, 
+        DisplayLinkToLastPage = (Model.PageNumber >= Model.PageCount - 1) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Never, 
+        DisplayLinkToNextPage = PagedListDisplayMode.Never,  
+        DisplayEllipsesWhenNotShowingAllPageNumbers = true,  
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" }, 
+        PageClasses = new[] { "page-link" } 
+    }
+)

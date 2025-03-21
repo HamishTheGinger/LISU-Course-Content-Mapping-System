@@ -1,0 +1,52 @@
+﻿@model CCM_Website.Models.WeekGraduateAttributes
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb d-flex justify-content-start">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a></li>
+        <li class="breadcrumb-item"><a asp-area="Admin" asp-controller="WeekGraduateAttributes" asp-action="Index">Week Graduate Attributes</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </div>
+    </ol>
+    <hr />
+</nav>
+
+<div class="row my-3 align-items-start">
+    <div class="col-md-10"><h2>Create Week Graduate Attribute</h2></div>
+</div>
+
+@Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="WeekId" class="control-label">Week</label>
+        <select asp-for="WeekId" name="WeekId" class="form-control" asp-items="ViewBag.WeekId" required>
+            <option value="">-- Select Week --</option>
+        </select>
+        <span asp-validation-for="WeekId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GraduateAttributeId" class="control-label">Graduate Attribute</label>
+        <select asp-for="GraduateAttributeId" name="GraduateAttributeId" class="form-control" asp-items="ViewBag.GraduateAttributeId" required>
+            <option value="">-- Select Graduate Attribute --</option>
+        </select>
+        <span asp-validation-for="GraduateAttributeId" class="text-danger"></span>
+    </div>
+
+    <br />
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-success" />
+        <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+    </div>
+</form>
+
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

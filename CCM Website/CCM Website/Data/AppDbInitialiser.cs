@@ -54,42 +54,56 @@ namespace CCM_Website.Data
                             LearningTypeName = "Acquisition",
                             LearningTypeColour = "#A1F5ED",
                             LearningTypeTextColour = "#000000",
+                            LearningTypeDescription =
+                                "Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Collaboration",
                             LearningTypeColour = "#FFD21A",
                             LearningTypeTextColour = "#000000",
+                            LearningTypeDescription =
+                                "Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Discussion",
                             LearningTypeColour = "#7AAEEA",
                             LearningTypeTextColour = "#000000",
+                            LearningTypeDescription =
+                                "Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Investigation",
                             LearningTypeColour = "#F8807F",
                             LearningTypeTextColour = "#000000",
+                            LearningTypeDescription =
+                                "Analysing Data, Desk Research, Research using Databases, Web Search",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Practice",
                             LearningTypeColour = "#BB98DC",
                             LearningTypeTextColour = "#000000",
+                            LearningTypeDescription =
+                                "Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Production",
                             LearningTypeColour = "#BDEA75",
                             LearningTypeTextColour = "#000000",
+                            LearningTypeDescription =
+                                "Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki",
                         },
                         new LearningType
                         {
                             LearningTypeName = "Assessment",
                             LearningTypeColour = "#44546A",
                             LearningTypeTextColour = "#fff",
+                            LearningTypeDescription =
+                                "Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form",
                         },
                     };
 
@@ -101,8 +115,18 @@ namespace CCM_Website.Data
                 {
                     var taskLocations = new[]
                     {
-                        new TaskLocation { LocationName = "On Campus" },
-                        new TaskLocation { LocationName = "Remote (Home)" },
+                        new TaskLocation
+                        {
+                            LocationName = "On Campus",
+                            LocationColour = "#FBCED0",
+                            LocationTextColour = "#000000",
+                        },
+                        new TaskLocation
+                        {
+                            LocationName = "Remote (Home)",
+                            LocationColour = "#FDEBAC",
+                            LocationTextColour = "#000000",
+                        },
                     };
 
                     context.TaskLocation.AddRange(taskLocations);
@@ -113,9 +137,24 @@ namespace CCM_Website.Data
                 {
                     var taskProgressStatuss = new[]
                     {
-                        new TaskProgressStatus { StatusName = "Completed" },
-                        new TaskProgressStatus { StatusName = "In-Progress" },
-                        new TaskProgressStatus { StatusName = "Unassigned" },
+                        new TaskProgressStatus
+                        {
+                            StatusName = "Completed",
+                            StatusColour = "#00B050",
+                            StatusTextColour = "#000000",
+                        },
+                        new TaskProgressStatus
+                        {
+                            StatusName = "In-Progress",
+                            StatusColour = "#FFC000",
+                            StatusTextColour = "#000000",
+                        },
+                        new TaskProgressStatus
+                        {
+                            StatusName = "Unassigned",
+                            StatusColour = "#FF0000",
+                            StatusTextColour = "#000000",
+                        },
                     };
 
                     context.TaskProgressStatus.AddRange(taskProgressStatuss);
@@ -126,11 +165,39 @@ namespace CCM_Website.Data
                 {
                     var taskApproachs = new[]
                     {
-                        new TaskApproach { ApproachName = "Synchronous" },
-                        new TaskApproach { ApproachName = "Asynchronous" },
+                        new TaskApproach
+                        {
+                            ApproachName = "Synchronous",
+                            ApproachColour = "#11BFD9",
+                            ApproachTextColour = "#000000",
+                        },
+                        new TaskApproach
+                        {
+                            ApproachName = "Asynchronous",
+                            ApproachColour = "#961272",
+                            ApproachTextColour = "#FFFFFF",
+                        },
                     };
 
                     context.TaskApproach.AddRange(taskApproachs);
+                    context.SaveChanges();
+                }
+
+                if (!context.UniversityArea.Any())
+                {
+                    var universityAreas = new[]
+                    {
+                        new UniversityArea { AreaName = "College of Arts & Humanities" },
+                        new UniversityArea
+                        {
+                            AreaName = "College of Medical, Veterinary & Life Sciences",
+                        },
+                        new UniversityArea { AreaName = "College of Science & Engineering" },
+                        new UniversityArea { AreaName = "College of Social Sciences" },
+                        new UniversityArea { AreaName = "University Services" },
+                    };
+
+                    context.UniversityArea.AddRange(universityAreas);
                     context.SaveChanges();
                 }
 

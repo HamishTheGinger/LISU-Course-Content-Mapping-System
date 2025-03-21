@@ -55,7 +55,7 @@
     </div>
     <div class="form-group">
         <label asp-for="TasksStatus" class="control-label">Task Status</label>
-        <input asp-for="TasksStatus" class="form-control"/>
+        <select asp-for="TasksStatusId" class="form-control" asp-items="ViewBag.TaskStatus"></select>
         <span asp-validation-for="TasksStatus" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -65,12 +65,12 @@
     </div>
     <div class="form-group">
         <label asp-for="TaskLocation" class="control-label">Task Location</label>
-        <input asp-for="TaskLocation" class="form-control"/>
+        <select asp-for="TaskLocationId" class="form-control" asp-items="ViewBag.TaskLocation"></select>
         <span asp-validation-for="TaskLocation" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="TaskApproach" class="control-label">Task Approach</label>
-        <input asp-for="TaskApproach" class="form-control"/>
+        <select asp-for="TaskApproachId" class="form-control" asp-items="ViewBag.TaskApproach"></select>
         <span asp-validation-for="TaskApproach" class="text-danger"></span>
     </div>
     <br/>
