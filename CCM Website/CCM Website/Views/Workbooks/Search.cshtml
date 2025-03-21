@@ -23,7 +23,7 @@ ViewData["Title"] = "Search";
 
 <div class="row mb-4">
     <div class="col-12">
-        <form asp-action="Search" method="post">
+        <form asp-action="Search" method="get">
             <div class="input-group mb-2">
                 <input type="text" name="SearchPhrase" class="form-control" placeholder="Search Workbooks" value="@ViewData["SearchPhrase"]"/>
                 <button type="submit" class="btn btn-primary">Search</button>
@@ -32,11 +32,11 @@ ViewData["Title"] = "Search";
             <div class="d-flex gap-2">
                 <select name="CourseCodePrefix" class="form-select">
                     <option value="">All Course Codes</option>
-                    @if (ViewData["CourseCodePrefixes"] is List<string> prefixes && prefixes.Any()) 
+                    @if (ViewData["CourseCodePrefixes"] is List<string> prefixes && prefixes.Any())
                     {
                         foreach (var prefix in prefixes)
                         {
-                            <option value="@prefix">@prefix</option>
+                            <option value="@prefix" selected="@(prefix == ViewData["CourseCodePrefix"]?.ToString())">@prefix</option>
                         }
                     }
                 </select>
@@ -45,9 +45,9 @@ ViewData["Title"] = "Search";
                     <option value="">All Course Leads</option>
                     @if (ViewData["CourseLeads"] is List<string> leads && leads.Any())
                     {
-                        @foreach (var lead in leads)
-                        {
-                            <option value="@lead">@lead</option>
+                        foreach (var lead in leads)
+                        { 
+                            <option value="@lead" selected="@(lead == ViewData["CourseLead"]?.ToString())">@lead</option>
                         }
                     }
                 </select>
