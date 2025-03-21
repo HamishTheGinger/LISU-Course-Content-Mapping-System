@@ -110,39 +110,8 @@ namespace CCM_Website.Controllers
                 .ToList();
 
             ViewData["SearchPhrase"] = searchPhrase;
-
-            return Task.FromResult<IActionResult>(View("Search", pagedResults));
-        }
-
-        //GET: Courses/Filter
-        [HttpGet]
-        public Task<IActionResult> Filter(string searchPhrase, string filterPhrase, int? page)
-        {
-            var workbooks = _context.Workbooks.AsQueryable();
-
-            if (!string.IsNullOrEmpty(searchPhrase))
-            {
-                workbooks = workbooks.Where(w =>
-                    EF.Functions.Like(w.CourseName, $"%{searchPhrase}%")
-                    || EF.Functions.Like(w.CourseLead, $"%{searchPhrase}%")
-                );
-            }
-
-            if (!string.IsNullOrEmpty(filterPhrase))
-            {
-                workbooks = workbooks.Where(w =>
-                    EF.Functions.Like(w.CourseName, $"%{filterPhrase}%")
-                    || EF.Functions.Like(w.CourseLead, $"%{filterPhrase}%")
-                );
-            }
-
-            ViewData["SearchPhrase"] = searchPhrase;
-            ViewData["FilterPhrase"] = filterPhrase;
-
-            int pageSize = 10;
-            int pageNumber = page ?? 1;
-
-            var pagedResults = workbooks.ToPagedList(pageNumber, pageSize);
+            ViewData["CourseCodePrefix"] = courseCodePrefix;
+            ViewData["CourseLead"] = courseLead;
 
             return Task.FromResult<IActionResult>(View("Search", pagedResults));
         }
