@@ -32,6 +32,11 @@
                 <input asp-for="ActivityName" class="form-control" />
                 <span asp-validation-for="ActivityName" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label for="LearningPlatformIds">Learning Platforms</label>
+                <select id="LearningPlatformIds" name="LearningPlatformIds" class="form-control" multiple asp-items="ViewBag.LearningPlatforms">
+                </select>
+            </div>
             <br/>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-success" />

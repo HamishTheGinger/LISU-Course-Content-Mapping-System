@@ -36,9 +36,9 @@
                 <span asp-validation-for="ActivityName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="LearningPlatformActivities" class="form-label">Learning Platform</label>
-                <select asp-for="LearningPlatformActivities" class="form-select" asp-items="ViewBag.LearningPlatforms">
-                    <option value="">-- Select a Platform --</option>
+                <label for="LearningPlatformId">Learning Platform</label>
+                <select id="LearningPlatformIds" name="LearningPlatformIds" class="form-control" multiple asp-items="ViewBag.LearningPlatforms">
+                    <option value="">-- Select Platform --</option>
                 </select>
                 <span asp-validation-for="LearningPlatformActivities" class="text-danger"></span>
             </div>

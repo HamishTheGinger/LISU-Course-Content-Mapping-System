@@ -7,6 +7,7 @@ using CCM_Website.Data;
 using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 using X.PagedList.Extensions;
@@ -53,7 +54,11 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var activities = await _context.Activities.FirstOrDefaultAsync(m => m.ActivityId == id);
+            var activities = await _context
+                .Activities.Include(a => a.LearningPlatformActivities!)
+                .ThenInclude(lpa => lpa.LearningPlatform)
+                .FirstOrDefaultAsync(m => m.ActivityId == id);
+
             if (activities == null)
             {
                 return NotFound();
@@ -78,11 +83,17 @@ namespace CCM_Website.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("ActivityId,ActivityName")] Activities activities
+            [Bind("ActivityId,ActivityName")] Activities activities,
+            List<int> LearningPlatformIds
         )
         {
-            var platforms = _context.LearningPlatforms.ToList(); // _context is your DB context
-            ViewBag.LearningPlatforms = new SelectList(platforms, "PlatformId", "PlatformName");
+            var platforms = _context.LearningPlatforms.ToList();
+            ViewBag.LearningPlatforms = new SelectList(
+                platforms,
+                "PlatformId",
+                "PlatformName",
+                LearningPlatformIds
+            );
 
             try
             {
@@ -92,10 +103,7 @@ namespace CCM_Website.Areas.Admin.Controllers
             catch (Exception e)
             {
                 Console.WriteLine($"Model Creation Error: {e.Message}");
-                ModelState.AddModelError(
-                    "",
-                    "An error occurred while saving the activity. Please try again later."
-                );
+                ModelState.AddModelError("", "An error occurred while saving the activity.");
                 return View(activities);
             }
 
@@ -108,20 +116,33 @@ namespace CCM_Website.Areas.Admin.Controllers
                 {
                     _context.Add(activities);
                     await _context.SaveChangesAsync();
+                    foreach (var platformId in LearningPlatformIds)
+                    {
+                        var platform = await _context.LearningPlatforms.FindAsync(platformId);
+                        if (platform != null)
+                        {
+                            var link = new LearningPlatformActivities
+                            {
+                                ActivitiesId = activities.ActivityId,
+                                LearningPlatformId = platformId,
+                                Activities = activities,
+                                LearningPlatform = platform,
+                            };
+                            _context.LearningPlatformActivities.Add(link);
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception exp)
                 {
                     Console.WriteLine($"Model Creation Error: {exp.Message}");
-                    ModelState.AddModelError(
-                        "",
-                        "An error occurred while saving the workbook. Please try again later."
-                    );
+                    ModelState.AddModelError("", "An error occurred while saving the activity.");
                     return View(activities);
                 }
             }
 
-            Console.WriteLine("Error creating model");
             return View(activities);
         }
 
@@ -133,11 +154,27 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var activities = await _context.Activities.FindAsync(id);
+            var activities = await _context
+                .Activities.Include(a => a.LearningPlatformActivities)
+                .FirstOrDefaultAsync(a => a.ActivityId == id);
+
             if (activities == null)
             {
                 return NotFound();
             }
+
+            var selectedPlatformIds = activities
+                .LearningPlatformActivities?.Select(lpa => lpa.LearningPlatformId)
+                .ToList();
+
+            var platforms = await _context.LearningPlatforms.ToListAsync();
+            ViewBag.LearningPlatforms = new MultiSelectList(
+                platforms,
+                "PlatformId",
+                "PlatformName",
+                selectedPlatformIds // This should be an IEnumerable
+            );
+
             return View(activities);
         }
 
@@ -148,7 +185,8 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("ActivityId,ActivityName")] Activities activities
+            [Bind("ActivityId,ActivityName")] Activities activities,
+            List<int> LearningPlatformIds
         )
         {
             if (id != activities.ActivityId)
@@ -156,26 +194,63 @@ namespace CCM_Website.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            ModelState.Remove(nameof(activities.WeekActivities));
+            ModelState.Remove(nameof(activities.LearningPlatformActivities));
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(activities);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ActivitiesExists(activities.ActivityId))
+                    var existingActivity = await _context
+                        .Activities.Include(a => a.LearningPlatformActivities)
+                        .FirstOrDefaultAsync(a => a.ActivityId == id);
+
+                    if (existingActivity == null)
                     {
                         return NotFound();
                     }
-                    else
+
+                    existingActivity.ActivityName = activities.ActivityName;
+
+                    var existingLinks =
+                        existingActivity.LearningPlatformActivities?.ToList()
+                        ?? new List<LearningPlatformActivities>();
+                    _context.LearningPlatformActivities.RemoveRange(existingLinks);
+
+                    foreach (var platformId in LearningPlatformIds)
                     {
-                        throw;
+                        var platform = await _context.LearningPlatforms.FindAsync(platformId);
+                        if (platform != null)
+                        {
+                            var link = new LearningPlatformActivities
+                            {
+                                ActivitiesId = id,
+                                LearningPlatformId = platformId,
+                                Activities = existingActivity,
+                                LearningPlatform = platform,
+                            };
+                            _context.LearningPlatformActivities.Add(link);
+                        }
                     }
+
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Edit Error: {ex.Message}");
+                    ModelState.AddModelError("", "An error occurred while updating the activity.");
+                }
             }
+
+            var platforms = await _context.LearningPlatforms.ToListAsync();
+            ViewBag.LearningPlatforms = new SelectList(
+                platforms,
+                "PlatformId",
+                "PlatformName",
+                LearningPlatformIds
+            );
+
             return View(activities);
         }
 
