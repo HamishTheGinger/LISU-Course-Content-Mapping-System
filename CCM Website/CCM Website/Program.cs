@@ -59,15 +59,6 @@ using (var scope = app.Services.CreateScope())
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while seeding the database with core data.");
     }
-    try
-    {
-        TestingAppDbInitialiser.TestingSeed(app);
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "An error occurred while seeding the database with testing data.");
-    }
 }
 
 // Configure the HTTP request pipeline.
