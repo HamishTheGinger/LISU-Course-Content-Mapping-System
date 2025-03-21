@@ -41,8 +41,8 @@ Microsoft.EntityFrameworkCore.Tools 9.0.1 \
 Microsoft.Identity.Web 2.19.1 \
 Microsoft.Identity.Web.UI 2.19.1 \
 Microsoft.VisualStudio.Web.CodeGeneration.Design 8.0.6 \
-X.PagedList 0.5.7 \
-X.PagedList.Mvc.Core 10.5.7 \
+X.PagedList 10.5.7 \
+X.PagedList.Mvc.Core 10.5.7
 
 #### CCM Website Tests
 coverlet.collector 6.0.0 \
@@ -52,7 +52,7 @@ Microsoft.NET.Test.Sdk 17.8.0 \
 Moq 4.20.72 \
 Moq.EntityFrameworkCore 9.0.0.1 \
 xunit 2.5.3 \
-xunit.runner.visualstudio 2.5.3 \
+xunit.runner.visualstudio 2.5.3
 
 ## User Guide
 Please see the [installation guide](InstallationGuide.md) for installation instructions.
