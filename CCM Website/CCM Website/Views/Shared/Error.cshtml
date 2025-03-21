@@ -13,6 +13,13 @@
     </p>
 }
 
+<div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Home</a>
+    @if (User.IsInRole("Admin")) {
+    <a authorization policy="Admin" asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-primary">Admin</a>
+    }
+</div>
+
 <h3>Development Mode</h3>
 <p>
     Swapping to <strong>Development</strong> environment will display more detailed information about the error that occurred.

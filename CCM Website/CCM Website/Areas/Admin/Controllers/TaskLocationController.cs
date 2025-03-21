@@ -7,6 +7,7 @@ using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.Extensions;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -21,9 +22,24 @@ namespace CCM_Website.Areas.Admin.Controllers
         }
 
         // GET: Admin/TaskLocation
-        public async Task<IActionResult> Index()
+        public Task<IActionResult> Index(string searchString, int? page)
         {
-            return View(await _context.TaskLocation.ToListAsync());
+            var taskLocation = _context.TaskLocation.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                taskLocation = taskLocation.Where(t =>
+                    t.LocationName.ToLower().Contains(searchString.ToLower())
+                );
+            }
+
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            ViewData["SearchString"] = searchString;
+
+            var pagedTaskLocation = taskLocation.ToPagedList(pageNumber, pageSize);
+            return Task.FromResult<IActionResult>(View(pagedTaskLocation));
         }
 
         // GET: Admin/TaskLocation/Details/5
@@ -56,7 +72,9 @@ namespace CCM_Website.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("LocationName")] TaskLocation taskLocation)
+        public async Task<IActionResult> Create(
+            [Bind("LocationName,LocationColour,LocationTextColour")] TaskLocation taskLocation
+        )
         {
             if (ModelState.IsValid)
             {
@@ -90,7 +108,8 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("LocationId,LocationName")] TaskLocation taskLocation
+            [Bind("LocationId,LocationName,LocationColour,LocationTextColour")]
+                TaskLocation taskLocation
         )
         {
             if (id != taskLocation.LocationId)

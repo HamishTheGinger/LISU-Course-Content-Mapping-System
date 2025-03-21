@@ -1,0 +1,19 @@
+﻿@model ErrorViewModel
+@{
+    ViewData["Title"] = "Accessed Denied";
+}
+
+<div>
+    <div>
+        <h2>Access Denied</h2>
+        <hr/>
+        <h4>You don't have access to view this page. Please contact an Admin if you believe this is an error.</h4>
+    </div>
+    <br/>
+    <div>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Home</a>
+        @if (User.IsInRole("Admin")) {
+            <a authorization policy="Admin" asp-area="Admin" asp-controller="Admin" asp-action="Index" class="btn btn-primary">Admin</a>
+        }    
+    </div>
+</div>

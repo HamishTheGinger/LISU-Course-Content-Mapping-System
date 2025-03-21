@@ -35,7 +35,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CourseCode" class="control-label">Course Code</label>
-                <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code" />
+                <input asp-for="CourseCode" class="form-control" placeholder="Enter Course Code (Optional)" />
                 <span asp-validation-for="CourseCode" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -60,6 +60,13 @@
                     <option value="">-- Select Learning Platform --</option>
                 </select>
                 <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UniversityAreaId" class="control-label">Workbook Area</label>
+                <select asp-for="UniversityAreaId" asp-items="ViewBag.UniversityAreas" class="form-control" required>
+                    <option value="">-- Select an Area --</option>
+                </select>
+                <span asp-validation-for="UniversityAreaId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Collaborators" class="control-label">Collaborators</label>

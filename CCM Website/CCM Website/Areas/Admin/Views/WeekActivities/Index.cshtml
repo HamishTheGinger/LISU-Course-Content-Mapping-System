@@ -1,5 +1,6 @@
-@model IEnumerable<CCM_Website.Models.WeekActivities>
-
+@model X.PagedList.IPagedList<CCM_Website.Models.WeekActivities>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using X.PagedList.Mvc.Core
 @{
     ViewData["Title"] = "Week Activity";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -16,46 +17,60 @@
     <hr/>
 </nav>
 
-<div class="row my-3 align-items-start">
-    <div class="col-md-10">
+<div class="row my-3">
+    <div class="col d-flex justify-content-between align-items-center">
         <h2>Week Activities</h2>
-    </div>
-    <div class="col-md-2 d-flex justify-content-center">
         <a class="btn btn-success"
-           asp-action="Create">Create New Week Activity
+           asp-action="Create"
+           asp-route-weekId="@(ViewData["DefaultWeekId"] ?? Model.FirstOrDefault()?.WeekId)">
+           Create New Week Activity
         </a>
     </div>
 </div>
 
+
+<div class="row my-3">
+    <div class="col d-flex justify-content-start align-items-center">
+        @using (Html.BeginForm("Index", "WeekActivities", FormMethod.Get))
+        {
+        <div class="input-group">
+            @Html.TextBox("searchString", ViewData["SearchString"] as string, new { @class = "form-control", placeholder = "Search task title..." })
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+        }
+    </div>
+</div>
+
+
 <table class="table">
     <thead>
-        <tr>
-            <th>
-                Week ID
-            </th>
-            <th>
-                Activities
-            </th>
-            <th>
-                Task Title
-            </th>
-            <th>
-                Task Staff
-            </th>
-            <th>
-                Task Time
-            </th>
-            <th>
-                Task Status
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            Week ID
+        </th>
+        <th>
+            Activities
+        </th>
+        <th>
+            Task Title
+        </th>
+        <th>
+            Task Staff
+        </th>
+        <th>
+            Task Time
+        </th>
+        <th>
+            Task Status
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Week.WeekId)
+                @Html.DisplayFor(modelItem => item.WeekId)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Activities.ActivityId)
@@ -70,7 +85,7 @@
                 @Html.DisplayFor(modelItem => item.TaskTime)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.TasksStatus)
+                @Html.DisplayFor(modelItem => item.TasksStatus.StatusName)
             </td>
             <td>
                 <div class="d-flex flex-wrap justify-content-end gap-2">
@@ -80,6 +95,24 @@
                 </div>
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
+
+<br />
+@Html.PagedListPager(Model,
+    page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }),
+    new PagedListRenderOptions
+    {
+        MaximumPageNumbersToDisplay = 3,
+        DisplayLinkToFirstPage = (Model.PageNumber <= 2) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always, 
+        DisplayLinkToLastPage = (Model.PageNumber >= Model.PageCount - 1) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Never, 
+        DisplayLinkToNextPage = PagedListDisplayMode.Never,  
+        DisplayEllipsesWhenNotShowingAllPageNumbers = true,  
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" }, 
+        PageClasses = new[] { "page-link" } 
+    }
+)
+

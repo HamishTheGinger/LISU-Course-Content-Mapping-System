@@ -1,54 +1,111 @@
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject IAuthorizationService AuthorizationService
 @model CCM_Website.ViewModels.WeekDetailsViewModel
 @{
-    ViewData["Title"] = $"{@Model.Week!.Workbook.CourseCode} - Week {@Model.Week.WeekNumber}";
+    ViewData["Title"] = $"{@Model.Week!.Workbook.CourseCode ?? Model.Week.Workbook.CourseName} - Week {@Model.Week.WeekNumber}";
     ViewData["LearningPlatform"] = $"{@Model.Week.Workbook.LearningPlatform.PlatformName}";
-    var learningLocationCounts = ViewBag.locationCount as Dictionary<string, int>;
-    var taskProgressCounts = ViewBag.progressCount as Dictionary<string, int>;
+
     var learningTypes = ViewData["LearningTypes"] as List<LearningType>;
 }
 
+@{
+    var isAuthorised = (await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded;
+}
+<script>
+    // This is needed to convert from Azure/Razor to Javascript. Hence the duplicated variable
+    var isUserAuthorised = @Json.Serialize(isAuthorised);
+</script>
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
-        <li class="breadcrumb-item"><a asp-area="" asp-controller="Workbooks" asp-action="Details" asp-route-id="@Model.Week.WorkbookId">Workbook Details</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Week @Model.Week.WeekNumber</li>
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+
+            @if ((await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded)
+            {
+                <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+            }else
+            {
+                <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Search">Workbooks</a></li>
+            }
+            <li class="breadcrumb-item"><a asp-area="" asp-controller="Workbooks" asp-action="Details" asp-route-id="@Model.Week.WorkbookId">Workbook Details</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Week @Model.Week.WeekNumber</li>
+        </div>
     </ol>
     <hr/>
 </nav>
 
 <div class="container-fluid">
     <div class="row my-3 align-items-start">
-        <div class="col-md-10">
+        <div class="col-md-10 mb-3">
             <h1 class="text-wrap">@Model.Week.Workbook.CourseName</h1>
             <h4 class="text-wrap">@Model.Week.Workbook.CourseLead</h4>
         </div>
-        <div class="col-md-2 d-flex justify-content-center ">
-            <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" asp-route-weekId="@Model.Week.WeekId" class="btn btn-success ">
-                Create Activity
-            </a>
+        <div class="col-md-2 d-flex justify-content-center">
+            @if ((await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded)
+            {
+                <a asp-controller="Workbooks" asp-action="CreateActivity" asp-route-id="@Model.Week.WorkbookId" asp-route-weekId="@Model.Week.WeekId" class="btn btn-success">
+                    Create Activity
+                </a>
+            }
         </div>
     </div>
     <div class="row">
         <div class="col-md-10">
             <div class="table-responsive mb-3">
-                <table id="weekTable"class="table table-bordered">
+                <table id="weekTable" class="table table-bordered">
                     <thead>
                     <tr>
                         <th class ="bg-week-table text-white text-center" id="weekTableHeading">Week @Model.Week.WeekNumber</th>
                     </tr>
                     <tr class="bg-week-table text-white text-center">
-                        <th>@Html.DisplayName("Staff Responsible")</th>
-                        <th>@Html.DisplayName("Title")</th>
-                        <th>@Html.DisplayName("Learning Activity")</th>
-                        <th>@Html.DisplayName("Learning Type")</th>
-                        <th>@Html.DisplayName("Time (Hrs:Mins)")</th>
-                        <th>@Html.DisplayName("Task Status")</th>
-                        <th>@Html.DisplayName("Activity Location")</th>
-                        <th>@Html.DisplayName("Learning Approach")</th>
-                        <th>Change Order</th>
-                        <th>Edit Activity</th>
+                        <th>
+                            @Html.DisplayName("Task Order")
+                            <a id="changeOrderTask" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Staff Responsible")
+                            <a id="changeOrderStaff" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Title")
+                            <a id="changeOrderTitle" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Learning Activity")
+                            <a id="changeOrderActivity" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Learning Type")
+                            <a id="changeOrderType" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Time (Hrs:Mins)")
+                            <a id="changeOrderTime" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Task Status")
+                            <a id="changeOrderStatus" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Activity Location")
+                            <a id="changeOrderLocation" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+                        <th>
+                            @Html.DisplayName("Learning Approach")
+                            <a id="changeOrderApproach" class="d-block text-white text-decoration-none border-0 bg-transparent"> ▲</a>
+                        </th>
+
+
+                        @if ((await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded)
+                            {
+                                <th><btn class="btn btn-primary d-block" id="changeOrder">Change Order</btn>
+                                    <btn class="btn btn-success d-none" id="saveOrder">Save Changes</btn>
+                                </th>
+                                <th>Edit Activity</th>
+                            }
 
                     </tr>
                     </thead>
@@ -59,19 +116,62 @@
             </div>
 
             <div class="row mb-10 justify-content-around">
-                <div id="legend" style="display: none">
-                    <table class="table table-bordered table-responsive">
+                    <div class="row-md-6 d-flex justify-content-center align-items-center">
+                        <table id="attributes_table" class="table table-bordered text-center position-sticky w-auto">
+                            <thead>
+                                <tr class="bg-week-table text-white">
+                                    <th colspan = "2" >Week Graduate Attribute(s)
+                                        @if ((await AuthorizationService.AuthorizeAsync(User, Model.Week.Workbook, "CanAccessResource")).Succeeded)
+                                        {
+                                            <a asp-action="AssignAttributes" asp-controller="Workbooks" asp-route-weekId="@Model.Week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1 text-white">
+                                                Assign
+                                            </a>
+                                        }
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var counter = 1;
+                                }
+
+
+                                @{
+                                    System.Diagnostics.Debug.Assert(Model.Week.WeekGraduateAttributes != null, "Model.Week.WeekGraduateAttributes != null");
+                                }
+                                @{
+                                    if (Model.Week.WeekGraduateAttributes.Count > 0)
+                                    {
+                                        foreach (var graduateAttribute in Model.Week.WeekGraduateAttributes)
+                                        {
+                                            <tr>
+                                                <td class="bg-thistle text-white">Graduate Attribute @counter</td>
+                                                <td>@graduateAttribute.GraduateAttribute.AttributeName</td>
+                                            </tr>
+
+                                            counter++;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        <tr>
+                                            <td>No Graduate Attributes</td>
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+                        </table>
+                </div>
+                
+                <div id="legend" class="d-none">
+                    <table class="table table-bordered table-responsive" id="legendTable">
                         <thead>
                             <tr><th>Legend</th></tr>
                         </thead>
                         <tbody>
-                        <tr><td id="Acquisition_legend">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q&A Walls, Readings, Videos</td></tr>
-                        <tr><td id="Collaboration_legend">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
-                        <tr><td id="Discussion_legend">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
-                        <tr><td id="Investigation_legend">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
-                        <tr><td id="Practice_legend">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
-                        <tr><td id="Production_legend">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
-                        <tr><td id="Assessment_legend" class="text-white">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+                    
                         </tbody>
                     </table>
 
@@ -79,80 +179,42 @@
 
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center table-responsive">
                     <button class="btn btn-primary m-3 rounded-pill " id="lt_table_hide"> <span id="arrow_stats">▼</span> Statistics</button>
+                    
 
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                        <table id="stats_table" class="table table-bordered text-center position-sticky" style="display:block">
+                    <div class="d-flex flex-column justify-content-between align-items-center">
+                        <table id="statsTable" class="table table-bordered text-center position-sticky d-block">
                             <thead>
-                            <tr>
-                                <th colspan="4" class ="text-white bg-stats-table">Statistics</th>
-                            </tr>
-                            <tr class ="text-white bg-stats-table">
-                                <th>Learning Type</th>
-                                <th>Allocation</th>
-                                <th>Status</th>
-                                <th>Tasks</th>
-                            </tr>
+                            <th colspan="4" class="text-white bg-stats-table">Statistics</th>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td id="Acquisition"></td>
-                                <td id="Acquisition_data"></td>
-                                <td class="bg-red">Unassigned</td>
-                                <td id="Unassigned"></td>
-                            </tr>
-                            <tr>
-                                <td id="Collaboration"></td>
-                                <td id="Collaboration_data"></td>
-                                <td class="bg-amber">In Progress</td>
-                                <td id="InProgress"></td>
-                            </tr>
-                            <tr>
-                                <td id="Discussion"></td>
-                                <td id="Discussion_data"></td>
-                                <td class="bg-green">Completed</td>
-                                <td id="Completed"></td>
-                            </tr>
-                            <tr>
-                                <td id="Investigation"></td>
-                                <td id="Investigation_data"></td>
-                                <td>Total Tasks</td>
-                                <td id="Total" class="bg-stats-total"></td>
-                            </tr>
-                            <tr>
-                                <td id="Practice"></td>
-                                <td id="Practice_data"></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <td id="Production"></td>
-                                <td id="Production_data"></td>
-                                <th class="bg-stats-table text-white">Activity Location</th>
-                                <th class="bg-stats-table text-white">Total</th>
-                            </tr>
-                            <tr>
-                                <td id="Assessment"></td>
-                                <td id="Assessment_data"></td>
-                                <td class="bg-on-campus">On Campus</td>
-                                <td id="OnCampus"></td>
-                            </tr> 
-                            <tr>
-                                <td class="fw-bold">Total Time</td>
-                                <td id="TotalTime" class="fw-bold bg-stats-total"></td>
-                                <td class="bg-remote">Remote (Home)</td>
-                                <td id="Remote"></td>
-                            </tr>
+                            <td>
+                                <table id="statsLearningActivityTable" class="table table-bordered text-center position-sticky d-block">
+                                    <thead class="text-white bg-stats-table">
+                                        <th>Learning Type</th>
+                                        <th>Allocation</th>
+                                    </thead>
+                                </table>
+                            </td>
+                            <td>
+                                <table id="statsTasksTable" class="table table-bordered text-center position-sticky d-block">
+                                </table>
+                            </td>
                             </tbody>
                         </table>
                     </div>
+                    
+
 
                 </div>
+                
+
+
                 <div class="col-md-6 d-flex flex-column justify-content-start align-items-center">
-                    <button class="btn btn-primary m-3 rounded-pill" id="lt_chart_hide"> <span id="arrow_chart">▼</span> Chart</button>
+                    <button class="btn btn-primary m-3 rounded-pill d-block" id="lt_chart_hide"> <span id="arrow_chart">▼</span> Chart</button>
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <div id="lt_chart" style="display:block"></div>
-                        <div id="lt_chart_key" style="display:block"></div>
+                        <div id="lt_chart"></div>
+                        <div id="lt_chart_key"></div>
                         <div id="lt_chart_details" class="minh-50"></div>
                     </div>
 
@@ -160,7 +222,7 @@
             </div>
 
             <div class="text-center d-flex justify-content-center">
-                <button class="btn btn-primary m-3 rounded-pill" id="legend_btn"> <span id="arrow_legend">▲</span> Legend</button>
+                <button class="btn btn-primary m-3 rounded-pill d-block" id="legend_btn"> <span id="arrow_legend">▲</span> Legend</button>
             </div>
 
         </div>
@@ -176,7 +238,7 @@
                         </a>
                     }
                     else {
-                        <a class="btn btn-primary mb-2 rounded-pill bg-gray-600 border border-gray-600" >
+                        <a class="btn btn-secondary mb-2 rounded-pill" >
                             Week @week.WeekNumber
                         </a>
                     }
@@ -193,25 +255,28 @@
     //Data for the main table
     var weekTableBody = document.getElementById('weekTable').querySelector('tbody');
     var weekTableData = [];
+    var isOrderingActive = false;
+    var changeOrderDisabled = false;
 
     @foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
     {
-        <text>
-            weekTableData.push({
-                id: "@item.WeekActivityId",
-                taskOrder : "@item.TaskOrder",
-                staffResponsible: "@item.TaskStaff",
-                title: "@item.TaskTitle",
-                learningActivity: "@item.Activities.ActivityName",
-                learningType: "@item.LearningType.LearningTypeName",
-                time: "@item.TaskTime.ToString(@"hh\:mm")",
-                status: "@item.TasksStatus.StatusName",
-                activityLocation: "@item.TaskLocation.LocationName",
-                approach: "@item.TaskApproach.ApproachName"
-            });
-        </text>
+    <text>
+        weekTableData.push({
+            id: "@Html.Raw(item.WeekActivityId)",
+            taskOrder : "@Html.Raw(item.TaskOrder)",
+            staffResponsible: "@Html.Raw(item.TaskStaff)",
+            title: "@Html.Raw(item.TaskTitle)",
+            learningActivity: "@Html.Raw(item.Activities.ActivityName)",
+            learningType: "@Html.Raw(item.LearningType.LearningTypeName)",
+            time: "@Html.Raw(item.TaskTime.ToString(@"hh\:mm"))",
+            status: "@Html.Raw(item.TasksStatus.StatusName)",
+            activityLocation: "@Html.Raw(item.TaskLocation.LocationName)",
+            approach: "@Html.Raw(item.TaskApproach.ApproachName)"
+        });
+    </text>
     }
-    @if (!(Model.ActivitiesList?.Any() ?? false)) // Correctly checking if the list is empty
+
+    @if (!(Model.ActivitiesList?.Any() ?? false))
     {
     <text>
     weekTableData.push({
@@ -231,84 +296,178 @@
     
     //Populating the heading for the table
     var tableHeading = document.getElementById('weekTableHeading')
-    tableHeading.colSpan = Object.keys(weekTableData[0]).length + 2;
+
+    const columnIds = [
+        "changeOrderTask", "changeOrderStaff", "changeOrderTitle",
+        "changeOrderActivity", "changeOrderType", "changeOrderTime",
+        "changeOrderStatus", "changeOrderLocation", "changeOrderApproach"
+    ];
+
+    const columnMappings = {
+        "changeOrderTask": "taskOrder",
+        "changeOrderStaff": "staffResponsible",
+        "changeOrderTitle": "title",
+        "changeOrderActivity": "learningActivity",
+        "changeOrderType": "learningType",
+        "changeOrderTime": "time",
+        "changeOrderStatus": "status",
+        "changeOrderLocation": "activityLocation",
+        "changeOrderApproach": "approach"
+    };
+
+    const columns = {}; 
+
+    columnIds.forEach(id => {
+        const column = document.getElementById(id);
+        if (column) {
+            columns[id] = { element: column, ascending: true };
+            column.addEventListener("click", () => sortColumn(id));
+            column.style.cursor = "pointer";
+        }
+    });
+
+    function sortColumn(columnId) {
+        const key = columnMappings[columnId]; 
+        const column = columns[columnId];
+
+        Object.keys(columns).forEach(id => {
+            if (id !== columnId) {
+                columns[id].element.textContent = columns[id].element.textContent.replace(" ▼", " ▲");
+                columns[id].ascending = true;
+            }
+        });
+
+        if (column.ascending) {
+            weekTableData.sort((a, b) => a[key].toString().localeCompare(b[key].toString(), undefined, { numeric: true }));
+            column.element.textContent = column.element.textContent.replace(" ▲", " ▼");
+        } else {
+            weekTableData.sort((a, b) => b[key].toString().localeCompare(a[key].toString(), undefined, { numeric: true }));
+            column.element.textContent = column.element.textContent.replace(" ▼", " ▲");
+        }
+
+        column.ascending = !column.ascending;
+        renderTable(); 
+    }
+    
     
     //Populating the table from the data
     function renderTable() {
     
         weekTableBody.innerHTML = '';
+        weekTableData.order
         weekTableData.forEach(function(rowData, index) {
             var row = document.createElement('tr');
             for (var key in rowData) {
-                if (key !== "id" && key !== "taskOrder") {
+                if (key !== "id") {
                     var cell = document.createElement('td');
                     cell.textContent = rowData[key];
                     row.appendChild(cell);
                 }
             }
 
-            var actionCell = document.createElement('td');
-            var upButton = document.createElement('button');
-            upButton.textContent = "▲";
-            upButton.disabled = index === 0;
-            upButton.style.background = "none";
-            upButton.style.border = "none";
-            upButton.id = `upButton-${index}`;
+            if (isUserAuthorised) {
 
-            upButton.addEventListener("mouseover", function() {
+                tableHeading.colSpan = Object.keys(weekTableData[0]).length + 1;
+                var actionCell = document.createElement('td');
+                var upButton = document.createElement('button');
+                upButton.textContent = "▲";
+                upButton.disabled = index === 0;
+                upButton.style.background = "none";
+                upButton.style.border = "none";
                 if (!upButton.disabled) {
-                    upButton.style.color = "#0d6efd";
+                    upButton.style.color = "#3b82f6";
+                }else{
+                    upButton.style.color = "#003865";
                 }
-            });
-            upButton.addEventListener("mouseout", function() {
-                upButton.style.color = "";
-            });
+                
+                upButton.id = `upButton-${index}`;
 
-            var downButton = document.createElement('button');
-            downButton.textContent = "▼";
-            downButton.style.background = "none";
-            downButton.style.border = "none";
-            downButton.disabled = index === weekTableData.length - 1;
-            downButton.id = `downButton-${index}`;
+                upButton.addEventListener("mouseover", function() {
+                    if (!upButton.disabled) {
+                        upButton.style.color = "#003865";
+                    }
+                });
+                upButton.addEventListener("mouseout", function() {
+                    if (!upButton.disabled) {
+                        upButton.style.color = "#3b82f6";
+                    }else{
+                        upButton.style.color = "#003865";
+                    }
+                });
 
-            downButton.addEventListener("mouseover", function() {
+                var downButton = document.createElement('button');
+                downButton.textContent = "▼";
+                downButton.style.background = "none";
+                downButton.style.border = "none";
+                downButton.disabled = index === weekTableData.length - 1;
+                downButton.id = `downButton-${index}`;
                 if (!downButton.disabled) {
-                    downButton.style.color = "#0d6efd";
+                    downButton.style.color = "#3b82f6";
+                }else{
+                    downButton.style.color = "#003865";
                 }
-            });
-            downButton.addEventListener("mouseout", function() {
-                downButton.style.color = "";
-            });
+                
 
-            upButton.onclick = function() {
-                moveRow(index, -1);
-                setTimeout(() => {
-                    refocusArrows(index - 1, "up");
-                }, 0);
-            };
+                if (isOrderingActive) {
+                    upButton.style.display = "block";
+                    downButton.style.display = "block";
+                } else {
+                    upButton.style.display = "none";
+                    downButton.style.display = "none";
+                }
+            
+                downButton.addEventListener("mouseover", function() {
+                    if (!downButton.disabled) {
+                        downButton.style.color = "#003865";
+                    }
+                });
+                downButton.addEventListener("mouseout", function() {
+                    if (!downButton.disabled) {
+                        downButton.style.color = "#3b82f6";
+                    }else{
+                        downButton.style.color = "#003865";
+                    }
+                });
 
-            downButton.onclick = function() {
-                moveRow(index, 1);
-                setTimeout(() => {
-                    refocusArrows(index + 1, "down");
-                }, 0);
-            };
+                upButton.onclick = function() {
+                    moveRow(index, -1);
+                    setTimeout(() => {
+                        refocusArrows(index - 1, "up");
+                    }, 0);
+                };
 
-            actionCell.appendChild(upButton);
-            actionCell.appendChild(downButton);
-            actionCell.classList.add("d-flex", "flex-column","gap-4");
-            actionCell.style.border = "none";
-            row.appendChild(actionCell);
+                downButton.onclick = function() {
+                    moveRow(index, 1);
+                    setTimeout(() => {
+                        refocusArrows(index + 1, "down");
+                    }, 0);
+                };
 
-            var editCell = document.createElement('td');
-            var editLink = document.createElement('a');
-            editLink.textContent = "Edit Activity";
-            if(rowData.id !== "N/A"){
-                editLink.href = `/Workbooks/EditActivity/${rowData.id}`;
+                actionCell.appendChild(upButton);
+                actionCell.appendChild(downButton);
+                actionCell.classList.add("d-flex", "flex-column","gap-4");
+                actionCell.style.border = "none";
+                row.appendChild(actionCell);
+
+                var editCell = document.createElement('td');
+                if(rowData.id !== "N/A"){
+                    var editLink = document.createElement('a');
+                    editLink.textContent = "Edit Activity";
+                    editLink.href = `/Workbooks/EditActivity/${rowData.id}`;
+                    editLink.className = "d-flex justify-content-center btn btn-primary";
+                    editCell.appendChild(editLink);
+                }else{
+                    editCell.textContent = "N/A";
+                    var changeOrderButton = document.getElementById("changeOrder");
+                    changeOrderButton.className = "btn btn-secondary d-block";
+                    changeOrderDisabled = true;
             }
-            editLink.className = "d-flex justify-content-center btn btn-primary";
-            editCell.appendChild(editLink);
             row.appendChild(editCell);
+            
+        }
+        else {
+                tableHeading.colSpan = Object.keys(weekTableData[0]).length - 1;
+        }
             weekTableBody.appendChild(row);
         });
     }
@@ -319,50 +478,80 @@
         var temp = weekTableData[index];
         weekTableData[index] = weekTableData[newIndex];
         weekTableData[newIndex] = temp;
-
-        if (direction > 0 && weekTableData[index]) {
-            upF(weekTableData[index].id);
-            downF(weekTableData[newIndex].id); 
-        }else{
-            upF(weekTableData[newIndex].id);
-            downF(weekTableData[index].id);  
-        }
         renderTable();
     }
 
     renderTable();
+    if (isUserAuthorised) {
+        var changeOrderButton = document.getElementById("changeOrder");
+        var saveOrderButton = document.getElementById("saveOrder");
+        
+        if (!changeOrderDisabled){
+            changeOrderButton.onclick = function() {
+                weekTableData.sort((a, b) => a.taskOrder - b.taskOrder);
+                renderTable();
+
+                columnIds.forEach(id => {
+                    const column = document.getElementById(id);
+                    if (column) {
+                        column.classList.add("d-none");
+                        column.classList.remove("d-block");
+                    }
+                });
+                
+                isOrderingActive = true;
+                saveOrderButton.className = "btn btn-success d-block";
+                changeOrderButton.className = "btn btn-primary d-none";
+
+                for (let i = 0; i < weekTableData.length; i++) {
+                    let buttonD = document.getElementById(`downButton-` + i);
+                    let buttonU = document.getElementById(`upButton-` + i);
+                    if (buttonD && buttonU) {
+                        buttonD.style.display = "block";
+                        buttonU.style.display = "block";
+                    }
+                }
+            };
+
+            saveOrderButton.onclick = function() {
+                isOrderingActive = false;
+                changeOrderButton.className = "btn btn-primary d-block";
+                saveOrderButton.className = "btn btn-success d-none";
+
+                columnIds.forEach(id => {
+                    const column = document.getElementById(id);
+                    if (column) {
+                        column.classList.add("d-block");
+                        column.classList.remove("d-none");
+                    }
+                });
+
+                for (let i = 0; i < weekTableData.length; i++) {
+                    let buttonD = document.getElementById(`downButton-` + i);
+                    let buttonU = document.getElementById(`upButton-` + i);
+                    if (buttonD && buttonU) {
+                        buttonD.style.display = "none";
+                        buttonU.style.display = "none";
+                    }
+                }
+            saveOrder();
+        
+            };
+        }
+    }
+
 
     //Stats table data 
     var statsData = [];
-    var unassigned = @Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Unassigned");
-    var inProgress = @Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "In-Progress");
-    var completed = @Model.ActivitiesList?.Count(a => a.TasksStatus.StatusName == "Completed");
-    var onCampus = @Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "On Campus");
-    var remote = @Model.ActivitiesList?.Count(a => a.TaskLocation.LocationName == "Remote (Home)");
-    var total = unassigned + inProgress + completed;
     @{
         double totalTime = Model.ActivitiesList?
             .Select(a => (double?)a.TaskTime.TotalMinutes)
             .Sum() ?? 0;
     }
-    
-    const unassignedCell = document.getElementById("Unassigned")
-    unassignedCell.textContent = unassigned;
-    const inProgressCell = document.getElementById("InProgress")
-    inProgressCell.textContent = inProgress;
-    const completedCell = document.getElementById("Completed")
-    completedCell.textContent = completed;
-    const totalCell = document.getElementById("Total")
-    totalCell.textContent = total;
-    const onCampusCell = document.getElementById("OnCampus")
-    onCampusCell.textContent = onCampus;
-    const remoteCell = document.getElementById("Remote")
-    remoteCell.textContent = remote;
-    const totalTimeCell = document.getElementById("TotalTime")
+
     let hoursTotal = Math.floor(@totalTime/60);
     let minutesTotal = @totalTime%60;
-    totalTimeCell.textContent = `${hoursTotal.toString().padStart(2, '0')}:${minutesTotal.toString().padStart(2, '0')}`;
-
+   
     @{
         foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
         {
@@ -371,32 +560,236 @@
                 .Select(a => (double?)a.TaskTime.TotalMinutes)
                 .Sum() ?? 0; 
             
-            <text>
-        statsData.push({
-            label: "@type.LearningTypeName", 
-            time: @time,
-            color: "@type.LearningTypeColour",
-            textColor: "@type.LearningTypeTextColour"
-        });
-    </text>
+                <text>
+                    statsData.push({
+                        label: "@Html.Raw(type.LearningTypeName)", 
+                        time: @Html.Raw(time),
+                        color: "@Html.Raw(type.LearningTypeColour)",
+                        textColor: "@Html.Raw(type.LearningTypeTextColour)"
+                    });
+                </text>
         }
     }
 
-    //populating table
+    legendData = []
+    @{
+        foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
+        {
+            <text>
+                    legendData.push({
+                    label: "@Html.Raw(type.LearningTypeName)",
+                    color: "@Html.Raw(type.LearningTypeColour)",
+                    textColor: "@Html.Raw(type.LearningTypeTextColour)",
+                    description: "@Html.Raw(type.LearningTypeDescription)"
+                });
+            </text>
+        }
+    }
+
+    var statsLearningActivityTable = document.getElementById("statsLearningActivityTable");
+    var statsTasksTable = document.getElementById("statsTasksTable");
+    statsLearningActivityTable.innerHTML = "";
+    statsTasksTable.innerHTML = "";
+
+    var rowLAHeading = document.createElement("tr");
+    rowLAHeading.innerHTML = `
+                <td class="text-white bg-stats-table p-2">
+                    Learning Activity
+                </td>
+                <td class=" text-white bg-stats-table p-2">
+                    Allocation
+                </td>
+            `;
+    statsLearningActivityTable.appendChild(rowLAHeading);
+    
     statsData.forEach(item => {
-        const labelId = item.label;
-        const cell = document.getElementById(labelId);
-        const cellData = document.getElementById(labelId + "_data");
-        if (cell) {
-            cell.textContent = item.label;
-            cell.style.backgroundColor = item.color;
-            cell.style.color = item.textColor;
+        var row = document.createElement("tr");
+        let hours = Math.floor(item.time/60);
+        let minutes = item.time%60;
+        row.innerHTML = `
+                <td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">
+                    ${item.label}
+                    
+                </td>
+                <td class="p-2">${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}</td>
+            `;
+        statsLearningActivityTable.appendChild(row);
+    });
+    var rowLATotal = document.createElement("tr");
+    rowLATotal.innerHTML = `<td class="p-2"> Total Time </td> 
+                    <td class="p-2 table-total">${hoursTotal.toString().padStart(2, '0')}:${minutesTotal.toString().padStart(2, '0')}</td>`;
+    statsLearningActivityTable.appendChild(rowLATotal);
+
+
+
+    var locationData = [];
+    @{
+        var locationCounts = new Dictionary<string, int>();
+
+        foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
+        {
+        var location = item?.TaskLocation.LocationName ?? "Unknown";
+        locationCounts[location] = locationCounts.ContainsKey(location) ? locationCounts[location] + 1 : 1;
         }
-        if (cellData) {
-            let hours = Math.floor(item.time/60);
-            let minutes = item.time%60;
-            cellData.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+  
+        foreach (var item in Model.LocationList ?? new List<TaskLocation>())
+        {
+        var location = item?.LocationName ?? "Unknown";
+        var locationColour = item?.LocationColour ?? "#FFFFFF";
+        var locationTextColour = item?.LocationTextColour ?? "#000000";
+        var count = locationCounts.ContainsKey(location) ? locationCounts[location] : 0;
+
+        <text>
+        locationData.push({
+            location: "@Html.Raw(location)",
+            color: "@Html.Raw(locationColour)",
+            textColor: "@Html.Raw(locationTextColour)",
+            count: @count
+        });
+        </text>
         }
+    }
+
+    var statusData = [];
+    @{
+    var statusCounts = new Dictionary<string, int>();
+
+    foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
+    {
+    var status = item?.TasksStatus.StatusName ?? "Unknown";
+    statusCounts[status] = statusCounts.ContainsKey(status) ? statusCounts[status] + 1 : 1;
+    }
+
+
+    foreach (var item in Model.StatusList ?? new List<TaskProgressStatus>())
+    {
+    var status = item?.StatusName ?? "Unknown";
+    var statusColour = item?.StatusColour ?? "#FFFFFF";
+    var statusTextColour = item?.StatusTextColour ?? "#000000";
+    var count = statusCounts.ContainsKey(status) ? statusCounts[status] : 0;
+
+    <text>
+    statusData.push({
+        status: "@Html.Raw(status)",
+        color: "@Html.Raw(statusColour)",
+        textColor: "@Html.Raw(statusTextColour)",
+        count: @count
+    });
+    </text>
+    }
+    }
+
+    var approachData = [];
+    @{
+    var approachCounts = new Dictionary<string, int>();
+
+    foreach (var item in Model.ActivitiesList ?? new List<WeekActivities>())
+    {
+    var approach = item?.TaskApproach.ApproachName ?? "Unknown";
+    approachCounts[approach] = approachCounts.ContainsKey(approach) ? approachCounts[approach] + 1 : 1;
+    }
+
+
+    foreach (var item in Model.ApproachList ?? new List<TaskApproach>())
+    {
+    var approach = item?.ApproachName ?? "Unknown";
+    var approachColour = item?.ApproachColour ?? "#FFFFFF";
+    var approachTextColour = item?.ApproachTextColour ?? "#000000";
+    var count = approachCounts.ContainsKey(approach) ? approachCounts[approach] : 0;
+
+    <text>
+    approachData.push({
+        approach: "@Html.Raw(approach)",
+        color: "@Html.Raw(approachColour)",
+        textColor: "@Html.Raw(approachTextColour)",
+        count: @count
+    });
+    </text>
+    }
+    }
+
+    var totalTasks = 0;
+
+    var rowTaskStatusHeading = document.createElement("tr");
+    rowTaskStatusHeading.innerHTML = `
+                <td class="text-white bg-stats-table p-2">
+                    Status
+                </td>
+                <td class=" text-white bg-stats-table p-2">
+                    Tasks
+                </td>
+            `;
+            
+    statsTasksTable.appendChild(rowTaskStatusHeading);
+
+    statusData.forEach(item => {
+
+        var row = document.createElement("tr");
+        row.innerHTML = `<td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">${item.status}</td> 
+                     <td class="p-2">${item.count}</td>`;
+        statsTasksTable.appendChild(row);
+        totalTasks += item.count;
+    });
+
+
+    var rowTaskLocationHeading = document.createElement("tr");
+    rowTaskLocationHeading.innerHTML = `
+    <td class="text-white bg-stats-table p-2">
+        Activity Location
+    </td>
+    <td class="text-white bg-stats-table p-2">
+        Total
+    </td>
+`;
+    statsTasksTable.appendChild(rowTaskLocationHeading);
+
+    locationData.forEach(item => {
+
+        var row = document.createElement("tr");
+        row.innerHTML = `<td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">${item.location}</td> 
+                     <td class="p-2">${item.count}</td>`;
+        statsTasksTable.appendChild(row);
+    });
+
+    var rowTaskApproachHeading = document.createElement("tr");
+    rowTaskApproachHeading.innerHTML = `
+                <td class="text-white bg-stats-table p-2">
+                    Activity Approach
+                </td>
+                <td class=" text-white bg-stats-table p-2">
+                    Total
+                </td>
+            `;
+    statsTasksTable.appendChild(rowTaskApproachHeading);
+
+    approachData.forEach(item => {
+        var row = document.createElement("tr");
+        row.innerHTML = `<td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">${item.approach}</td> 
+                    <td class="p-2">${item.count}</td>`;
+        statsTasksTable.appendChild(row);
+    });
+
+    var rowTaskTotal = document.createElement("tr");
+    rowTaskTotal.innerHTML = `<td class="p-2">Total Tasks</td> 
+                     <td class="p-2 table-total">${totalTasks}</td>`;
+    statsTasksTable.appendChild(rowTaskTotal);
+
+    var legendTable = document.getElementById("legendTable");
+    legendTable.innerHTML = "";
+
+    legendData.forEach(item => {
+        var row = document.createElement("tr");
+
+        row.innerHTML = `
+                <td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">
+                    ${item.label}
+                    
+                </td>
+                <td class="p-2">${item.description}<td>
+            `;
+
+        legendTable.appendChild(row);
     });
 
     //button toggle functions
@@ -407,88 +800,94 @@
     function togglePieChart() {
         const chart = document.getElementById("lt_chart");
         const key = document.getElementById("lt_chart_key");
-        const currentDisplay = chart.style.display;
         const arrow = document.getElementById("arrow_chart");
-        const newDisplay = currentDisplay === "none" ? "block" : "none";
-        chart.style.display = newDisplay;
-        key.style.display = newDisplay;
-        if (currentDisplay === "none") {
+        chart.classList.toggle("d-none")
+        chart.classList.toggle("d-block")
+        key.classList.toggle("d-none")
+        key.classList.toggle("d-block")
+
+        if (chart.classList.contains("d-none")) {
             arrow.innerHTML = "▲";
-            refocusButton("lt_chart");
+            
         } else {
             arrow.innerHTML = "▼";
+            refocusButton("lt_chart");
         }
     }
-
+    
     function toggleLegend() {
         const chart = document.getElementById("lt_chart");
-        const table = document.getElementById("stats_table");
+        const table = document.getElementById("statsTable");
         const key = document.getElementById("lt_chart_key");
         const legend = document.getElementById("legend");
         const arrow = document.getElementById("arrow_legend");
         const buttonChart = document.getElementById("lt_chart_hide");
         const buttonTable = document.getElementById("lt_table_hide");
 
-        const currentDisplay = legend.style.display;
-        statsData.forEach(item => {
-            const legend_colour = document.getElementById(item.label + "_legend");
-            legend_colour.style.backgroundColor = item.color;
-        });
+        legend.classList.toggle("d-none")
+        legend.classList.toggle("d-block")
+        chart.className = "d-none";
+        key.className = "d-none";
+        table.className = "table table-bordered text-center position-sticky d-none";
+        buttonChart.className = "btn btn-primary m-3 rounded-pill d-none";
+        buttonTable.className = "btn btn-primary m-3 rounded-pill d-none";
 
-        legend.style.display = currentDisplay === "none" || currentDisplay === "" ? "block" : "none";
-        chart.style.display = "none";
-        key.style.display = "none";
-        table.style.display = "none";
-        buttonChart.style.display = "none";
-        buttonTable.style.display = "none";
-
-        if (legend.style.display === "block") {
+        if (legend.classList.contains("d-block")) {
             arrow.innerHTML = "▼";
             refocusButton("legend");
 
         } else {
             arrow.innerHTML = "▲";
-            buttonChart.style.display = "block";
-            buttonTable.style.display = "block";
+            buttonChart.className = "btn btn-primary m-3 rounded-pill d-block";
+            buttonTable.className = "btn btn-primary m-3 rounded-pill d-block";
         }
     }
 
     function toggleStatsTable() {
-        const table = document.getElementById("stats_table");
+        const table = document.getElementById("statsTable");
         const arrow = document.getElementById("arrow_stats");
-        const currentDisplay = table.style.display;
-        const newDisplay = currentDisplay === "none" ? "block" : "none";
-        table.style.display = newDisplay;
+        table.classList.toggle("d-none")
+        table.classList.toggle("d-block")
 
-        if (currentDisplay === "none") {
+        if (table.classList.contains("d-none")) {
             arrow.innerHTML = "▲";
-            refocusButton("stats_table");
+            
         } else {
             arrow.innerHTML = "▼";
+            refocusButton("statsTable");
         }
     }
     
+    
+    
     //function to call controller to save new taskOrder to the DB
-    function upF(activityId) {
-        fetch('/Workbooks/activityUp', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(activityId),
-        })
-            .catch(error => console.error('Error:', error));
-    }
+    function saveOrder() {
+        var activities = {};
 
-    function downF(activityId) {
-        fetch('/Workbooks/activityDown', {
+
+        for (let i = 0; i < weekTableData.length; i++) {
+            activities[weekTableData[i].id] = i+1;
+        }
+
+        var workbookId = @Model.Week!.Workbook!.WorkbookId;
+        activities["workbookId"] = workbookId;
+
+        fetch('/Workbooks/ChangeActivityOrder', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(activityId),
-        })
-            .catch(error => console.error('Error:', error));
+            body: JSON.stringify(activities),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+        setTimeout(() => {
+            location.reload();
+        }, 1000);
     }
     
     //functions to focus the screen on the related elements
@@ -592,7 +991,7 @@
     
     //percentage of time displayed when the user hovers over the pie chart
     function displayDetails(d) {
-        var percentage = @totalTime > 0 ? ((d.time / @totalTime) * 100).toFixed(2) : 0;
+        var percentage = @Html.Raw(totalTime) > 0 ? ((d.time / @Html.Raw(totalTime)) * 100).toFixed(2) : 0;
         let detailsDiv = d3.select("#lt_chart_details");
         detailsDiv.html(`<strong>${d.label}</strong>: (${percentage}%)`);
     }
@@ -603,15 +1002,3 @@
     }
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-

@@ -36,6 +36,10 @@ namespace CCM_Website.Data
                     var xSite = context.LearningPlatforms.First(lp => lp.PlatformName == "xSiTe");
                     var COIL = context.LearningPlatforms.First(lp => lp.PlatformName == "COIL");
 
+                    var COSE = context.UniversityArea.First(ua =>
+                        ua.AreaName == "College of Science & Engineering"
+                    );
+
                     var workbooks = new[]
                     {
                         new Workbook
@@ -47,6 +51,8 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI5001",
                             Collaborators = "Caitlin Diver, Scott Ramsay, Andrew Struan",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -57,6 +63,8 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI4009",
                             Collaborators = "John Smith, Jack Smith",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "P32IxjfQbecvIyKZ6yY_-buRniOMRLQMwhF_QQfDtV4",
                         },
                         new Workbook
                         {
@@ -67,6 +75,8 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI4081",
                             Collaborators = "Nikela Papadopoulou",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -76,6 +86,8 @@ namespace CCM_Website.Data
                             LastEdited = DateTime.Now,
                             CourseCode = "COMPSCI4073",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -86,6 +98,8 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI4014",
                             Collaborators = "Xianghua (Sharon) Ding",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "P32IxjfQbecvIyKZ6yY_-buRniOMRLQMwhF_QQfDtV4",
                         },
                         new Workbook
                         {
@@ -95,6 +109,8 @@ namespace CCM_Website.Data
                             LastEdited = DateTime.Now,
                             CourseCode = "COMPSCI9001",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -105,6 +121,8 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI4015",
                             Collaborators = "Peggy Gregory",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -115,6 +133,8 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI4013",
                             Collaborators = "Qiyuan Wang",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "P32IxjfQbecvIyKZ6yY_-buRniOMRLQMwhF_QQfDtV4",
                         },
                         new Workbook
                         {
@@ -125,6 +145,8 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI4062",
                             Collaborators = "Ghadeer Alsharif, Kai Feng",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "P32IxjfQbecvIyKZ6yY_-buRniOMRLQMwhF_QQfDtV4",
                         },
                         new Workbook
                         {
@@ -135,6 +157,8 @@ namespace CCM_Website.Data
                             CourseCode = "COMPSCI4076",
                             Collaborators = "Dr J. Paul Siebert",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                         new Workbook
                         {
@@ -144,6 +168,8 @@ namespace CCM_Website.Data
                             LastEdited = DateTime.Now,
                             CourseCode = "COMPSCI4074",
                             LearningPlatform = moodle,
+                            UniversityArea = COSE,
+                            OwnerId = "dmfVYOAEweex77KPOOgKBVP1XD7hgDAuxTVPXpCywiY",
                         },
                     };
 

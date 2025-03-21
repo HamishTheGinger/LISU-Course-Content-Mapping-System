@@ -1,5 +1,6 @@
-@model IEnumerable<CCM_Website.Models.Week>
-
+@model X.PagedList.IPagedList<CCM_Website.Models.Week>
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using X.PagedList.Mvc.Core
 @{
     ViewData["Title"] = "Week";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -19,6 +20,18 @@
 <div class="row my-3 align-items-start">
     <div class="col-md-10">
         <h2>Weeks</h2>
+    </div>
+</div>
+
+<div class="row my-3">
+    <div class="col d-flex justify-content-start align-items-center">
+        @using (Html.BeginForm("Index", "Week", FormMethod.Get))
+        {
+            <div class="input-group">
+                @Html.TextBox("searchString", ViewData["SearchString"] as string, new { @class = "form-control", placeholder = "Search course name..." })
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        }
     </div>
 </div>
 
@@ -51,3 +64,20 @@
     }
     </tbody>
 </table>
+
+<br />
+@Html.PagedListPager(Model,
+    page => Url.Action("Index", new { page, searchString = ViewData["SearchString"] }),
+    new PagedListRenderOptions
+    {
+        MaximumPageNumbersToDisplay = 3,
+        DisplayLinkToFirstPage = (Model.PageNumber <= 2) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always, 
+        DisplayLinkToLastPage = (Model.PageNumber >= Model.PageCount - 1) ? PagedListDisplayMode.Never : PagedListDisplayMode.Always,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Never, 
+        DisplayLinkToNextPage = PagedListDisplayMode.Never,  
+        DisplayEllipsesWhenNotShowingAllPageNumbers = true,  
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" }, 
+        PageClasses = new[] { "page-link" } 
+    }
+)

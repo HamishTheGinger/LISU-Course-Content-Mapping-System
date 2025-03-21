@@ -1,158 +1,178 @@
-﻿@model CCM_Website.Models.Workbook
+﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model CCM_Website.Models.Workbook
+@inject IAuthorizationService AuthorizationService
 
 @{
-    ViewData["Title"] = $"{@Model.CourseCode} - Overview";
-    ViewData["LearningPlatform"] = $"{@Model.LearningPlatform.PlatformName}";
+    ViewData["Title"] = $"{@Model?.CourseCode ?? @Model?.CourseName ?? "N/A"} - Overview";
+    ViewData["LearningPlatform"] = $"{@Model?.LearningPlatform.PlatformName}";
+    var learningTypes = ViewData["LearningTypes"] as List<LearningType>;
+    var graduateAttributes = ViewData["GraduateAttributes"] as List<GraduateAttribute>;
 }
 
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-        <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Workbook Details</li>
-    </ol>
-    <hr/>
+        <ol class="breadcrumb row">
+            <div class="col-md-10 d-flex align-items-center">
+                <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+                <li class="breadcrumb-item ms-2"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                @if ((await AuthorizationService.AuthorizeAsync(User, Model, "CanAccessResource")).Succeeded)
+                {
+                <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+                }else
+                {
+                    <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Search">Workbooks</a></li>
+                }
+               
+                <li class="breadcrumb-item active" aria-current="page">Workbook Details</li>
+            </div>
+            <div class="col-md-2 d-flex justify-content-center">
+                <button id="shareBtn" class="btn btn-success m-2">Share Workbook</button>
+            </div>
+        </ol>
+        <hr />
 </nav>
 
-<!-- Main part of workbook page with buttons-->
 <div class="container-fluid">
     <div class="row my-3 align-items-start">
-        <div class="col-md-10">
+        <div class="col-md-10 mb-3">
             <h1 class="text-wrap">@Html.DisplayFor(model => model.CourseName)</h1>
             <h4 class="text-wrap">Course Leads: @Html.DisplayFor(model => model.CourseLead)</h4>
         </div>
-        <div class="col-md-2 d-flex justify-content-center ">
-            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Overview</a>
-        </div>
+        @if ((await AuthorizationService.AuthorizeAsync(User, Model, "CanAccessResource")).Succeeded)
+        {            
+            <div class="col-md-2 d-flex justify-content-center">
+                <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.WorkbookId">Edit Overview</a>
+            </div>
+        }
     </div>
-    
-    
+
+
+    <div class="container-fluid">
         <div class="row">
-            <!-- Left Column with Toggle Buttons -->
             <div class="col-md-2 left-column d-flex flex-column justify-content-center align-items-center">
                 <br />
                 <br />
-                
-                <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_btn"> <span id="arrow_time_breakdown">◀</span>Time Breakdown</button>
+                <button class="btn btn-primary m-3 rounded-pill active" id="time_breakdown_btn"> <span id="arrow_time_breakdown">◀</span>Student Notional Working Hours</button>
                 <button class="btn btn-primary m-3 rounded-pill" id="time_breakdown_graph_btn"> <span id="arrow_time_breakdown_graph">▶</span>Time Breakdown Graph</button>
-                <button class="btn btn-primary m-3 rounded-pill" id="graduate_attributes_btn"> <span id="arrow_graduate_attributes">▶</span>Graduate Attributes</button>
+                <button class="btn btn-primary m-3 rounded-pill" id="graduate_attributes_btn"> <span id="arrow_graduate_attributes">▶</span>Graduate Attributes Table</button>
             </div>
-
-            <!-- Center Content -->
+            
             <div class="col-md-8 center-column d-flex align-items-center justify-content-center">
                 <div id="graph-container" class="overflow-auto flex-column">
 
-                    <div id="time-breakdown" style="display: block;">
+                    <div id="time-breakdown" class="show">
                         <table class="table table-bordered table-responsive w-auto">
                             <thead>
                                 <tr class="bg-secondary text-center">
                                     <th class="text-white">Week</th>
-                                    <th id="Acquisition" style="background-color: #A1F5ED">Acquisition</th>
-                                    <th id="Collaboration" style="background-color: #FFD21A">Collaboration</th>
-                                    <th id="Discussion" style="background-color: #7AAEEA">Discussion</th>
-                                    <th id="Investigation" style="background-color: #F8807F">Investigation</th>
-                                    <th id="Practice" style="background-color: #BB98DC">Practice</th>
-                                    <th id="Production" style="background-color: #BDEA75">Production</th>
-                                    <th id="Assessment" class="text-white" style="background-color: #44546A">Assessment</th>
+                                    @foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
+                                    {
+                                        <th id="@type.LearningTypeName">@type.LearningTypeName</th>
+                                    }
                                     <th class="text-white">Total Time</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var week in Model!.Weeks ?? Enumerable.Empty<Week>())
                                 {
-                                var weekData = ViewBag.TimeBreakdown != null && ViewBag.TimeBreakdown.ContainsKey(week.WeekNumber)
-                                ? ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>
-                                : new Dictionary<string, TimeSpan>();
+                                    var weekData = ViewBag.TimeBreakdown != null && ViewBag.TimeBreakdown.ContainsKey(week.WeekNumber)
+                                    ? ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>
+                                    : new Dictionary<string, TimeSpan>();
 
-                                <tr>
-                                    <td style="text-align: center;">@week.WeekNumber</td> <!-- Week number -->
-                                    <td style="text-align: center;">@weekData!["Acquisition"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData!["Collaboration"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData!["Discussion"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData!["Investigation"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData!["Practice"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData!["Production"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center;">@weekData!["Assessment"].ToString(@"hh\:mm")</td>
-                                    <td style="text-align: center; font-weight:bold;">
-                                        @{
-                                        var totalTime = weekData.Values.Aggregate(TimeSpan.Zero, (sum, next) => sum + next);
-                                        }
-                                        @totalTime.ToString(@"hh\:mm")
-                                    </td>
-                                </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div id="time-breakdown-graph" style="display: none;">
-                        <!-- Graph that shows up in this div is found in js -->
-                        <div class="d-flex">
-                            <div id="bar_chart_legend"></div>
-                            <div id="bar_chart_details"></div>
-                        </div>
-                        
-                    </div>
-                
-
-
-                    <div id="grad-attributes" style="display: none;">
-                        <table class="table table-bordered table-responsive text-center">
-                            <thead>
-                                <tr class="bg-secondary text-white">
-                                    <th>Graduate Attributes</th>
-                                    <th>Total Attributes</th>
-
-                                    @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
-                                        {
-                                            <th>W @week.WeekNumber</th>
-                                        }
-                                    
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var graduateAttribute in (Model.Weeks ?? Enumerable.Empty<Week>())
-                                    .Where(week => week.WeekGraduateAttributes != null)
-                                    .SelectMany(week => week.WeekGraduateAttributes!
-                                    .Select(wga => wga.GraduateAttribute))
-                                    .Where(attr => attr != null)
-                                    .Distinct())
-                                {
                                     <tr>
-                                        <td class="bg-grad-attributes-table text-white">
-                                            @graduateAttribute.AttributeName
-                                        </td> <!-- Graduate Attribute Name -->
-                                        <td>
-                                            @graduateAttribute.WeekGraduateAttributes?.Count()  <!-- Total Attributes (Count of WeekGraduateAttributes for this GraduateAttribute) -->
-                                        </td>
-                                        @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
+                                        <td class="text-center">@week.WeekNumber</td>
+                                        @foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
                                         {
-                                            // Get the count of occurrences of the current graduate attribute for the current week
-                                            var attributeCountForWeek = week.WeekGraduateAttributes?
-                                            .Count(wga => wga.GraduateAttributeId == graduateAttribute.AttributeId) ?? 0;
-                                            <td>
-                                                @attributeCountForWeek  <!-- Display the count of this graduate attribute for the current week -->
-                                            </td> <!-- Week Columns -->
+                                            var timeValue = weekData!.ContainsKey(type.LearningTypeName) ? weekData[type.LearningTypeName] : TimeSpan.Zero;
+                                            <td class="text-center">@timeValue.ToString(@"hh\:mm")</td>
                                         }
+                                        <td class="text-center fw-bold">
+                                            @{
+                                                var totalTime = weekData?.Values.Aggregate(TimeSpan.Zero, (sum, next) => sum + next) ?? TimeSpan.Zero;
+                                            }
+                                            @totalTime.ToString(@"hh\:mm")
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
 
-                    <div id="legend" style="display: none;">
-                        <table class="table table-bordered table-responsive">
+                    <div id="time-breakdown-graph" class="d-none">
+                        <div class="d-flex">
+                            <div id="bar_chart_legend"></div>
+                            <div id="bar_chart_details"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="grad-attributes" class="d-none">
+                        <table class="table table-bordered table-responsive text-center">
+                            <thead>
+                            <tr class="bg-secondary text-white">
+                                <th>Graduate Attributes</th>
+                                <th>Total Attributes</th>
+                                @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
+                                {
+                                    <th>
+                                        W @week.WeekNumber
+                                        <br />
+                                        @if ((await AuthorizationService.AuthorizeAsync(User, Model, "CanAccessResource")).Succeeded)
+                                        {
+                                            <a asp-action="AssignAttributes" asp-controller="Workbooks"
+                                               asp-route-weekId="@week.WeekId" class="btn btn-primary btn-sm rounded-pill m-1 text-white bg-grad-attributes-table">
+                                                Assign
+                                            </a>
+                                        }
+                                    </th>
+                                }
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @{
+                            // get all graduate attributes
+                            var allGraduateAttributes = (graduateAttributes ?? Enumerable.Empty<GraduateAttribute>())
+                            .Select(ga => ga.AttributeName)
+                            .Union((Model.Weeks ?? Enumerable.Empty<Week>())
+                            .Where(w => w.WeekGraduateAttributes != null)
+                            .SelectMany(w => w.WeekGraduateAttributes!.Select(wga => wga.GraduateAttribute.AttributeName)))
+                            .Distinct()
+                            .ToList();
+                            }
+
+                            @foreach (var attributeName in allGraduateAttributes)
+                            {
+                            <tr>
+                                <td class="bg-grad-attributes-table text-white">@attributeName</td>
+                                
+                                <td>
+                                    @{
+                                    var totalAttributeCount = (Model.Weeks ?? Enumerable.Empty<Week>())
+                                    .Sum(week => week.WeekGraduateAttributes?.Count(wga => wga.GraduateAttribute.AttributeName == attributeName) ?? 0);
+                                    }
+                                    @totalAttributeCount
+                                </td>
+                                
+                                @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
+                                {
+                                var countForWeek = week.WeekGraduateAttributes?
+                                .Count(wga => wga.GraduateAttribute.AttributeName == attributeName) ?? 0;
+
+                                <td>@countForWeek</td>
+                                }
+                            </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <div id="legend" class="d-none">
+                        <table class="table table-bordered table-responsive" id="legendTable">
                             <thead>
                             <tr><th>Legend</th></tr>
                             </thead>
                             <tbody>
-                            <tr><td style="background-color: #A1F5ED">Acquisition</td><td>Forums,Lectures,Live Webinar, Multiple-Choice Questions(MCQ), Podcasts, Q & A Walls, Readings, Videos</td></tr>
-                            <tr><td style="background-color: #FFD21A">Collaboration</td><td>Collaborative Docs, Crowd Sourcing, Digital Artifact, Mind Mapping, Peer Review, Podcast, Shared Resource, Social Annotation, Software Dev, Video</td></tr>
-                            <tr><td style="background-color: #7AAEEA">Discussion</td><td>Debates, Engaging in Dialogue, Group Discussions, Microsoft Teams, Moodle Forum, Social Annotation, Social Networking, Twitter, Webinar, Zoom </td></tr>
-                            <tr><td style="background-color: #F8807F">Investigation</td><td>Analysing Data, Desk Research, Research using Databases, Web Search</td></tr>
-                            <tr><td style="background-color: #BB98DC">Practice</td><td>Assessment Prep, Case Studies, Drafting a Paper, Multiple-Choice Questions(MCQ), Reflective Tasks, Scenarios</td></tr>
-                            <tr><td style="background-color: #BDEA75">Production</td><td>Annotated Bibliography, Assessment, Blogging, Case Study, Course Doc FAQ, ePortfolios, Peer Review, Podcast, Reflection, Report, Software Dev, Video, Wiki</td></tr>
-                            <tr><td style="background-color: #44546A" class="text-white">Assessment</td><td>Graded summative assignment that is a dedicated student activity as outlined in Coursera and the UofG PIP form</td></tr>
+
                             </tbody>
                         </table>
 
@@ -160,9 +180,6 @@
                     
                 </div>
             </div>
-
-
-            <!-- Right Column -->
             
             <div class="col-md-2 right-column d-flex flex-column align-items-center">
                 @foreach (var week in @Model.Weeks ?? Enumerable.Empty<Week>())
@@ -177,10 +194,64 @@
 
         </div>
     </div>
+</div>
 
 
+<script>    
+    var colourData = [];
+    var activities=[];
+    
+    // ---LEGEND---
+    legendData = []
+    @{
+    foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
+    {
+    <text>
+    legendData.push({
+        label: "@Html.Raw(type.LearningTypeName)",
+        color: "@Html.Raw(type.LearningTypeColour)",
+        textColor: "@Html.Raw(type.LearningTypeTextColour)",
+        description: "@Html.Raw(type.LearningTypeDescription)"
+    });
+    </text>
+    }
+    }
+    
+    var legendTable = document.getElementById("legendTable");
+    legendTable.innerHTML = "";
 
-<script>
+    legendData.forEach(item => {
+        var row = document.createElement("tr");
+
+        row.innerHTML = `
+                <td style="background-color: ${item.color}; color: ${item.textColor};" class="p-2">
+                    ${item.label}
+                    
+                </td>
+                <td class="p-2">${item.description}<td>
+            `;
+
+        legendTable.appendChild(row);
+    });
+
+    // ---LEARNING TYPE TABLE---
+    @foreach (var type in learningTypes ?? Enumerable.Empty<LearningType>())
+    {
+        
+        <text>
+    activities.push("@type.LearningTypeName");
+    colourData.push({
+        label: "@type.LearningTypeName",
+        color: "@type.LearningTypeColour",
+        textColor: "@type.LearningTypeTextColour",
+    });
+    
+        
+        </text>
+    }
+
+
+    // ---SELECTION BUTTONS---
     function refocusButton(id) {
 
         let content = document.getElementById(`${id}`);
@@ -188,20 +259,32 @@
         content.scrollIntoView({ behavior: "smooth", block: "center" });
     }
     
-    // Get the sections and buttons
     function toggleSection(buttonId, sectionId, arrowId) {
         const button = document.getElementById(buttonId);
         const section = document.getElementById(sectionId);
         const arrow = document.getElementById(arrowId);
 
+        colourData.forEach(item => {
+            const colourCell = document.getElementById(item.label);
+            if (colourCell) {
+                colourCell.style.backgroundColor = item.color;
+                colourCell.style.color = item.textColor;
+            }
+        });
+
         button.addEventListener("click", function () {
-            if (section.style.display === "none" || section.style.display === "") {
-                section.style.display = "block";
+            if (section.classList.contains("d-none")) {
+                section.classList.add("show");
+                section.classList.remove("d-none");
                 arrow.textContent = "◀"; 
                 refocusButton(sectionId);
+                button.classList.add("active");
+                
             } else {
-                section.style.display = "none";
-                arrow.textContent = "▶"; 
+                section.classList.remove("show");
+                section.classList.add("d-none");
+                arrow.textContent = "▶";
+                button.classList.remove("active");
             }
         });
     }
@@ -212,20 +295,32 @@
         const arrow = document.getElementById(arrowId);
 
         button.addEventListener("click", function () {
-            if (section.style.display === "none" || section.style.display === "") {
-                section.style.display = "block";
+            if (section.classList.contains("d-none")) {
+                section.classList.add("show");
+                section.classList.remove("d-none");
                 arrow.textContent = "▼";
                 refocusButton(sectionId);
+                button.classList.add("active");
+
+                colourData.forEach(item => {
+                    const legendCell = document.getElementById(item.label + "_legend");
+                    if (legendCell) {
+                        legendCell.style.backgroundColor = item.color;
+                        legendCell.style.color = item.textColor;
+                    }
+                });
+
             } else {
-                section.style.display = "none";
+                section.classList.remove("show");
+                section.classList.add("d-none");
                 arrow.textContent = "▲";
+                button.classList.remove("active");
             }
         });
 
         
     }
 
-    // Apply toggle functionality to each button-section pair
     toggleSection("time_breakdown_btn", "time-breakdown", "arrow_time_breakdown");
     toggleSection("time_breakdown_graph_btn", "time-breakdown-graph", "arrow_time_breakdown_graph");
     toggleSection("graduate_attributes_btn", "grad-attributes", "arrow_graduate_attributes");
@@ -234,44 +329,30 @@
 
 
 
-
-    // Time breakdown graph
-     
+    // ---TIME BREAKDOWN GRAPH---
     const data = [
-    @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>())
-            {
+        @foreach (var week in Model.Weeks ?? Enumerable.Empty<Week>()){
             var weekData = ViewBag.TimeBreakdown[week.WeekNumber] as Dictionary<string, TimeSpan>;
 
-            if (weekData != null)
-            {
-            @: {
-                @:    week: @week.WeekNumber,
-                @:    acquisition: @weekData["Acquisition"].TotalHours.ToString("0.##"),
-                @:    collaboration: @weekData["Collaboration"].TotalHours.ToString("0.##"),
-                @:    discussion: @weekData["Discussion"].TotalHours.ToString("0.##"),
-                @:    investigation: @weekData["Investigation"].TotalHours.ToString("0.##"),
-                @:    practice: @weekData["Practice"].TotalHours.ToString("0.##"),
-                @:    production: @weekData["Production"].TotalHours.ToString("0.##"),
-                @:    assessment: @weekData["Assessment"].TotalHours.ToString("0.##")
-            @: },
+            if (weekData != null) {
+                @: {
+                @:week: @week.WeekNumber,
+                @foreach (var type in ViewBag.LearningTypes ?? Enumerable.Empty<LearningType>()){
+                    @:@type.LearningTypeName.Replace(" ", ""): @weekData[type.LearningTypeName].TotalHours.ToString("0.##"),
+                }
+                @: },
             }
-            }
-    ] 
-
-    const activities = [
-        "acquisition",
-        "collaboration",
-        "discussion",
-        "investigation",
-        "practice",
-        "production",
-        "assessment"
+        }
     ];
+
 
     const stackedData = d3.stack().keys(activities)(data);
 
-    const svg = d3
-        .select("#time-breakdown-graph")
+    const colorScale = d3.scaleOrdinal()
+        .domain(activities)
+        .range(colourData.map(d => d.color));
+
+    const svg = d3.select("#time-breakdown-graph")
         .append("svg")
         .attr("width", 800)
         .attr("height", 400);
@@ -280,22 +361,15 @@
     const height = 400;
     const margin = { top: 20, right: 30, bottom: 40, left: 50 };
 
-    const xScale = d3
-        .scaleBand()
+    const xScale = d3.scaleBand()
         .domain(data.map(d => d.week))
         .range([margin.left, width - margin.right])
         .padding(0.1);
 
-    const yScale = d3
-        .scaleLinear()
-        .domain([0, d3.max(stackedData, layer => d3.max(layer, d => d[1]))])
+    const yScale = d3.scaleLinear()
+        .domain([0, d3.max(stackedData, layer => d3.max(layer, d => d[1] || 0))]) 
         .nice()
         .range([height - margin.bottom, margin.top]);
-
-    const colorScale = d3
-        .scaleOrdinal()
-        .domain(activities)
-        .range(["#A1F5ED", "#FFD21A", "#7AAEEA", "#F8807F", "#BB98DC", "#BDEA75", "#44546A"]);
 
     const hoverValues = d3.select("#hoverValues");
 
@@ -319,14 +393,11 @@
             hideDetails();
         });
 
-
-    // Add X-axis
     svg
         .append("g")
         .attr("transform", `translate(0, ${height - margin.bottom})`)
         .call(d3.axisBottom(xScale));
 
-    // Add Y-axis
     svg
         .append("g")
         .attr("transform", `translate(${margin.left}, 0)`)
@@ -336,22 +407,23 @@
             return `${hours}:${minutes.toString().padStart(2, "0")}`;
         }));
 
-    // Create a container for the legend
+    //legend for graph
     const barChartLegend = d3.select("#bar_chart_legend")
         .style("display", "flex")
         .style("flex-direction", "column")
         .style("margin-left", "20px")
         .style("margin-top", "20px");
 
-    // Populate the legend with activity names and their corresponding colors
     barChartLegend.selectAll("div")
-        .data(activities) // Use the activities array
+        .data(activities)
         .enter()
         .append("div")
         .style("display", "flex")
         .style("align-items", "center")
         .style("margin-bottom", "5px")
         .html(activity => {
+
+            console.log("Legend Activity:", activity, "Color:", colorScale(activity));
             return `
                 <div style="width: 12px; height: 12px; background-color: ${colorScale(activity)}; margin-right: 8px; border: 1px solid black;"></div>
                 ${activity}
@@ -363,17 +435,29 @@
 
         let totalHours = d[activityType];
 
-        // Convert to 00:00 format
         let hours = Math.floor(totalHours);
         let minutes = Math.round((totalHours - hours) * 60);
 
         detailsDiv.html(`<strong>Week ${d.week}</strong><br>${activityType}: <strong>${hours}:${minutes.toString().padStart(2, "0")}</strong>`);
-        
+
         detailsDiv.style("display", "block");
     }
+
     function hideDetails() {
         d3.select("#bar_chart_details").style("display", "none");
     }
-    
 
+    // ---SHARE BUTTON---
+    document.getElementById("shareBtn").addEventListener("click", function () {
+        if (navigator.share) {
+            navigator.share({
+                title: document.title,
+                url: window.location.href
+            }).catch((error) => console.log('Sharing failed:', error));
+        } else {
+            alert("Your browser does not support the Web Share API.");
+        }
+    });
 </script>
+
+

@@ -1,7 +1,7 @@
 @model CCM_Website.Models.TaskApproach
 
 @{
-    ViewData["Title"] = "Edit Task Approach";
+    ViewData["Title"] = "Edit";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -31,6 +31,16 @@
                 <label asp-for="ApproachName" class="control-label">Approach Name</label>
                 <input asp-for="ApproachName" class="form-control" />
                 <span asp-validation-for="ApproachName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApproachColour" class="control-label">Approach Colour</label>
+                <input asp-for="ApproachColour" class="form-control" />
+                <span asp-validation-for="ApproachColour" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ApproachTextColour" class="control-label">Approach Text Colour</label>
+                <input asp-for="ApproachTextColour" class="form-control" />
+                <span asp-validation-for="ApproachTextColour" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">

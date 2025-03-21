@@ -7,6 +7,7 @@ using CCM_Website.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList.Extensions;
 
 namespace CCM_Website.Areas.Admin.Controllers
 {
@@ -21,9 +22,24 @@ namespace CCM_Website.Areas.Admin.Controllers
         }
 
         // GET: Admin/TaskProgressStatus
-        public async Task<IActionResult> Index()
+        public Task<IActionResult> Index(string searchString, int? page)
         {
-            return View(await _context.TaskProgressStatus.ToListAsync());
+            var taskProgressStatus = _context.TaskProgressStatus.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                taskProgressStatus = taskProgressStatus.Where(t =>
+                    t.StatusName.ToLower().Contains(searchString.ToLower())
+                );
+            }
+
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+
+            ViewData["SearchString"] = searchString;
+
+            var pagedTaskProgressStatus = taskProgressStatus.ToPagedList(pageNumber, pageSize);
+            return Task.FromResult<IActionResult>(View(pagedTaskProgressStatus));
         }
 
         // GET: Admin/TaskProgressStatus/Details/5
@@ -57,7 +73,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            [Bind("StatusName")] TaskProgressStatus taskProgressStatus
+            [Bind("StatusName,StatusColour,StatusTextColour")] TaskProgressStatus taskProgressStatus
         )
         {
             if (ModelState.IsValid)
@@ -92,7 +108,8 @@ namespace CCM_Website.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
             int id,
-            [Bind("StatusId,StatusName")] TaskProgressStatus taskProgressStatus
+            [Bind("StatusId,StatusName,StatusColour,StatusTextColour")]
+                TaskProgressStatus taskProgressStatus
         )
         {
             if (id != taskProgressStatus.StatusId)

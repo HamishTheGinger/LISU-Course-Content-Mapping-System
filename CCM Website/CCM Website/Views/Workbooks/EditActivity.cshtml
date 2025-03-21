@@ -7,11 +7,14 @@
 
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
         <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Details" asp-route-id="@ViewBag.WorkbookId">Workbook Details</a></li>
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Week" asp-route-id=@ViewBag.CrumbWeekId>Week</a></li>
         <li class="breadcrumb-item active" aria-current="page">Edit Activity</li>
+        </div>
     </ol>
     <hr/>
 </nav>
@@ -30,10 +33,9 @@
                 <select disabled asp-for="WeekId" class="form-control" asp-items="ViewBag.WeekId"></select>
                 <span asp-validation-for="WeekId" class="text-danger"></span>
             </div>
-            <input type="hidden" asp-for="ActivitiesId" />
             <div class="form-group">
                 <label asp-for="ActivitiesId" class="control-label">Activity</label>
-                <select disabled asp-for="ActivitiesId" class="form-control" asp-items="ViewBag.ActivitiesId"></select>
+                <select asp-for="ActivitiesId" class="form-control" asp-items="ViewBag.ActivitiesId"></select>
                 <span asp-validation-for="ActivitiesId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -73,8 +75,8 @@
             </div>
             <br/>
             <div class="form-group">
-                <input type="submit" value="Save Changes" class="btn btn-primary"/>
-                <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+                <input type="submit" value="Save Changes" class="btn btn-success"/>
+                <a class="btn btn-secondary" asp-action="Week" asp-route-id="@ViewBag.CrumbWeekId">Cancel</a>
             </div>
         </form>
     </div>

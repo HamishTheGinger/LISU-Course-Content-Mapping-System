@@ -6,11 +6,14 @@
 }
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
+        <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
+        <div class="d-flex m-2">
         <li class="breadcrumb-item"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Details" asp-route-id="@ViewBag.CrumbWorkbookId">Workbook Details</a></li>
         <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Week" asp-route-id=@ViewBag.CrumbWeekId>Week</a></li>
         <li class="breadcrumb-item active" aria-current="page">Create Activity</li>
+        </div>
     </ol>
     <hr/>
 </nav>
@@ -23,8 +26,7 @@
         <form asp-action="CreateActivity">
             <div class="form-group">
                 <label asp-for="TaskOrder" class="control-label">Task Order</label>
-                <input asp-for="TaskOrder" class="form-control" />
-                <span asp-validation-for="TaskOrder" class="text-danger"></span>
+                <input asp-for="TaskOrder" class="form-control" value="@ViewBag.NextTaskOrder" readonly />
             </div>
             <div class="form-group">
                 <label asp-for="WeekId" class="control-label">Week</label>
@@ -73,8 +75,8 @@
             </div>
             <br/>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary"/>
-                <a class="btn btn-secondary" asp-action="Index">Cancel</a>
+                <input type="submit" value="Create" class="btn btn-success"/>
+                <a class="btn btn-secondary" asp-action="Week" asp-route-id="@ViewBag.CrumbWeekId">Cancel</a>
             </div>
         </form>
     </div>
