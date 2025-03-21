@@ -18,7 +18,7 @@
     --bs-remote: #FDEBAC;
     --bs-on-campus: #FBCED0;
     --bs-grad-attributes-table: #44546A;
-    --bs-thistle: #951272;
+    --bs-thistle: #951272; /*LISU Thistle*/
     --bs-font-pt-sans: "PT Sans", Tahoma, Verdana, sans-serif;
     --bs-body-font-family: var(--bs-font-pt-sans);
     --bs-body-font-size: 14px;
@@ -167,6 +167,17 @@
     border-radius: 0.25rem !important;
 }
 
+.pagination .disabled .page-link{
+    display: inline-block !important;
+    padding: 0.75rem !important;
+    margin: 0.25rem !important;
+    background-color: #64748b !important;
+    border: 1px solid #dee2e6 !important;
+    text-decoration: none !important;
+    color: #fff !important;
+    border-radius: 0.25rem !important;
+}
+
 .pagination .page-link:focus {
     background-color: var(--bs-primary-new) !important;
     color: #fff !important;
@@ -214,13 +225,13 @@
 
 .toggle-btn.active, .font-btn.active {
     background: #007bff !important;
-    color: white !important;
+    color: #fff !important;
     border-radius: 20px !important;
 }
 .burger-line {
     width: 35px;
     height: 5px;
-    background-color: black;
+    background-color: #000;
     margin: 6px 0;
     transition: 0.3s ease-in-out;
 }
@@ -285,34 +296,34 @@
 
 .dark-mode nav {
     background-color: #0f172a !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .nav-link {
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .main {
     background-color: #0f172a !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .card {
     background-color: #1a2332 !important;
-    color: white !important;
+    color: #fff !important;
     border-color: #2a3b4c !important;
 }
 
 .dark-mode .btn-primary {
     background-color: #3b82f6 !important;
     border-color: #3b82f6 !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .btn-secondary {
     background-color: #64748b !important;
     border-color: #64748b !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .breadcrumb-item a {
@@ -320,24 +331,24 @@
 }
 
 .dark-mode .breadcrumb-item.active {
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode input {
     background-color: #1a2332 !important;
-    color: white !important;
+    color: #fff !important;
     border-color: #4a5568 !important;
 }
 
 .dark-mode select {
     background-color: #1a2332 !important;
-    color: white !important;
+    color: #fff !important;
     border-color: #4a5568 !important;
 }
 
 .dark-mode textarea {
     background-color: #1a2332 !important;
-    color: white !important;
+    color: #fff !important;
     border-color: #4a5568 !important;
 }
 
@@ -347,7 +358,7 @@
 
 .dark-mode table {
     background-color: #0f172a !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode th,
@@ -357,18 +368,18 @@
 }
 
 .dark-mode .btn-success {
-    color: white !important;
+    color: #fff !important;
 }
 
 .btn-danger {
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .btn-danger:hover,
 .dark-mode .btn-success:focus,
 .dark-mode .btn-danger:focus,
 .dark-mode .btn-danger:active {
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .row-header{
@@ -412,10 +423,10 @@
     display: inline-block !important;
     padding: 0.75rem !important;
     margin: 0.25rem !important;
-    background-color: #64748b  !important;
-    border: 1px solid #fff !important;
-    text-decoration: none !important;
+    background-color: #3b82f6 !important;
+    border-color: #3b82f6 !important;
     color: #fff !important;
+    text-decoration: none !important;
     border-radius: 0.25rem !important;
 }
 
@@ -425,8 +436,8 @@
 }
 
 .dark-mode .pagination .active .page-link:focus {
-    background-color: #64748b !important;
-    border-color: #64748b !important;
+    background-color: #3b82f6 !important;
+    border-color: #fff !important;
     color: #fff !important;
 }
 
@@ -446,7 +457,7 @@
 
 .dark-mode .form-control {
     background-color: #1a2332 !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode input:-webkit-autofill,
@@ -454,7 +465,7 @@
 .dark-mode input:-webkit-autofill:focus,
 .dark-mode input:-webkit-autofill:active {
     background-color: #1a2332 !important;
-    color: white !important;
+    color: #fff !important;
     border-color: #4a5568 !important;
     -webkit-box-shadow: 0 0 0px 1000px #1a2332 inset !important;
 }
@@ -468,13 +479,13 @@
     max-width: 500px !important;
     background-color: #000 !important;
     overflow: hidden !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .font-btn,
 .dark-mode .toggle-btn {
     background-color: #000 !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .font-btn:hover,
@@ -486,7 +497,7 @@
 .dark-mode .toggle-btn.active,
 .dark-mode .font-btn.active {
     background: var(--bs-secondary-new) !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .bg-primary{
@@ -504,7 +515,7 @@
 .dark-mode .btn-burger {
     background-color: #3b82f6 !important;
     border-color: #3b82f6 !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .btn-burger:hover {
@@ -524,7 +535,7 @@
 .dark-mode .btn-burger.active:hover {
     background-color: #3b82f6 !important;
     border-color: #3b82f6 !important;
-    color: white !important;
+    color: #fff !important;
 }
 
 .dark-mode .btn-primary:hover {
@@ -537,8 +548,8 @@
 .dark-mode input:-webkit-autofill:focus,
 .dark-mode input:-webkit-autofill:active {
     background-color: #1a2332 !important;
-    color: white !important;
-    -webkit-text-fill-color: white !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
     border-color: #4a5568 !important;
 }
 
@@ -554,6 +565,19 @@
 
 .dark-mode .btn-primary.active:hover {
     background-color: #3b82f6 !important;
-    border-color: #3b82f6 !important;
+    border-color: #fff !important;
     color: #fff !important;
 }
+
+.dark-mode .pagination .disabled .page-link{
+    display: inline-block !important;
+    padding: 0.75rem !important;
+    margin: 0.25rem !important;
+    background-color: #64748b !important;
+    border: 1px solid #dee2e6 !important;
+    text-decoration: none !important;
+    color: #fff !important;
+    border-radius: 0.25rem !important;
+}
+
+

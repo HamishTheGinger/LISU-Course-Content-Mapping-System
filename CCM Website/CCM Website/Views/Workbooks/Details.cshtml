@@ -15,7 +15,14 @@
             <div class="col-md-10 d-flex align-items-center">
                 <li><button class="btn btn-primary me-3" onclick="history.back();">Back</button></li>
                 <li class="breadcrumb-item ms-2"><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                @if ((await AuthorizationService.AuthorizeAsync(User, Model, "CanAccessResource")).Succeeded)
+                {
                 <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Index">Workbooks</a></li>
+                }else
+                {
+                    <li class="breadcrumb-item"><a asp-controller="Workbooks" asp-action="Search">Workbooks</a></li>
+                }
+               
                 <li class="breadcrumb-item active" aria-current="page">Workbook Details</li>
             </div>
             <div class="col-md-2 d-flex justify-content-center">
