@@ -453,9 +453,10 @@
             navigator.share({
                 title: document.title,
                 url: window.location.href
-            }).catch((error) => console.log('Sharing failed:', error));
+            }).catch((error) => console.log('WebShare API Failed, falling back to clipboard share:', error));
         } else {
-            alert("Your browser does not support the Web Share API.");
+            navigator.clipboard.writeText(window.location.href)
+            alert("Workbook Link Copied");
         }
     });
 </script>
