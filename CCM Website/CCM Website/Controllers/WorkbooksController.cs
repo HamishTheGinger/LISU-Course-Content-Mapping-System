@@ -924,6 +924,7 @@ namespace CCM_Website.Controllers
                     lpa.LearningPlatformId == learningPlatformId
                 )
                 .Select(lpa => lpa.Activities)
+                .OrderBy(lpa => lpa.ActivityName)
                 .ToList();
 
             ViewBag.WeekId = new SelectList(filteredWeeks, "WeekId", "WeekNumber");
@@ -1248,6 +1249,8 @@ namespace CCM_Website.Controllers
                 ViewBag.WorkbookId = entity.WorkbookId;
                 ViewBag.WeekId = weekId;
                 ViewBag.GraduateAttributes = attributeSelectList;
+                int weekNumber = week?.WeekNumber ?? 1;
+                ViewBag.weekNumber = weekNumber;
             }
 
             return View("~/Views/Workbooks/AssignAttributes.cshtml");
