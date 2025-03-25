@@ -277,7 +277,7 @@ namespace CCM_Website.Areas.Admin.Controllers
         public async Task<IActionResult> Edit(
             int id,
             [Bind(
-                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,UniversityAreaId,Collaborators"
+                "WorkbookId,CourseName,CourseCode,PipReference,CourseLead,CourseLength,LearningPlatformId,UniversityAreaId,Collaborators,OwnerId"
             )]
                 Workbook workbook
         )

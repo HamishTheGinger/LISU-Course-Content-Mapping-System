@@ -55,8 +55,9 @@
                 <span asp-validation-for="CourseLength" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <input type="hidden" asp-for="LearningPlatformId" />
                 <label asp-for="LearningPlatformId" class="control-label">Learning Platform</label>
-                <select asp-for="LearningPlatformId" asp-items="ViewBag.LearningPlatforms" class="form-control">
+                <select disabled asp-for="LearningPlatformId" asp-items="ViewBag.LearningPlatforms" class="form-control">
                     <option value="">-- Select Learning Platform --</option>
                 </select>
                 <span asp-validation-for="LearningPlatformId" class="text-danger"></span>
@@ -72,6 +73,10 @@
                 <label asp-for="Collaborators" class="control-label">Collaborators</label>
                 <textarea asp-for="Collaborators" class="form-control" placeholder="Enter Collaborators, separated by commas"></textarea>
                 <span asp-validation-for="Collaborators" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="OwnerId" class="form-control" />
+                <span asp-validation-for="OwnerId" class="text-danger"></span>
             </div>
             <br/>
             <div class="form-group">

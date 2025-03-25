@@ -19,14 +19,12 @@
     <hr/>
 </nav>
 
-<h2>Assign Attributes to Week</h2>
+<h2>Assign Attributes to Week @ViewBag.WeekNumber:</h2>
 
 <form asp-action="AssignAttributes" asp-controller="Workbooks" method="post">
     @Html.AntiForgeryToken()
 
     <input type="hidden" name="weekId" value="@ViewBag.WeekId" />
-
-    <h2>Assign Attributes:</h2>
     <div class="form-group">
         @if (ViewBag.GraduateAttributes != null && ViewBag.GraduateAttributes is List<SelectListItem>)
         {

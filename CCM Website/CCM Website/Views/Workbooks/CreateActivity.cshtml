@@ -1,8 +1,11 @@
-﻿@model CCM_Website.Models.WeekActivities
+﻿@using Humanizer
+@using Microsoft.EntityFrameworkCore
+@model CCM_Website.Models.WeekActivities
 
 @{
     ViewData["Title"] = "Create Activity";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    
 }
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -30,7 +33,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="WeekId" class="control-label">Week</label>
-                <select asp-for="WeekId" class="form-control" asp-items="ViewBag.WeekId"></select>
+                <select asp-for="WeekId" class="form-control" id="weekReload" asp-items="ViewBag.WeekId"></select>
                 <span asp-validation-for="WeekId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -85,3 +88,12 @@
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")
 }
+
+
+<script>
+    document.getElementById("weekReload").addEventListener("change", function () {
+        var selectedWeekId = this.value; 
+        var workbookId = @ViewBag.CrumbWorkbookId; 
+        window.location.href = ` /Workbooks/CreateActivity/${workbookId}?weekId=${selectedWeekId}`;
+    });
+</script>

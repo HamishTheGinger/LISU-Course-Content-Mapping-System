@@ -283,6 +283,10 @@
 }
 
 .dark-mode header {
+    background-color: #0f172a !important;
+}
+
+.dark-mode .main-header {
     background-color: #000000 !important;
 }
 
