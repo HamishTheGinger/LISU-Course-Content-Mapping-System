@@ -19,7 +19,7 @@ Workbooks should be created with different lengths (number of weeks) and linked 
 
 For each week in the workbook, the course lead (assigned on creation) should be able to add any number of weekly activities, selected from the available activities for the workbooks linked learning platform. The course lead should also be able to assign a number of graduate attributes to each week.
 
-See the [requirements wiki page](https://stgit.dcs.gla.ac.uk/team-project-h/2024/sh04/sh04-main/-/wikis/Project-Writeup/Project-Requirements) for more in-depth requirements.
+See the [requirements wiki page](https://github.com/HamishTheGinger/LISU-Course-Content-Mapping-System/wiki/Project-Requirements) for more in-depth requirements.
 
 ### Solution Design
 Front-End Design: [Figma Prototype ](https://www.figma.com/proto/Hf2XEAaav9YKt5Q6M19D0j/Basic-Wireframe?page-id=0%3A1&node-id=21-3&node-type=canvas&viewport=-13%2C427%2C0.04&t=0nrmnLeMZ7QZ4RJZ-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=21%3A3&show-proto-sidebar=1)
